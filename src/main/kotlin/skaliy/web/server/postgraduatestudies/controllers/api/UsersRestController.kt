@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import skaliy.web.server.postgraduatestudies.entities.User
 
 import skaliy.web.server.postgraduatestudies.repositories.BranchesRepository
 import skaliy.web.server.postgraduatestudies.repositories.ContactInfoRepository
@@ -152,6 +153,7 @@ class UsersRestController(
                             scopusAuthorId
                     )
             )
+
 
     @JsonView(View.TREE::class)
     @GetMapping(value = ["get/one-tree"])
@@ -342,37 +344,48 @@ class UsersRestController(
             @RequestParam(
                     value = "all_records",
                     required = false) allRecords: Boolean?
-    ) =
-            usersRepository.getAll(
-                    degreesRepository.get(
-                            idDegree,
-                            degreeName,
-                            degreeBranch
-                    ),
-                    branchesRepository.get(
-                            idBranch,
-                            branchNumber,
-                            branchName
-                    ),
-                    specialitiesRepository.get(
-                            idSpeciality,
-                            specialityNumber,
-                            specialityName
-                    ),
-                    departmentsRepository.get(
-                            idDepartment,
-                            departmentName
-                    ),
-                    facultiesRepository.get(
-                            idFaculty,
-                            facultyName
-                    ),
-                    institutesRepository.get(
-                            idInstitute,
-                            instituteName
-                    ),
-                    allRecords
-            )
+    ): MutableList<User>? {
+
+        println(specialityNumber)
+        println(
+                specialitiesRepository.get(
+                        idSpeciality,
+                        specialityNumber,
+                        specialityName
+                )!!.idSpeciality
+        )
+//todo speciality don't work
+        return usersRepository.getAll(
+                degreesRepository.get(
+                        idDegree,
+                        degreeName,
+                        degreeBranch
+                ),
+                branchesRepository.get(
+                        idBranch,
+                        branchNumber,
+                        branchName
+                ),
+                specialitiesRepository.get(
+                        idSpeciality,
+                        specialityNumber,
+                        specialityName
+                ),
+                departmentsRepository.get(
+                        idDepartment,
+                        departmentName
+                ),
+                facultiesRepository.get(
+                        idFaculty,
+                        facultyName
+                ),
+                institutesRepository.get(
+                        idInstitute,
+                        instituteName
+                ),
+                allRecords
+        )
+    }
 
     @JsonView(View.TREE::class)
     @GetMapping(value = ["get/all-tree"])

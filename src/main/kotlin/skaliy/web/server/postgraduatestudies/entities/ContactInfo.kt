@@ -59,8 +59,9 @@ data class ContactInfo(
                 length = 100)
         @JsonProperty(value = "phone_number")
         @JsonView(View.UI::class)
+        @NotNull
         @Size(max = 100)
-        val phoneNumber: String? = "Невідомий номер телефону",
+        val phoneNumber: String,
 
         @Column(name = "email",
                 nullable = false,
@@ -92,13 +93,13 @@ data class ContactInfo(
 
     constructor() : this(
             0,
-            "Невідомий номер телефону",
+            "",
             "",
             "Невідома адреса")
 
     constructor(
             idContactInfo: Int,
-            phoneNumber: String?,
+            phoneNumber: String,
             email: String,
             address: String?,
             user: User?

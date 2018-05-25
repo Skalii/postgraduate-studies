@@ -103,7 +103,7 @@ data class Speciality(
 
 
     constructor() : this(
-            -1,
+            0,
             "",
             "")
 
