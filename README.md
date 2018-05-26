@@ -1,5 +1,5 @@
 # postgraduate-studies
-<h2><b>RESTful API:</b></h2>
+<h2><b>RESTful API</b></h2>
 <h4>Used technologies:</h5>
 <ul>
 <li>Spring Boot DevTools
@@ -16,7 +16,7 @@
        | ui |------|------| = data / <s> id </s> / <s> foreign </s> | 
        |----| rest |------| = data /  id  / <s> foreign </s> |
        |<u>----|------| tree | = data /  id  /  foreign  </u>|
-<br>  |?|     = request parameters, <b><i>optional</i></b>
+<br>  |?|     = request parameters, <b><i>all optional</i></b>
  |body|   = request body / <b><i>json object</i></b>, <b><i>required</i></b>
 |content| = <b><i>content-type: application/json; charset=UTF8</i></b>
 <br>|i| = integer
