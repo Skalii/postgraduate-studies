@@ -2,6 +2,7 @@ package skaliy.web.server.postgraduatestudies.entities
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonView
 
@@ -23,8 +24,6 @@ import javax.persistence.OneToOne
 import javax.persistence.OrderBy
 import javax.persistence.SequenceGenerator
 import javax.persistence.Table
-import javax.persistence.Temporal
-import javax.persistence.TemporalType
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
@@ -120,10 +119,12 @@ data class User(
 
         @Column(name = "birthday",
                 nullable = false)
+        @JsonFormat(
+                pattern = "yyyy-MM-dd",
+                timezone = "Europe/Kiev")
         @JsonProperty(value = "birthday")
         @JsonView(View.UI::class)
         @NotNull
-        @Temporal(TemporalType.DATE)
         val birthday: Date,
 
         @Column(name = "family_status")

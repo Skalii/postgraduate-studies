@@ -16,63 +16,67 @@ import skaliy.web.server.postgraduatestudies.entities.User
 interface FacultiesRepository : JpaRepository<Faculty, Int> {
 
 
-    /** ============================== GET ============================== */
+    /** ============================== GET / SELECT ============================== */
 
 
     //language=PostgresPLSQL
     @Query(value = """select (faculty_record(
                           cast_int(:id_faculty),
-                          cast_text(:name))).*""",
+                          cast_text(:name)
+                      )).*""",
             nativeQuery = true)
     fun get(
-            @Param("id_faculty") idFaculty: Int?,
-            @Param("name") name: String?
+            @Param("id_faculty") idFaculty: Int? = null,
+            @Param("name") name: String? = null
     ): Faculty?
-
-    //language=PostgresPLSQL
-    @Query(value = "select (faculty_record(all_records => true)).*",
-            nativeQuery = true)
-    fun getAll(): MutableList<Faculty>?
-
-    //language=PostgresPLSQL
-    @Query(value = "select (faculty_record(_id_institute => cast_int(:#{#institute.idInstitute}))).*",
-            nativeQuery = true)
-    fun getAllByInstitute(@Param("institute") institute: Institute?): Faculty?
 
     //language=PostgresPLSQL
     @Query(value = "select (faculty_record(cast_int(:#{#department.idFaculty}))).*",
             nativeQuery = true)
-    fun getByDepartment(@Param("department") department: Department?): Faculty?
+    fun get(@Param("department") department: Department? = Department()): Faculty?
 
     //language=PostgresPLSQL
     @Query(value = "select (faculty_record(cast_int(:#{#user.department.idFaculty}))).*",
             nativeQuery = true)
-    fun getByUser(@Param("user") user: User?): Faculty?
+    fun get(@Param("user") user: User? = User()): Faculty?
+
+    //language=PostgresPLSQL
+    @Query(value = """select (faculty_record(
+                          _id_institute => cast_int(:#{#institute.idInstitute}),
+                          all_records => cast_bool(:all_records)
+                      )).*""",
+            nativeQuery = true)
+    fun getAll(
+            @Param("all_records") allRecords: Boolean? = false,
+            @Param("institute") institute: Institute? = Institute()
+    ): MutableList<Faculty>?
 
 
-    /** ============================== INSERT ============================== */
+    /** ============================== ADD / INSERT INTO ============================== */
 
 
     //language=PostgresPLSQL
     @Query(value = """select (faculty_insert(
-                          cast_text(:#{#faculty.name}))).*""",
+                          cast_text(:#{#faculty.name})
+                      )).*""",
             nativeQuery = true)
-    fun create(@Param("faculty") faculty: Faculty?): Faculty?
+    fun add(@Param("faculty") faculty: Faculty?): Faculty?
 
 
-    /** ============================== UPDATE ============================== */
+    /** ============================== SET / UPDATE ============================== */
 
 
     //language=PostgresPLSQL
     @Query(value = """select (faculty_update(
                           cast_text(:#{#faculty.name}),
                           cast_int(:id_faculty),
-                          cast_text(:name))).*""",
+                          cast_text(:name)
+                      )).*""",
             nativeQuery = true)
-    fun update(
+    fun set(
             @Param("faculty") newFaculty: Faculty?,
-            @Param("id_faculty") idFaculty: Int?,
-            @Param("name") name: String?
+            @Param("id_faculty") idFaculty: Int? = null,
+            @Param("name") name: String? = null
     ): Faculty?
 
 
@@ -82,11 +86,12 @@ interface FacultiesRepository : JpaRepository<Faculty, Int> {
     //language=PostgresPLSQL
     @Query(value = """select (faculty_delete(
                           cast_int(:id_faculty),
-                          cast_text(:name))).*""",
+                          cast_text(:name)
+                      )).*""",
             nativeQuery = true)
     fun delete(
-            @Param("id_faculty") idFaculty: Int?,
-            @Param("name") name: String?
+            @Param("id_faculty") idFaculty: Int? = null,
+            @Param("name") name: String? = null
     ): Faculty?
 
 }

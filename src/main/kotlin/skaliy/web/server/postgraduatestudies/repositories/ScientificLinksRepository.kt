@@ -14,23 +14,26 @@ import skaliy.web.server.postgraduatestudies.entities.ScientificLinks
 interface ScientificLinksRepository : JpaRepository<ScientificLinks, Int> {
 
 
-    /** ============================== GET ============================== */
+    /** ============================== GET / SELECT ============================== */
 
 
     //language=PostgresPLSQL
     @Query(value = """select (scientific_links_record(
                           cast_int(:id_scientific_links),
-                          _orcid => cast_text(:orcid),
-                          _researcherid => cast_text(:researcherid),
-                          _google_scholar_id => cast_text(:google_scholar_id),
-                          _scopus_author_id => cast_text(:scopus_author_id))).*""",
+                          cast_int(:#{#user.idUser}),
+                          cast_text(:orcid),
+                          cast_text(:researcherid),
+                          cast_text(:google_scholar_id),
+                          cast_text(:scopus_author_id)
+                      )).*""",
             nativeQuery = true)
     fun get(
-            @Param("id_scientific_links") idScientificLinks: Int?,
-            @Param("orcid") orcid: String?,
-            @Param("researcherid") researcherid: String?,
-            @Param("google_scholar_id") googleScholarId: String?,
-            @Param("scopus_author_id") scopusAuthorId: String?
+            @Param("id_scientific_links") idScientificLinks: Int? = null,
+            @Param("orcid") orcid: String?  = null,
+            @Param("researcherid") researcherid: String? = null,
+            @Param("google_scholar_id") googleScholarId: String? = null,
+            @Param("scopus_author_id") scopusAuthorId: String? = null,
+            @Param("user") user: User? = User()
     ): ScientificLinks?
 
     //language=PostgresPLSQL
@@ -38,13 +41,8 @@ interface ScientificLinksRepository : JpaRepository<ScientificLinks, Int> {
             nativeQuery = true)
     fun getAll(): MutableList<ScientificLinks>?
 
-    //language=PostgresPLSQL
-    @Query(value = "select (scientific_links_record(_id_user => cast_int(:#{#user.idUser}))).*",
-            nativeQuery = true)
-    fun getByUser(@Param("user") user: User?): ScientificLinks?
 
-
-    /** ============================== INSERT ============================== */
+    /** ============================== ADD / INSERT INTO ============================== */
 
 
     //language=PostgresPLSQL
@@ -52,12 +50,13 @@ interface ScientificLinksRepository : JpaRepository<ScientificLinks, Int> {
                           cast_text(:#{#scientific_links.orcid}),
                           cast_text(:#{#scientific_links.researcherid}),
                           cast_text(:#{#scientific_links.googleScholarId}),
-                          cast_text(:#{#scientific_links.scopusAuthorId}))).*""",
+                          cast_text(:#{#scientific_links.scopusAuthorId})
+                      )).*""",
             nativeQuery = true)
-    fun create(@Param("scientific_links") scientificLinks: ScientificLinks?): ScientificLinks?
+    fun add(@Param("scientific_links") scientificLinks: ScientificLinks?): ScientificLinks?
 
 
-    /** ============================== UPDATE ============================== */
+    /** ============================== SET / UPDATE ============================== */
 
 
     //language=PostgresPLSQL
@@ -67,31 +66,21 @@ interface ScientificLinksRepository : JpaRepository<ScientificLinks, Int> {
                           cast_text(:#{#scientific_links.googleScholarId}),
                           cast_text(:#{#scientific_links.scopusAuthorId}),
                           cast_int(:id_scientific_links),
-                          _orcid => cast_text(:orcid),
-                          _researcherid => cast_text(:researcherid),
-                          _google_scholar_id => cast_text(:google_scholar_id),
-                          _scopus_author_id => cast_text(:scopus_author_id))).*""",
+                          cast_int(:#{#user.idUser}),
+                          cast_text(:orcid),
+                          cast_text(:researcherid),
+                          cast_text(:google_scholar_id),
+                          cast_text(:scopus_author_id)
+                      )).*""",
             nativeQuery = true)
-    fun update(
+    fun set(
             @Param("scientific_links") newScientificLinks: ScientificLinks?,
-            @Param("id_scientific_links") idScientificLinks: Int?,
-            @Param("orcid") orcid: String?,
-            @Param("researcherid") researcherid: String?,
-            @Param("google_scholar_id") googleScholarId: String?,
-            @Param("scopus_author_id") scopusAuthorId: String?
-    ): ScientificLinks?
-
-    //language=PostgresPLSQL
-    @Query(value = """select (scientific_links_update(
-                          cast_text(:#{#scientific_links.orcid}),
-                          cast_text(:#{#scientific_links.researcherid}),
-                          cast_text(:#{#scientific_links.googleScholarId}),
-                          cast_text(:#{#scientific_links.scopusAuthorId}),
-                          _id_user => cast_int(:#{#user.idUser}))).*""",
-            nativeQuery = true)
-    fun updateByUser(
-            @Param("scientific_links") newScientificLinks: ScientificLinks?,
-            @Param("user") user: User?
+            @Param("id_scientific_links") idScientificLinks: Int? = null,
+            @Param("orcid") orcid: String? = null,
+            @Param("researcherid") researcherid: String? = null,
+            @Param("google_scholar_id") googleScholarId: String? = null,
+            @Param("scopus_author_id") scopusAuthorId: String? = null,
+            @Param("user") user: User? = User()
     ): ScientificLinks?
 
 
@@ -101,22 +90,20 @@ interface ScientificLinksRepository : JpaRepository<ScientificLinks, Int> {
     //language=PostgresPLSQL
     @Query(value = """select (scientific_links_delete(
                           cast_int(:id_scientific_links),
+                          cast_int(:#{#user.idUser}),
                           cast_text(:orcid),
                           cast_text(:researcherid),
                           cast_text(:google_scholar_id),
-                          cast_text(:scopus_author_id))).*""",
+                          cast_text(:scopus_author_id)
+                      )).*""",
             nativeQuery = true)
     fun delete(
-            @Param("id_scientific_links") idScientificLinks: Int?,
-            @Param("orcid") orcid: String?,
-            @Param("researcherid") researcherid: String?,
-            @Param("google_scholar_id") googleScholarId: String?,
-            @Param("scopus_author_id") scopusAuthorId: String?
+            @Param("id_scientific_links") idScientificLinks: Int? = null,
+            @Param("orcid") orcid: String? = null,
+            @Param("researcherid") researcherid: String? = null,
+            @Param("google_scholar_id") googleScholarId: String? = null,
+            @Param("scopus_author_id") scopusAuthorId: String? = null,
+            @Param("user") user: User? = User()
     ): ScientificLinks?
-
-    //language=PostgresPLSQL
-    @Query(value = "select (scientific_links_delete(_id_user => cast_int(:#{#user.idUser}))).*",
-            nativeQuery = true)
-    fun deleteByUser(@Param("user") user: User?): ScientificLinks?
 
 }

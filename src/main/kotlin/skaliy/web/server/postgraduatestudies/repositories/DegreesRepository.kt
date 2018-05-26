@@ -14,54 +14,54 @@ import skaliy.web.server.postgraduatestudies.entities.User
 interface DegreesRepository : JpaRepository<Degree, Int> {
 
 
-    /** ============================== GET ============================== */
+    /** ============================== GET / SELECT ============================== */
 
 
     //language=PostgresPLSQL
     @Query(value = """select (degree_record(
                           cast_int(:id_degree),
                           cast_degree(:name),
-                          cast_branch(:branch))).*""",
+                          cast_branch(:branch)
+                      )).*""",
             nativeQuery = true)
     fun get(
-            @Param("id_degree") idDegree: Int?,
-            @Param("name") name: String?,
-            @Param("branch") branch: String?
+            @Param("id_degree") idDegree: Int? = null,
+            @Param("name") name: String? = null,
+            @Param("branch") branch: String? = null
     ): Degree?
-
-    //language=PostgresPLSQL
-    @Query(value = "select (degree_record(all_records => true)).*",
-            nativeQuery = true)
-    fun getAll(): MutableList<Degree>?
-
-    //language=PostgresPLSQL
-    @Query(value = "select (degree_record(_name => cast_degree(:name))).*",
-            nativeQuery = true)
-    fun getAllByName(@Param("name") name: String?): MutableList<Degree>?
-
-    //language=PostgresPLSQL
-    @Query(value = "select (degree_record(_branch => cast_branch(:branch))).*",
-            nativeQuery = true)
-    fun getAllByBranch(@Param("branch") branch: String?): MutableList<Degree>?
 
     //language=PostgresPLSQL
     @Query(value = "select (degree_record(:#{#user.idDegree})).*",
             nativeQuery = true)
-    fun getByUser(@Param("user") user: User?): Degree?
+    fun get(@Param("user") user: User? = User()): Degree?
+
+    //language=PostgresPLSQL
+    @Query(value = """select (degree_record(
+                          _name => cast_degree(:name),
+                          _branch => cast_branch(:branch),
+                          all_records => cast_bool(:all_records)
+                      )).*""",
+            nativeQuery = true)
+    fun getAll(
+            @Param("all_records") allRecords: Boolean? = false,
+            @Param("name") name: String? = null,
+            @Param("branch") branch: String? = null
+    ): MutableList<Degree>?
 
 
-    /** ============================== INSERT ============================== */
+    /** ============================== ADD / INSERT INTO ============================== */
 
 
     //language=PostgresPLSQL
     @Query(value = """select (degree_insert(
                           cast_degree(:#{#degree.name.value}),
-                          cast_branch(:#{#degree.branch.value}))).*""",
+                          cast_branch(:#{#degree.branch.value})
+                      )).*""",
             nativeQuery = true)
-    fun create(@Param("degree") degree: Degree): Degree?
+    fun add(@Param("degree") degree: Degree?): Degree?
 
 
-    /** ============================== UPDATE ============================== */
+    /** ============================== SET / UPDATE ============================== */
 
 
     //language=PostgresPLSQL
@@ -70,13 +70,14 @@ interface DegreesRepository : JpaRepository<Degree, Int> {
                           cast_branch(:#{#degree.branch.value}),
                           cast_int(:id_degree),
                           cast_degree(:name),
-                          cast_branch(:branch))).*""",
+                          cast_branch(:branch)
+                      )).*""",
             nativeQuery = true)
-    fun update(
+    fun set(
             @Param("degree") newDegree: Degree?,
-            @Param("id_degree") idDegree: Int?,
-            @Param("name") name: String?,
-            @Param("branch") branch: String?
+            @Param("id_degree") idDegree: Int? = null,
+            @Param("name") name: String? = null,
+            @Param("branch") branch: String? = null
     ): Degree?
 
 
@@ -87,12 +88,13 @@ interface DegreesRepository : JpaRepository<Degree, Int> {
     @Query(value = """select (degree_delete(
                           cast_int(:id_degree),
                           cast_degree(:name),
-                          cast_branch(:branch))).*""",
+                          cast_branch(:branch)
+                      )).*""",
             nativeQuery = true)
     fun delete(
-            @Param("id_degree") idDegree: Int?,
-            @Param("name") name: String?,
-            @Param("branch") branch: String?
+            @Param("id_degree") idDegree: Int? = null,
+            @Param("name") name: String? = null,
+            @Param("branch") branch: String? = null
     ): Degree?
 
 }

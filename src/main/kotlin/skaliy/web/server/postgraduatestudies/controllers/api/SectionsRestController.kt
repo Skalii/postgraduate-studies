@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 import skaliy.web.server.postgraduatestudies.entities.Section
+import skaliy.web.server.postgraduatestudies.repositories.ContactInfoRepository
+import skaliy.web.server.postgraduatestudies.repositories.ScientificLinksRepository
 import skaliy.web.server.postgraduatestudies.repositories.SectionsRepository
+import skaliy.web.server.postgraduatestudies.repositories.StudyInfoRepository
 import skaliy.web.server.postgraduatestudies.repositories.TasksRepository
 import skaliy.web.server.postgraduatestudies.repositories.UsersRepository
 import skaliy.web.server.postgraduatestudies.views.View
@@ -25,7 +28,10 @@ import skaliy.web.server.postgraduatestudies.views.View
         produces = [APPLICATION_JSON_UTF8_VALUE])
 @RestController
 class SectionsRestController(
+        val contactInfoRepository: ContactInfoRepository,
+        val scientificLinksRepository: ScientificLinksRepository,
         val sectionsRepository: SectionsRepository,
+        val studyInfoRepository: StudyInfoRepository,
         val tasksRepository: TasksRepository,
         val usersRepository: UsersRepository
 ) {
@@ -33,7 +39,7 @@ class SectionsRestController(
 
     /**
      * Queries to
-     * GET
+     * GET / SELECT
      * records
      */
 
@@ -46,43 +52,195 @@ class SectionsRestController(
     fun getOneUI(
             @RequestParam(
                     value = "id_section",
-                    required = false) idSection: Int?
+                    required = false) idSection: Int?,
+            @RequestParam(
+                    value = "id_user",
+                    required = false) idUser: Int?,
+            @RequestParam(
+                    value = "id_contact_info",
+                    required = false) idContactInfo: Int?,
+            @RequestParam(
+                    value = "phone_number",
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "email",
+                    required = false) email: String?,
+            @RequestParam(
+                    value = "id_study_info",
+                    required = false) idStudyInfo: Int?,
+            @RequestParam(
+                    value = "id_scientific_links",
+                    required = false) idScientificLinks: Int?,
+            @RequestParam(
+                    value = "orcid",
+                    required = false) orcid: String?,
+            @RequestParam(
+                    value = "researcherid",
+                    required = false) researcherid: String?,
+            @RequestParam(
+                    value = "google_scholar_id",
+                    required = false) googleScholarId: String?,
+            @RequestParam(
+                    value = "scopus_author_id",
+                    required = false) scopusAuthorId: String?,
+            @RequestParam(
+                    value = "number",
+                    required = false) number: Int?,
+            @RequestParam(
+                    value = "title",
+                    required = false) title: String?
     ) =
-            sectionsRepository.get(idSection)
+            sectionsRepository.get(
+                    idSection,
+                    usersRepository.get(
+                            idUser,
+                            contactInfoRepository.get(
+                                    idContactInfo,
+                                    phoneNumber,
+                                    email
+                            ),
+                            studyInfoRepository.get(idStudyInfo),
+                            scientificLinksRepository.get(
+                                    idScientificLinks,
+                                    orcid,
+                                    researcherid,
+                                    googleScholarId,
+                                    scopusAuthorId
+                            )
+                    ),
+                    number,
+                    title
+            )
 
     @JsonView(View.REST::class)
     @GetMapping(value = ["get/one-rest"])
     fun getOneRest(
             @RequestParam(
                     value = "id_section",
-                    required = false) idSection: Int?
+                    required = false) idSection: Int?,
+            @RequestParam(
+                    value = "id_user",
+                    required = false) idUser: Int?,
+            @RequestParam(
+                    value = "id_contact_info",
+                    required = false) idContactInfo: Int?,
+            @RequestParam(
+                    value = "phone_number",
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "email",
+                    required = false) email: String?,
+            @RequestParam(
+                    value = "id_study_info",
+                    required = false) idStudyInfo: Int?,
+            @RequestParam(
+                    value = "id_scientific_links",
+                    required = false) idScientificLinks: Int?,
+            @RequestParam(
+                    value = "orcid",
+                    required = false) orcid: String?,
+            @RequestParam(
+                    value = "researcherid",
+                    required = false) researcherid: String?,
+            @RequestParam(
+                    value = "google_scholar_id",
+                    required = false) googleScholarId: String?,
+            @RequestParam(
+                    value = "scopus_author_id",
+                    required = false) scopusAuthorId: String?,
+            @RequestParam(
+                    value = "number",
+                    required = false) number: Int?,
+            @RequestParam(
+                    value = "title",
+                    required = false) title: String?
     ) =
-            sectionsRepository.get(idSection)
+            sectionsRepository.get(
+                    idSection,
+                    usersRepository.get(
+                            idUser,
+                            contactInfoRepository.get(
+                                    idContactInfo,
+                                    phoneNumber,
+                                    email
+                            ),
+                            studyInfoRepository.get(idStudyInfo),
+                            scientificLinksRepository.get(
+                                    idScientificLinks,
+                                    orcid,
+                                    researcherid,
+                                    googleScholarId,
+                                    scopusAuthorId
+                            )
+                    ),
+                    number,
+                    title
+            )
 
     @JsonView(View.TREE::class)
     @GetMapping(value = ["get/one-tree"])
     fun getOneTree(
             @RequestParam(
                     value = "id_section",
-                    required = false) idSection: Int?
+                    required = false) idSection: Int?,
+            @RequestParam(
+                    value = "id_user",
+                    required = false) idUser: Int?,
+            @RequestParam(
+                    value = "id_contact_info",
+                    required = false) idContactInfo: Int?,
+            @RequestParam(
+                    value = "phone_number",
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "email",
+                    required = false) email: String?,
+            @RequestParam(
+                    value = "id_study_info",
+                    required = false) idStudyInfo: Int?,
+            @RequestParam(
+                    value = "id_scientific_links",
+                    required = false) idScientificLinks: Int?,
+            @RequestParam(
+                    value = "orcid",
+                    required = false) orcid: String?,
+            @RequestParam(
+                    value = "researcherid",
+                    required = false) researcherid: String?,
+            @RequestParam(
+                    value = "google_scholar_id",
+                    required = false) googleScholarId: String?,
+            @RequestParam(
+                    value = "scopus_author_id",
+                    required = false) scopusAuthorId: String?,
+            @RequestParam(
+                    value = "number",
+                    required = false) number: Int?,
+            @RequestParam(
+                    value = "title",
+                    required = false) title: String?
     ) =
-            sectionsRepository.get(idSection)
-
-
-    /** ============================== ALL ============================== */
-
-
-    @JsonView(View.UI::class)
-    @GetMapping(value = ["get/all-ui"])
-    fun getAllUI() = sectionsRepository.getAll()
-
-    @JsonView(View.REST::class)
-    @GetMapping(value = ["get/all-rest"])
-    fun getAllRest() = sectionsRepository.getAll()
-
-    @JsonView(View.TREE::class)
-    @GetMapping(value = ["get/all-tree"])
-    fun getAllTree() = sectionsRepository.getAll()
+            sectionsRepository.get(
+                    idSection,
+                    usersRepository.get(
+                            idUser,
+                            contactInfoRepository.get(
+                                    idContactInfo,
+                                    phoneNumber,
+                                    email
+                            ),
+                            studyInfoRepository.get(idStudyInfo),
+                            scientificLinksRepository.get(
+                                    idScientificLinks,
+                                    orcid,
+                                    researcherid,
+                                    googleScholarId,
+                                    scopusAuthorId
+                            )
+                    ),
+                    number,
+                    title
+            )
 
 
     /** ============================== ONE
@@ -109,7 +267,7 @@ class SectionsRestController(
                     value = "title",
                     required = false) title: String?
     ) =
-            sectionsRepository.getByTask(tasksRepository.get(idTask))
+            sectionsRepository.get(tasksRepository.get(idTask))
 
     @JsonView(View.REST::class)
     @GetMapping(value = ["get/one-by-task-rest"])
@@ -130,7 +288,7 @@ class SectionsRestController(
                     value = "title",
                     required = false) title: String?
     ) =
-            sectionsRepository.getByTask(tasksRepository.get(idTask))
+            sectionsRepository.get(tasksRepository.get(idTask))
 
     @JsonView(View.TREE::class)
     @GetMapping(value = ["get/one-by-task-tree"])
@@ -151,26 +309,27 @@ class SectionsRestController(
                     value = "title",
                     required = false) title: String?
     ) =
-            sectionsRepository.getByTask(tasksRepository.get(idTask))
+            sectionsRepository.get(tasksRepository.get(idTask))
 
-/*
 
-    */
-/** ============================== ONE
-     *                                 BY
-     *                                 USER ============================== *//*
-
+    /** ============================== ALL ============================== */
 
 
     @JsonView(View.UI::class)
-    @GetMapping(value = ["get/one-by-user-ui"])
-    fun getOneByUserUI(
+    @GetMapping(value = ["get/all-ui"])
+    fun getAllUI(
             @RequestParam(
                     value = "id_user",
                     required = false) idUser: Int?,
             @RequestParam(
                     value = "id_contact_info",
                     required = false) idContactInfo: Int?,
+            @RequestParam(
+                    value = "phone_number",
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "email",
+                    required = false) email: String?,
             @RequestParam(
                     value = "id_study_info",
                     required = false) idStudyInfo: Int?,
@@ -178,248 +337,397 @@ class SectionsRestController(
                     value = "id_scientific_links",
                     required = false) idScientificLinks: Int?,
             @RequestParam(
-                    value = "number",
-                    required = false) number: Int?,
+                    value = "orcid",
+                    required = false) orcid: String?,
             @RequestParam(
-                    value = "title",
-                    required = false) title: String?
+                    value = "researcherid",
+                    required = false) researcherid: String?,
+            @RequestParam(
+                    value = "google_scholar_id",
+                    required = false) googleScholarId: String?,
+            @RequestParam(
+                    value = "scopus_author_id",
+                    required = false) scopusAuthorId: String?
     ) =
-            sectionsRepository.getByUser(
+            sectionsRepository.getAll(
                     usersRepository.get(
                             idUser,
-                            idContactInfo,
-                            idStudyInfo,
-                            idScientificLinks
-                    ),
-                    number,
-                    title)
-
-    @JsonView(View.REST::class)
-    @GetMapping(value = ["get/one-by-user-rest"])
-    fun getOneByUserRest(
-            @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
-                    value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
-            @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "number",
-                    required = false) number: Int?,
-            @RequestParam(
-                    value = "title",
-                    required = false) title: String?
-    ) =
-            sectionsRepository.getByUser(
-                    usersRepository.get(
-                            idUser,
-                            idContactInfo,
-                            idStudyInfo,
-                            idScientificLinks
-                    ),
-                    number,
-                    title)
-
-    @JsonView(View.TREE::class)
-    @GetMapping(value = ["get/one-by-user-tree"])
-    fun getOneByUserTree(
-            @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
-                    value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
-            @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "number",
-                    required = false) number: Int?,
-            @RequestParam(
-                    value = "title",
-                    required = false) title: String?
-    ) =
-            sectionsRepository.getByUser(
-                    usersRepository.get(
-                            idUser,
-                            idContactInfo,
-                            idStudyInfo,
-                            idScientificLinks
-                    ),
-                    number,
-                    title)
-
-
-    */
-/** ============================== ALL
-     *                                 BY
-     *                                 USER ============================== *//*
-
-
-
-    @JsonView(View.UI::class)
-    @GetMapping(value = ["get/all-by-user-ui"])
-    fun getAllByUserUI(
-            @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
-                    value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
-            @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?
-    ) =
-            sectionsRepository.getAllByUser(
-                    usersRepository.get(
-                            idUser,
-                            idContactInfo,
-                            idStudyInfo,
-                            idScientificLinks
+                            contactInfoRepository.get(
+                                    idContactInfo,
+                                    phoneNumber,
+                                    email
+                            ),
+                            studyInfoRepository.get(idStudyInfo),
+                            scientificLinksRepository.get(
+                                    idScientificLinks,
+                                    orcid,
+                                    researcherid,
+                                    googleScholarId,
+                                    scopusAuthorId
+                            )
                     )
             )
 
     @JsonView(View.REST::class)
-    @GetMapping(value = ["get/all-by-user-rest"])
-    fun getAllByUserRest(
-            @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
-                    value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
-            @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?
+    @GetMapping(value = ["get/all-rest"])
+    fun getAllRest(@RequestParam(
+            value = "id_user",
+            required = false) idUser: Int?,
+                   @RequestParam(
+                           value = "id_contact_info",
+                           required = false) idContactInfo: Int?,
+                   @RequestParam(
+                           value = "phone_number",
+                           required = false) phoneNumber: String?,
+                   @RequestParam(
+                           value = "email",
+                           required = false) email: String?,
+                   @RequestParam(
+                           value = "id_study_info",
+                           required = false) idStudyInfo: Int?,
+                   @RequestParam(
+                           value = "id_scientific_links",
+                           required = false) idScientificLinks: Int?,
+                   @RequestParam(
+                           value = "orcid",
+                           required = false) orcid: String?,
+                   @RequestParam(
+                           value = "researcherid",
+                           required = false) researcherid: String?,
+                   @RequestParam(
+                           value = "google_scholar_id",
+                           required = false) googleScholarId: String?,
+                   @RequestParam(
+                           value = "scopus_author_id",
+                           required = false) scopusAuthorId: String?
     ) =
-            sectionsRepository.getAllByUser(
+            sectionsRepository.getAll(
                     usersRepository.get(
                             idUser,
-                            idContactInfo,
-                            idStudyInfo,
-                            idScientificLinks
+                            contactInfoRepository.get(
+                                    idContactInfo,
+                                    phoneNumber,
+                                    email
+                            ),
+                            studyInfoRepository.get(idStudyInfo),
+                            scientificLinksRepository.get(
+                                    idScientificLinks,
+                                    orcid,
+                                    researcherid,
+                                    googleScholarId,
+                                    scopusAuthorId
+                            )
                     )
             )
 
     @JsonView(View.TREE::class)
-    @GetMapping(value = ["get/all-by-user-tree"])
-    fun getAllByUserTree(
-            @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
-                    value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
-            @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?
+    @GetMapping(value = ["get/all-tree"])
+    fun getAllTree(@RequestParam(
+            value = "id_user",
+            required = false) idUser: Int?,
+                   @RequestParam(
+                           value = "id_contact_info",
+                           required = false) idContactInfo: Int?,
+                   @RequestParam(
+                           value = "phone_number",
+                           required = false) phoneNumber: String?,
+                   @RequestParam(
+                           value = "email",
+                           required = false) email: String?,
+                   @RequestParam(
+                           value = "id_study_info",
+                           required = false) idStudyInfo: Int?,
+                   @RequestParam(
+                           value = "id_scientific_links",
+                           required = false) idScientificLinks: Int?,
+                   @RequestParam(
+                           value = "orcid",
+                           required = false) orcid: String?,
+                   @RequestParam(
+                           value = "researcherid",
+                           required = false) researcherid: String?,
+                   @RequestParam(
+                           value = "google_scholar_id",
+                           required = false) googleScholarId: String?,
+                   @RequestParam(
+                           value = "scopus_author_id",
+                           required = false) scopusAuthorId: String?
     ) =
-            sectionsRepository.getAllByUser(
+            sectionsRepository.getAll(
                     usersRepository.get(
                             idUser,
-                            idContactInfo,
-                            idStudyInfo,
-                            idScientificLinks
+                            contactInfoRepository.get(
+                                    idContactInfo,
+                                    phoneNumber,
+                                    email
+                            ),
+                            studyInfoRepository.get(idStudyInfo),
+                            scientificLinksRepository.get(
+                                    idScientificLinks,
+                                    orcid,
+                                    researcherid,
+                                    googleScholarId,
+                                    scopusAuthorId
+                            )
                     )
             )
-*/
 
 
     /**
      * Queries to
-     * UPDATE
+     * ADD / INSERT INTO
      * records
      */
 
 
-    /** ============================== INSERT ============================== */
+    /** ============================== ONE ============================== */
 
 
     @JsonView(View.UI::class)
-    @PostMapping(value = ["post/create-ui"])
-    fun createUI(@RequestBody section: Section) =
-            sectionsRepository.create(section)
+    @PostMapping(value = ["post/add-ui"])
+    fun addUI(@RequestBody section: Section) =
+            sectionsRepository.add(section)
 
     @JsonView(View.REST::class)
-    @PostMapping(value = ["post/create-rest"])
-    fun createRest(@RequestBody section: Section) =
-            sectionsRepository.create(section)
+    @PostMapping(value = ["post/add-rest"])
+    fun addRest(@RequestBody section: Section) =
+            sectionsRepository.add(section)
 
     @JsonView(View.TREE::class)
-    @PostMapping(value = ["post/create-tree"])
-    fun createTree(@RequestBody section: Section) =
-            sectionsRepository.create(section)
+    @PostMapping(value = ["post/add-tree"])
+    fun addTree(@RequestBody section: Section) =
+            sectionsRepository.add(section)
 
 
-    /** ============================== UPDATE ============================== */
+    /**
+     * Queries to
+     * SET / UPDATE
+     * records
+     */
+
+
+    /** ============================== ONE ============================== */
 
 
     @JsonView(View.UI::class)
-    @PutMapping(value = ["put/update-ui"])
-    fun updateUI(
+    @PutMapping(value = ["put/set-ui"])
+    fun setUI(
             @RequestBody newSection: Section?,
             @RequestParam(
                     value = "id_section",
-                    required = false) idSection: Int?
-    ) =
-            sectionsRepository.update(
-                    newSection,
-                    idSection
-            )
+                    required = false) idSection: Int?,
+            @RequestParam(
+                    value = "id_user",
+                    required = false) idUser: Int?,
+            @RequestParam(
+                    value = "id_contact_info",
+                    required = false) idContactInfo: Int?,
+            @RequestParam(
+                    value = "phone_number",
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "email",
+                    required = false) email: String?,
+            @RequestParam(
+                    value = "id_study_info",
+                    required = false) idStudyInfo: Int?,
+            @RequestParam(
+                    value = "id_scientific_links",
+                    required = false) idScientificLinks: Int?,
+            @RequestParam(
+                    value = "orcid",
+                    required = false) orcid: String?,
+            @RequestParam(
+                    value = "researcherid",
+                    required = false) researcherid: String?,
+            @RequestParam(
+                    value = "google_scholar_id",
+                    required = false) googleScholarId: String?,
+            @RequestParam(
+                    value = "scopus_author_id",
+                    required = false) scopusAuthorId: String?,
+            @RequestParam(
+                    value = "number",
+                    required = false) number: Int?,
+            @RequestParam(
+                    value = "title",
+                    required = false) title: String?
+    ): Section? {
+        val section =
+                sectionsRepository.set(
+                        newSection,
+                        idSection,
+                        usersRepository.get(
+                                idUser,
+                                contactInfoRepository.get(
+                                        idContactInfo,
+                                        phoneNumber,
+                                        email
+                                ),
+                                studyInfoRepository.get(idStudyInfo),
+                                scientificLinksRepository.get(
+                                        idScientificLinks,
+                                        orcid,
+                                        researcherid,
+                                        googleScholarId,
+                                        scopusAuthorId
+                                )
+                        ),
+                        number,
+                        title
+                )
+        return sectionsRepository.get(section?.idSection)
+    }
 
     @JsonView(View.REST::class)
-    @PutMapping(value = ["put/update-rest"])
-    fun updateRest(
+    @PutMapping(value = ["put/set-rest"])
+    fun setRest(
             @RequestBody newSection: Section?,
             @RequestParam(
                     value = "id_section",
-                    required = false) idSection: Int?
-    ) =
-            sectionsRepository.update(
-                    newSection,
-                    idSection
-            )
+                    required = false) idSection: Int?,
+            @RequestParam(
+                    value = "id_user",
+                    required = false) idUser: Int?,
+            @RequestParam(
+                    value = "id_contact_info",
+                    required = false) idContactInfo: Int?,
+            @RequestParam(
+                    value = "phone_number",
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "email",
+                    required = false) email: String?,
+            @RequestParam(
+                    value = "id_study_info",
+                    required = false) idStudyInfo: Int?,
+            @RequestParam(
+                    value = "id_scientific_links",
+                    required = false) idScientificLinks: Int?,
+            @RequestParam(
+                    value = "orcid",
+                    required = false) orcid: String?,
+            @RequestParam(
+                    value = "researcherid",
+                    required = false) researcherid: String?,
+            @RequestParam(
+                    value = "google_scholar_id",
+                    required = false) googleScholarId: String?,
+            @RequestParam(
+                    value = "scopus_author_id",
+                    required = false) scopusAuthorId: String?,
+            @RequestParam(
+                    value = "number",
+                    required = false) number: Int?,
+            @RequestParam(
+                    value = "title",
+                    required = false) title: String?
+    ): Section? {
+        val section =
+                sectionsRepository.set(
+                        newSection,
+                        idSection,
+                        usersRepository.get(
+                                idUser,
+                                contactInfoRepository.get(
+                                        idContactInfo,
+                                        phoneNumber,
+                                        email
+                                ),
+                                studyInfoRepository.get(idStudyInfo),
+                                scientificLinksRepository.get(
+                                        idScientificLinks,
+                                        orcid,
+                                        researcherid,
+                                        googleScholarId,
+                                        scopusAuthorId
+                                )
+                        ),
+                        number,
+                        title
+                )
+        return sectionsRepository.get(section?.idSection)
+    }
 
     @JsonView(View.TREE::class)
-    @PutMapping(value = ["put/update-tree"])
-    fun updateTree(
+    @PutMapping(value = ["put/set-tree"])
+    fun setTree(
             @RequestBody newSection: Section?,
             @RequestParam(
                     value = "id_section",
-                    required = false) idSection: Int?
-    ) =
-            sectionsRepository.update(
-                    newSection,
-                    idSection
-            )
+                    required = false) idSection: Int?,
+            @RequestParam(
+                    value = "id_user",
+                    required = false) idUser: Int?,
+            @RequestParam(
+                    value = "id_contact_info",
+                    required = false) idContactInfo: Int?,
+            @RequestParam(
+                    value = "phone_number",
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "email",
+                    required = false) email: String?,
+            @RequestParam(
+                    value = "id_study_info",
+                    required = false) idStudyInfo: Int?,
+            @RequestParam(
+                    value = "id_scientific_links",
+                    required = false) idScientificLinks: Int?,
+            @RequestParam(
+                    value = "orcid",
+                    required = false) orcid: String?,
+            @RequestParam(
+                    value = "researcherid",
+                    required = false) researcherid: String?,
+            @RequestParam(
+                    value = "google_scholar_id",
+                    required = false) googleScholarId: String?,
+            @RequestParam(
+                    value = "scopus_author_id",
+                    required = false) scopusAuthorId: String?,
+            @RequestParam(
+                    value = "number",
+                    required = false) number: Int?,
+            @RequestParam(
+                    value = "title",
+                    required = false) title: String?
+    ): Section? {
+        val section =
+                sectionsRepository.set(
+                        newSection,
+                        idSection,
+                        usersRepository.get(
+                                idUser,
+                                contactInfoRepository.get(
+                                        idContactInfo,
+                                        phoneNumber,
+                                        email
+                                ),
+                                studyInfoRepository.get(idStudyInfo),
+                                scientificLinksRepository.get(
+                                        idScientificLinks,
+                                        orcid,
+                                        researcherid,
+                                        googleScholarId,
+                                        scopusAuthorId
+                                )
+                        ),
+                        number,
+                        title
+                )
+        return sectionsRepository.get(section?.idSection)
+    }
 
 
-    /** ============================== UPDATE
+    /** ============================== ONE
      *                                 BY
      *                                 TASK ============================== */
 
 
     @JsonView(View.UI::class)
-    @GetMapping(value = ["put/update-by-task-ui"])
-    fun updateByTaskUI(
+    @GetMapping(value = ["put/set-by-task-ui"])
+    fun setByTaskUI(
             @RequestBody newSection: Section?,
             @RequestParam(
                     value = "id_task",
@@ -438,20 +746,15 @@ class SectionsRestController(
                     required = false) title: String?
     ): Section? {
         val section =
-                sectionsRepository.updateByTask(
+                sectionsRepository.set(
                         newSection,
                         tasksRepository.get(idTask))
-        return Section(
-                section?.idSection!!,
-                newSection?.number!!,
-                newSection.title,
-                section.user
-        )
+        return sectionsRepository.get(section?.idSection)
     }
 
     @JsonView(View.REST::class)
-    @GetMapping(value = ["put/update-by-task-rest"])
-    fun updateByTaskRest(
+    @GetMapping(value = ["put/set-by-task-rest"])
+    fun setByTaskRest(
             @RequestBody newSection: Section?,
             @RequestParam(
                     value = "id_task",
@@ -470,20 +773,15 @@ class SectionsRestController(
                     required = false) title: String?
     ): Section? {
         val section =
-                sectionsRepository.updateByTask(
+                sectionsRepository.set(
                         newSection,
                         tasksRepository.get(idTask))
-        return Section(
-                section?.idSection!!,
-                newSection?.number!!,
-                newSection.title,
-                section.user
-        )
+        return sectionsRepository.get(section?.idSection)
     }
 
     @JsonView(View.TREE::class)
-    @GetMapping(value = ["put/update-by-task-tree"])
-    fun updateByTaskTree(
+    @GetMapping(value = ["put/set-by-task-tree"])
+    fun setByTaskTree(
             @RequestBody newSection: Section?,
             @RequestParam(
                     value = "id_task",
@@ -502,335 +800,256 @@ class SectionsRestController(
                     required = false) title: String?
     ): Section? {
         val section =
-                sectionsRepository.updateByTask(
+                sectionsRepository.set(
                         newSection,
                         tasksRepository.get(idTask))
-        return Section(
-                section?.idSection!!,
-                newSection?.number!!,
-                newSection.title,
-                section.user
-        )
+        return sectionsRepository.get(section?.idSection)
     }
 
-/*
 
-    */
-/** ============================== UPDATE
-     *                                 BY
-     *                                 USER ============================== *//*
+    /**
+     * Queries to
+     * DELETE
+     * records
+     */
 
+
+    /** ============================== ONE ============================== */
 
 
     @JsonView(View.UI::class)
-    @GetMapping(value = ["put/update-by-user-ui"])
-    fun updateByUserUI(
-            @RequestBody newSection: Section?,
-            @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
-                    value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
-            @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "number",
-                    required = false) number: Int?,
-            @RequestParam(
-                    value = "title",
-                    required = false) title: String?
-    ): Section? {
-        val section =
-                sectionsRepository.updateByUser(
-                        newSection,
-                        usersRepository.get(
-                                idUser,
-                                idContactInfo,
-                                idStudyInfo,
-                                idScientificLinks),
-                        number,
-                        title
-                )
-        return Section(
-                section?.idSection!!,
-                newSection?.number!!,
-                newSection.title,
-                section.user
-        )
-    }
-
-    @JsonView(View.REST::class)
-    @GetMapping(value = ["put/update-by-user-rest"])
-    fun updateByUserRest(
-            @RequestBody newSection: Section?,
-            @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
-                    value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
-            @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "number",
-                    required = false) number: Int?,
-            @RequestParam(
-                    value = "title",
-                    required = false) title: String?
-    ): Section? {
-        val section =
-                sectionsRepository.updateByUser(
-                        newSection,
-                        usersRepository.get(
-                                idUser,
-                                idContactInfo,
-                                idStudyInfo,
-                                idScientificLinks),
-                        number,
-                        title
-                )
-        return Section(
-                section?.idSection!!,
-                newSection?.number!!,
-                newSection.title,
-                section.user
-        )
-    }
-
-    @JsonView(View.TREE::class)
-    @GetMapping(value = ["put/update-by-user-tree"])
-    fun updateByUserTree(
-            @RequestBody newSection: Section?,
-            @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
-                    value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
-            @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "number",
-                    required = false) number: Int?,
-            @RequestParam(
-                    value = "title",
-                    required = false) title: String?
-    ): Section? {
-        val section =
-                sectionsRepository.updateByUser(
-                        newSection,
-                        usersRepository.get(
-                                idUser,
-                                idContactInfo,
-                                idStudyInfo,
-                                idScientificLinks),
-                        number,
-                        title
-                )
-        return Section(
-                section?.idSection!!,
-                newSection?.number!!,
-                newSection.title,
-                section.user
-        )
-    }
-*/
-
-
-    /** ============================== DELETE ============================== */
-
-
-    @JsonView(View.UI::class)
-    @DeleteMapping(value = ["delete/delete-ui"])
+    @DeleteMapping(value = ["delete/one-ui"])
     fun deleteUI(
             @RequestParam(
                     value = "id_section",
-                    required = false) idSection: Int?
+                    required = false) idSection: Int?,
+            @RequestParam(
+                    value = "id_user",
+                    required = false) idUser: Int?,
+            @RequestParam(
+                    value = "id_contact_info",
+                    required = false) idContactInfo: Int?,
+            @RequestParam(
+                    value = "phone_number",
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "email",
+                    required = false) email: String?,
+            @RequestParam(
+                    value = "id_study_info",
+                    required = false) idStudyInfo: Int?,
+            @RequestParam(
+                    value = "id_scientific_links",
+                    required = false) idScientificLinks: Int?,
+            @RequestParam(
+                    value = "orcid",
+                    required = false) orcid: String?,
+            @RequestParam(
+                    value = "researcherid",
+                    required = false) researcherid: String?,
+            @RequestParam(
+                    value = "google_scholar_id",
+                    required = false) googleScholarId: String?,
+            @RequestParam(
+                    value = "scopus_author_id",
+                    required = false) scopusAuthorId: String?,
+            @RequestParam(
+                    value = "number",
+                    required = false) number: Int?,
+            @RequestParam(
+                    value = "title",
+                    required = false) title: String?
     ) =
-            sectionsRepository.delete(idSection)
+            sectionsRepository.delete(
+                    idSection,
+                    usersRepository.get(
+                            idUser,
+                            contactInfoRepository.get(
+                                    idContactInfo,
+                                    phoneNumber,
+                                    email
+                            ),
+                            studyInfoRepository.get(idStudyInfo),
+                            scientificLinksRepository.get(
+                                    idScientificLinks,
+                                    orcid,
+                                    researcherid,
+                                    googleScholarId,
+                                    scopusAuthorId
+                            )
+                    ),
+                    number,
+                    title)
 
     @JsonView(View.REST::class)
-    @DeleteMapping(value = ["delete/delete-rest"])
+    @DeleteMapping(value = ["delete/one-rest"])
     fun deleteRest(
             @RequestParam(
                     value = "id_section",
-                    required = false) idSection: Int?
+                    required = false) idSection: Int?,
+            @RequestParam(
+                    value = "id_user",
+                    required = false) idUser: Int?,
+            @RequestParam(
+                    value = "id_contact_info",
+                    required = false) idContactInfo: Int?,
+            @RequestParam(
+                    value = "phone_number",
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "email",
+                    required = false) email: String?,
+            @RequestParam(
+                    value = "id_study_info",
+                    required = false) idStudyInfo: Int?,
+            @RequestParam(
+                    value = "id_scientific_links",
+                    required = false) idScientificLinks: Int?,
+            @RequestParam(
+                    value = "orcid",
+                    required = false) orcid: String?,
+            @RequestParam(
+                    value = "researcherid",
+                    required = false) researcherid: String?,
+            @RequestParam(
+                    value = "google_scholar_id",
+                    required = false) googleScholarId: String?,
+            @RequestParam(
+                    value = "scopus_author_id",
+                    required = false) scopusAuthorId: String?,
+            @RequestParam(
+                    value = "number",
+                    required = false) number: Int?,
+            @RequestParam(
+                    value = "title",
+                    required = false) title: String?
     ) =
-            sectionsRepository.delete(idSection)
+            sectionsRepository.delete(
+                    idSection,
+                    usersRepository.get(
+                            idUser,
+                            contactInfoRepository.get(
+                                    idContactInfo,
+                                    phoneNumber,
+                                    email
+                            ),
+                            studyInfoRepository.get(idStudyInfo),
+                            scientificLinksRepository.get(
+                                    idScientificLinks,
+                                    orcid,
+                                    researcherid,
+                                    googleScholarId,
+                                    scopusAuthorId
+                            )
+                    ),
+                    number,
+                    title)
 
     @JsonView(View.TREE::class)
-    @DeleteMapping(value = ["delete/delete-tree"])
+    @DeleteMapping(value = ["delete/one-tree"])
     fun deleteTree(
             @RequestParam(
                     value = "id_section",
-                    required = false) idSection: Int?
+                    required = false) idSection: Int?,
+            @RequestParam(
+                    value = "id_user",
+                    required = false) idUser: Int?,
+            @RequestParam(
+                    value = "id_contact_info",
+                    required = false) idContactInfo: Int?,
+            @RequestParam(
+                    value = "phone_number",
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "email",
+                    required = false) email: String?,
+            @RequestParam(
+                    value = "id_study_info",
+                    required = false) idStudyInfo: Int?,
+            @RequestParam(
+                    value = "id_scientific_links",
+                    required = false) idScientificLinks: Int?,
+            @RequestParam(
+                    value = "orcid",
+                    required = false) orcid: String?,
+            @RequestParam(
+                    value = "researcherid",
+                    required = false) researcherid: String?,
+            @RequestParam(
+                    value = "google_scholar_id",
+                    required = false) googleScholarId: String?,
+            @RequestParam(
+                    value = "scopus_author_id",
+                    required = false) scopusAuthorId: String?,
+            @RequestParam(
+                    value = "number",
+                    required = false) number: Int?,
+            @RequestParam(
+                    value = "title",
+                    required = false) title: String?
     ) =
-            sectionsRepository.delete(idSection)
+            sectionsRepository.delete(
+                    idSection,
+                    usersRepository.get(
+                            idUser,
+                            contactInfoRepository.get(
+                                    idContactInfo,
+                                    phoneNumber,
+                                    email
+                            ),
+                            studyInfoRepository.get(idStudyInfo),
+                            scientificLinksRepository.get(
+                                    idScientificLinks,
+                                    orcid,
+                                    researcherid,
+                                    googleScholarId,
+                                    scopusAuthorId
+                            )
+                    ),
+                    number,
+                    title)
 
 
-    /** ============================== DELETE
+    /** ============================== ONE
      *                                 BY
      *                                 TASK ============================== */
 
 
     @JsonView(View.UI::class)
-    @DeleteMapping(value = ["delete/delete-by-task-ui"])
+    @DeleteMapping(value = ["delete/one-by-task-ui"])
     fun deleteByTaskUI(
             @RequestParam(
                     value = "id_task",
                     required = false) idTask: Int?
     ) =
-            sectionsRepository.deleteByTask(tasksRepository.get(idTask))
+            sectionsRepository.delete(tasksRepository.get(idTask))
 
     @JsonView(View.REST::class)
-    @DeleteMapping(value = ["delete/delete-by-task-rest"])
+    @DeleteMapping(value = ["delete/one-by-task-rest"])
     fun deleteByTaskRest(
             @RequestParam(
                     value = "id_task",
                     required = false) idTask: Int?
     ) =
-            sectionsRepository.deleteByTask(tasksRepository.get(idTask))
+            sectionsRepository.delete(tasksRepository.get(idTask))
 
     @JsonView(View.TREE::class)
-    @DeleteMapping(value = ["delete/delete-by-task-tree"])
+    @DeleteMapping(value = ["delete/one-by-task-tree"])
     fun deleteByTaskTree(
             @RequestParam(
                     value = "id_task",
                     required = false) idTask: Int?
     ) =
-            sectionsRepository.deleteByTask(tasksRepository.get(idTask))
+            sectionsRepository.delete(tasksRepository.get(idTask))
 
-/*
 
-    */
-/** ============================== DELETE
+    /** ============================== ALL
      *                                 BY
-     *                                 USER ============================== *//*
-
+     *                                 USER ============================== */
 
 
     @JsonView(View.UI::class)
-    @DeleteMapping(value = ["delete/delete-by-user-ui"])
-    fun deleteByUserUI(
-            @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
-                    value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
-            @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "number",
-                    required = false) number: Int?,
-            @RequestParam(
-                    value = "title",
-                    required = false) title: String?
-    ) =
-            sectionsRepository.deleteByUser(
-                    usersRepository.get(
-                            idUser,
-                            idContactInfo,
-                            idStudyInfo,
-                            idScientificLinks
-                    ),
-                    number,
-                    title)
-
-    @JsonView(View.REST::class)
-    @DeleteMapping(value = ["delete/delete-by-user-rest"])
-    fun deleteByUserRest(
-            @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
-                    value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
-            @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "number",
-                    required = false) number: Int?,
-            @RequestParam(
-                    value = "title",
-                    required = false) title: String?
-    ) =
-            sectionsRepository.deleteByUser(
-                    usersRepository.get(
-                            idUser,
-                            idContactInfo,
-                            idStudyInfo,
-                            idScientificLinks
-                    ),
-                    number,
-                    title
-            )
-
-    @JsonView(View.TREE::class)
-    @DeleteMapping(value = ["delete/delete-by-user-tree"])
-    fun deleteByUserTree(
-            @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
-                    value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
-            @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "number",
-                    required = false) number: Int?,
-            @RequestParam(
-                    value = "title",
-                    required = false) title: String?
-    ) =
-            sectionsRepository.deleteByUser(
-                    usersRepository.get(
-                            idUser,
-                            idContactInfo,
-                            idStudyInfo,
-                            idScientificLinks
-                    ),
-                    number,
-                    title
-            )
-
-
-    */
-/** ============================== DELETE
-     *                                 ALL
-     *                                 BY
-     *                                 USER ============================== *//*
-
-
-
-    @JsonView(View.UI::class)
-    @DeleteMapping(value = ["delete/delete-all-by-user-ui"])
+    @DeleteMapping(value = ["delete/all-by-user-ui"])
     fun deleteAllByUserUI(
             @RequestParam(
                     value = "id_user",
@@ -839,23 +1058,51 @@ class SectionsRestController(
                     value = "id_contact_info",
                     required = false) idContactInfo: Int?,
             @RequestParam(
+                    value = "phone_number",
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "email",
+                    required = false) email: String?,
+            @RequestParam(
                     value = "id_study_info",
                     required = false) idStudyInfo: Int?,
             @RequestParam(
                     value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?
+                    required = false) idScientificLinks: Int?,
+            @RequestParam(
+                    value = "orcid",
+                    required = false) orcid: String?,
+            @RequestParam(
+                    value = "researcherid",
+                    required = false) researcherid: String?,
+            @RequestParam(
+                    value = "google_scholar_id",
+                    required = false) googleScholarId: String?,
+            @RequestParam(
+                    value = "scopus_author_id",
+                    required = false) scopusAuthorId: String?
     ) =
-            sectionsRepository.deleteAllByUser(
+            sectionsRepository.deleteAll(
                     usersRepository.get(
                             idUser,
-                            idContactInfo,
-                            idStudyInfo,
-                            idScientificLinks
+                            contactInfoRepository.get(
+                                    idContactInfo,
+                                    phoneNumber,
+                                    email
+                            ),
+                            studyInfoRepository.get(idStudyInfo),
+                            scientificLinksRepository.get(
+                                    idScientificLinks,
+                                    orcid,
+                                    researcherid,
+                                    googleScholarId,
+                                    scopusAuthorId
+                            )
                     )
             )
 
     @JsonView(View.REST::class)
-    @DeleteMapping(value = ["delete/delete-all-by-user-rest"])
+    @DeleteMapping(value = ["delete/all-by-user-rest"])
     fun deleteAllByUserRest(
             @RequestParam(
                     value = "id_user",
@@ -864,23 +1111,51 @@ class SectionsRestController(
                     value = "id_contact_info",
                     required = false) idContactInfo: Int?,
             @RequestParam(
+                    value = "phone_number",
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "email",
+                    required = false) email: String?,
+            @RequestParam(
                     value = "id_study_info",
                     required = false) idStudyInfo: Int?,
             @RequestParam(
                     value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?
+                    required = false) idScientificLinks: Int?,
+            @RequestParam(
+                    value = "orcid",
+                    required = false) orcid: String?,
+            @RequestParam(
+                    value = "researcherid",
+                    required = false) researcherid: String?,
+            @RequestParam(
+                    value = "google_scholar_id",
+                    required = false) googleScholarId: String?,
+            @RequestParam(
+                    value = "scopus_author_id",
+                    required = false) scopusAuthorId: String?
     ) =
-            sectionsRepository.deleteAllByUser(
+            sectionsRepository.deleteAll(
                     usersRepository.get(
                             idUser,
-                            idContactInfo,
-                            idStudyInfo,
-                            idScientificLinks
+                            contactInfoRepository.get(
+                                    idContactInfo,
+                                    phoneNumber,
+                                    email
+                            ),
+                            studyInfoRepository.get(idStudyInfo),
+                            scientificLinksRepository.get(
+                                    idScientificLinks,
+                                    orcid,
+                                    researcherid,
+                                    googleScholarId,
+                                    scopusAuthorId
+                            )
                     )
             )
 
     @JsonView(View.TREE::class)
-    @DeleteMapping(value = ["delete/delete-all-by-user-tree"])
+    @DeleteMapping(value = ["delete/all-by-user-tree"])
     fun deleteAllByUserTree(
             @RequestParam(
                     value = "id_user",
@@ -889,20 +1164,47 @@ class SectionsRestController(
                     value = "id_contact_info",
                     required = false) idContactInfo: Int?,
             @RequestParam(
+                    value = "phone_number",
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "email",
+                    required = false) email: String?,
+            @RequestParam(
                     value = "id_study_info",
                     required = false) idStudyInfo: Int?,
             @RequestParam(
                     value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?
+                    required = false) idScientificLinks: Int?,
+            @RequestParam(
+                    value = "orcid",
+                    required = false) orcid: String?,
+            @RequestParam(
+                    value = "researcherid",
+                    required = false) researcherid: String?,
+            @RequestParam(
+                    value = "google_scholar_id",
+                    required = false) googleScholarId: String?,
+            @RequestParam(
+                    value = "scopus_author_id",
+                    required = false) scopusAuthorId: String?
     ) =
-            sectionsRepository.deleteAllByUser(
+            sectionsRepository.deleteAll(
                     usersRepository.get(
                             idUser,
-                            idContactInfo,
-                            idStudyInfo,
-                            idScientificLinks
+                            contactInfoRepository.get(
+                                    idContactInfo,
+                                    phoneNumber,
+                                    email
+                            ),
+                            studyInfoRepository.get(idStudyInfo),
+                            scientificLinksRepository.get(
+                                    idScientificLinks,
+                                    orcid,
+                                    researcherid,
+                                    googleScholarId,
+                                    scopusAuthorId
+                            )
                     )
             )
-*/
 
 }

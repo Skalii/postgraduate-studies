@@ -14,7 +14,12 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 import skaliy.web.server.postgraduatestudies.entities.Branch
-import skaliy.web.server.postgraduatestudies.repositories.*
+import skaliy.web.server.postgraduatestudies.repositories.BranchesRepository
+import skaliy.web.server.postgraduatestudies.repositories.ContactInfoRepository
+import skaliy.web.server.postgraduatestudies.repositories.ScientificLinksRepository
+import skaliy.web.server.postgraduatestudies.repositories.SpecialitiesRepository
+import skaliy.web.server.postgraduatestudies.repositories.StudyInfoRepository
+import skaliy.web.server.postgraduatestudies.repositories.UsersRepository
 import skaliy.web.server.postgraduatestudies.views.View
 
 
@@ -100,22 +105,6 @@ class BranchesRestController(
             )
 
 
-    /** ============================== ALL ============================== */
-
-
-    @JsonView(View.UI::class)
-    @GetMapping(value = ["get/all-ui"])
-    fun getAllUI() = branchesRepository.getAll()
-
-    @JsonView(View.REST::class)
-    @GetMapping(value = ["get/all-rest"])
-    fun getAllRest() = branchesRepository.getAll()
-
-    @JsonView(View.TREE::class)
-    @GetMapping(value = ["get/all-tree"])
-    fun getAllTree() = branchesRepository.getAll()
-
-
     /** ============================== ONE
      *                                 BY
      *                                 SPECIALITY ============================== */
@@ -140,6 +129,7 @@ class BranchesRestController(
                             number,
                             name
                     ))
+
 
     @JsonView(View.REST::class)
     @GetMapping(value = ["get/one-by-speciality-rest"])
@@ -180,7 +170,6 @@ class BranchesRestController(
                             number,
                             name
                     ))
-
 
     /** ============================== ONE
      *                                 BY
@@ -239,6 +228,7 @@ class BranchesRestController(
                             )
                     )
             )
+
 
     @JsonView(View.REST::class)
     @GetMapping(value = ["get/one-by-user-rest"])
@@ -346,39 +336,61 @@ class BranchesRestController(
                     )
             )
 
+    /** ============================== ALL ============================== */
+
+
+    @JsonView(View.UI::class)
+    @GetMapping(value = ["get/all-ui"])
+    fun getAllUI() = branchesRepository.getAll()
+
+    @JsonView(View.REST::class)
+    @GetMapping(value = ["get/all-rest"])
+    fun getAllRest() = branchesRepository.getAll()
+
+    @JsonView(View.TREE::class)
+    @GetMapping(value = ["get/all-tree"])
+    fun getAllTree() = branchesRepository.getAll()
+
 
     /**
      * Queries to
-     * UPDATE
+     * ADD / INSERT INTO
      * records
      */
 
 
-    /** ============================== INSERT ============================== */
+    /** ============================== ONE ============================== */
 
 
     @JsonView(View.UI::class)
-    @PostMapping(value = ["post/create-ui"])
-    fun createUI(@RequestBody branch: Branch?) =
-            branchesRepository.create(branch)
+    @PostMapping(value = ["post/add-ui"])
+    fun addUI(@RequestBody branch: Branch?) =
+            branchesRepository.add(branch)
 
     @JsonView(View.REST::class)
-    @PostMapping(value = ["post/create-rest"])
-    fun createRest(@RequestBody branch: Branch?) =
-            branchesRepository.create(branch)
+    @PostMapping(value = ["post/add-rest"])
+    fun addRest(@RequestBody branch: Branch?) =
+            branchesRepository.add(branch)
 
     @JsonView(View.TREE::class)
-    @PostMapping(value = ["post/create-tree"])
-    fun createTree(@RequestBody branch: Branch?) =
-            branchesRepository.create(branch)
+    @PostMapping(value = ["post/add-tree"])
+    fun addTree(@RequestBody branch: Branch?) =
+            branchesRepository.add(branch)
 
 
-    /** ============================== UPDATE ============================== */
+    /**
+     * Queries to
+     * SET / UPDATE
+     * records
+     */
+
+
+    /** ============================== ONE ============================== */
 
 
     @JsonView(View.UI::class)
-    @PutMapping(value = ["put/update-ui"])
-    fun updateUI(
+    @PutMapping(value = ["put/set-ui"])
+    fun setUI(
             @RequestBody newBranch: Branch?,
             @RequestParam(
                     value = "id_branch",
@@ -389,17 +401,20 @@ class BranchesRestController(
             @RequestParam(
                     value = "name",
                     required = false) name: String?
-    ) =
-            branchesRepository.update(
-                    newBranch,
-                    idBranch,
-                    number,
-                    name
-            )
+    ): Branch? {
+        val branch =
+                branchesRepository.set(
+                        newBranch,
+                        idBranch,
+                        number,
+                        name
+                )
+        return branchesRepository.get(branch?.idBranch)
+    }
 
     @JsonView(View.REST::class)
-    @PutMapping(value = ["put/update-rest"])
-    fun updateRest(
+    @PutMapping(value = ["put/set-rest"])
+    fun setRest(
             @RequestBody newBranch: Branch?,
             @RequestParam(
                     value = "id_branch",
@@ -410,17 +425,20 @@ class BranchesRestController(
             @RequestParam(
                     value = "name",
                     required = false) name: String?
-    ) =
-            branchesRepository.update(
-                    newBranch,
-                    idBranch,
-                    number,
-                    name
-            )
+    ): Branch? {
+        val branch =
+                branchesRepository.set(
+                        newBranch,
+                        idBranch,
+                        number,
+                        name
+                )
+        return branchesRepository.get(branch?.idBranch)
+    }
 
     @JsonView(View.TREE::class)
-    @PutMapping(value = ["put/update-tree"])
-    fun updateTree(
+    @PutMapping(value = ["put/set-tree"])
+    fun setTree(
             @RequestBody newBranch: Branch?,
             @RequestParam(
                     value = "id_branch",
@@ -431,20 +449,30 @@ class BranchesRestController(
             @RequestParam(
                     value = "name",
                     required = false) name: String?
-    ) =
-            branchesRepository.update(
-                    newBranch,
-                    idBranch,
-                    number,
-                    name
-            )
+    ): Branch? {
+        val branch =
+                branchesRepository.set(
+                        newBranch,
+                        idBranch,
+                        number,
+                        name
+                )
+        return branchesRepository.get(branch?.idBranch)
+    }
 
 
-    /** ============================== DELETE ============================== */
+    /**
+     * Queries to
+     * DELETE
+     * records
+     */
+
+
+    /** ============================== ONE ============================== */
 
 
     @JsonView(View.UI::class)
-    @DeleteMapping(value = ["delete/delete-ui"])
+    @DeleteMapping(value = ["delete/one-ui"])
     fun deleteUI(
             @RequestParam(
                     value = "id_branch",
@@ -463,7 +491,7 @@ class BranchesRestController(
             )
 
     @JsonView(View.REST::class)
-    @DeleteMapping(value = ["delete/delete-rest"])
+    @DeleteMapping(value = ["delete/one-rest"])
     fun deleteRest(
             @RequestParam(
                     value = "id_branch",
@@ -482,7 +510,7 @@ class BranchesRestController(
             )
 
     @JsonView(View.TREE::class)
-    @DeleteMapping(value = ["delete/delete-tree"])
+    @DeleteMapping(value = ["delete/one-tree"])
     fun deleteTree(
             @RequestParam(
                     value = "id_branch",
@@ -506,7 +534,7 @@ class BranchesRestController(
 
 
     @JsonView(View.UI::class)
-    @DeleteMapping(value = ["delete/delete-by-speciality-ui"])
+    @DeleteMapping(value = ["delete/one-by-speciality-ui"])
     fun deleteBySpecialityUI(
             @RequestParam(
                     value = "id_speciality",
@@ -527,7 +555,7 @@ class BranchesRestController(
             )
 
     @JsonView(View.REST::class)
-    @DeleteMapping(value = ["delete/delete-by-speciality-rest"])
+    @DeleteMapping(value = ["delete/one-by-speciality-rest"])
     fun deleteBySpecialityRest(
             @RequestParam(
                     value = "id_speciality",
@@ -548,7 +576,7 @@ class BranchesRestController(
             )
 
     @JsonView(View.TREE::class)
-    @DeleteMapping(value = ["delete/delete-by-speciality-tree"])
+    @DeleteMapping(value = ["delete/one-by-speciality-tree"])
     fun deleteBySpecialityTree(
             @RequestParam(
                     value = "id_speciality",

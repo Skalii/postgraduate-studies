@@ -15,51 +15,51 @@ import skaliy.web.server.postgraduatestudies.entities.User
 interface BranchesRepository : JpaRepository<Branch, Int> {
 
 
-    /** ============================== GET ============================== */
+    /** ============================== GET / SELECT ============================== */
 
 
     //language=PostgresPLSQL
     @Query(value = """select (branch_record(
                           cast_int(:id_branch),
                           cast_text(:number),
-                          cast_text(:name))).*""",
+                          cast_text(:name)
+                      )).*""",
             nativeQuery = true)
     fun get(
-            @Param("id_branch") idBranch: Int?,
-            @Param("number") number: String?,
-            @Param("name") name: String?
+            @Param("id_branch") idBranch: Int? = null,
+            @Param("number") number: String? = null,
+            @Param("name") name: String? = null
     ): Branch?
+
+    //language=PostgresPLSQL
+    @Query(value = "select (branch_record(cast_int(:#{#speciality.branch.idBranch}))).*",
+            nativeQuery = true)
+    fun getBySpeciality(@Param("speciality") speciality: Speciality? = Speciality()): Branch?
+
+    //language=PostgresPLSQL
+    @Query(value = "select (branch_record(cast_int(:#{#user.speciality.branch.idBranch}))).*",
+            nativeQuery = true)
+    fun getByUser(@Param("user") user: User? = User()): Branch?
 
     //language=PostgresPLSQL
     @Query(value = "select (branch_record(all_records => true)).*",
             nativeQuery = true)
     fun getAll(): MutableList<Branch>?
 
-    //language=PostgresPLSQL
-    @Query(value = "select (branch_record(cast_int(:#{#speciality.branch.idBranch}))).*",
-            nativeQuery = true)
-    fun getBySpeciality(@Param("speciality") speciality: Speciality?): Branch?
 
-    //language=PostgresPLSQL
-    @Query(value = """select (branch_record(
-                          (select (speciality_record(
-                              cast_int(:#{#user.speciality.idSpeciality})).id_branch)))).*""",
-            nativeQuery = true)
-    fun getByUser(@Param("user") user: User?): Branch?
-
-
-    /** ============================== INSERT ============================== */
+    /** ============================== ADD / INSERT INTO ============================== */
 
 
     //language=PostgresPLSQL
     @Query(value = """select (branch_insert(
                           cast_text(:#{#branch.number}),
-                          cast_text(:#{#branch.name}))).*""",
+                          cast_text(:#{#branch.name})
+                      )).*""",
             nativeQuery = true)
-    fun create(@Param("branch") branch: Branch?): Branch?
+    fun add(@Param("branch") branch: Branch?): Branch?
 
 
-    /** ============================== UPDATE ============================== */
+    /** ============================== SET / UPDATE ============================== */
 
 
     //language=PostgresPLSQL
@@ -68,13 +68,14 @@ interface BranchesRepository : JpaRepository<Branch, Int> {
                           cast_text(:#{#branch.name}),
                           cast_int(:id_branch),
                           cast_text(:number),
-                          cast_text(:name))).*""",
+                          cast_text(:name)
+                      )).*""",
             nativeQuery = true)
-    fun update(
+    fun set(
             @Param("branch") newBranch: Branch?,
-            @Param("id_branch") idBranch: Int?,
-            @Param("number") number: String?,
-            @Param("name") name: String?
+            @Param("id_branch") idBranch: Int? = null,
+            @Param("number") number: String? = null,
+            @Param("name") name: String? = null
     ): Branch?
 
 
@@ -85,17 +86,18 @@ interface BranchesRepository : JpaRepository<Branch, Int> {
     @Query(value = """select (branch_delete(
                           cast_int(:id_branch),
                           cast_text(:number),
-                          cast_text(:name))).*""",
+                          cast_text(:name)
+                      )).*""",
             nativeQuery = true)
     fun delete(
-            @Param("id_branch") idBranch: Int?,
-            @Param("number") number: String?,
-            @Param("name") name: String?
+            @Param("id_branch") idBranch: Int? = null,
+            @Param("number") number: String? = null,
+            @Param("name") name: String? = null
     ): Branch?
 
     //language=PostgresPLSQL
     @Query(value = "select (branch_delete(cast_int(:#{#speciality.branch.idBranch}))).*",
             nativeQuery = true)
-    fun deleteBySpeciality(@Param("speciality") speciality: Speciality?): Branch?
+    fun deleteBySpeciality(@Param("speciality") speciality: Speciality? = Speciality()): Branch?
 
 }

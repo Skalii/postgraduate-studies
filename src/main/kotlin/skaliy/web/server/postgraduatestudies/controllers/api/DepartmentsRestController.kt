@@ -14,9 +14,12 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 import skaliy.web.server.postgraduatestudies.entities.Department
+import skaliy.web.server.postgraduatestudies.repositories.ContactInfoRepository
 import skaliy.web.server.postgraduatestudies.repositories.DepartmentsRepository
-import skaliy.web.server.postgraduatestudies.repositories.FacultiesRepository
 import skaliy.web.server.postgraduatestudies.repositories.InstitutesRepository
+import skaliy.web.server.postgraduatestudies.repositories.FacultiesRepository
+import skaliy.web.server.postgraduatestudies.repositories.ScientificLinksRepository
+import skaliy.web.server.postgraduatestudies.repositories.StudyInfoRepository
 import skaliy.web.server.postgraduatestudies.repositories.UsersRepository
 import skaliy.web.server.postgraduatestudies.views.View
 
@@ -26,9 +29,12 @@ import skaliy.web.server.postgraduatestudies.views.View
         produces = [APPLICATION_JSON_UTF8_VALUE])
 @RestController
 class DepartmentsRestController(
+        val contactInfoRepository: ContactInfoRepository,
         val departmentsRepository: DepartmentsRepository,
         val institutesRepository: InstitutesRepository,
         val facultiesRepository: FacultiesRepository,
+        val scientificLinksRepository: ScientificLinksRepository,
+        val studyInfoRepository: StudyInfoRepository,
         val usersRepository: UsersRepository
 ) {
 
@@ -89,136 +95,9 @@ class DepartmentsRestController(
             )
 
 
-    /** ============================== ALL ============================== */
-
-
-    @JsonView(View.UI::class)
-    @GetMapping(value = ["get/all-ui"])
-    fun getAllUI() = departmentsRepository.getAll()
-
-    @JsonView(View.REST::class)
-    @GetMapping(value = ["get/all-rest"])
-    fun getAllRest() = departmentsRepository.getAll()
-
-    @JsonView(View.TREE::class)
-    @GetMapping(value = ["get/all-tree"])
-    fun getAllTree() = departmentsRepository.getAll()
-
-
-    /** ============================== ALL
+    /** ============================== ONE
      *                                 BY
-     *                                 INSTITUTE ============================== */
-
-
-    @JsonView(View.UI::class)
-    @GetMapping(value = ["get/all-by-institute-ui"])
-    fun getAllByInstituteUI(
-            @RequestParam(
-                    value = "id_institute",
-                    required = false) idInstitute: Int?,
-            @RequestParam(
-                    value = "name",
-                    required = false) name: String?
-    ) =
-            departmentsRepository.getAllByInstitute(
-                    institutesRepository.get(
-                            idInstitute,
-                            name
-                    ))
-
-    @JsonView(View.REST::class)
-    @GetMapping(value = ["get/all-by-institute-rest"])
-    fun getAllByInstituteRest(
-            @RequestParam(
-                    value = "id_institute",
-                    required = false) idInstitute: Int?,
-            @RequestParam(
-                    value = "name",
-                    required = false) name: String?
-    ) =
-            departmentsRepository.getAllByInstitute(
-                    institutesRepository.get(
-                            idInstitute,
-                            name
-                    ))
-
-    @JsonView(View.TREE::class)
-    @GetMapping(value = ["get/all-by-institute-tree"])
-    fun getAllByInstituteTree(
-            @RequestParam(
-                    value = "id_institute",
-                    required = false) idInstitute: Int?,
-            @RequestParam(
-                    value = "name",
-                    required = false) name: String?
-    ) =
-            departmentsRepository.getAllByInstitute(
-                    institutesRepository.get(
-                            idInstitute,
-                            name
-                    ))
-
-
-    /** ============================== ALL
-     *                                 BY
-     *                                 FACULTY ============================== */
-
-
-    @JsonView(View.UI::class)
-    @GetMapping(value = ["get/all-by-faculty-ui"])
-    fun getAllByFacultyUI(
-            @RequestParam(
-                    value = "id_faculty",
-                    required = false) idFaculty: Int?,
-            @RequestParam(
-                    value = "name",
-                    required = false) name: String?
-    ) =
-            departmentsRepository.getAllByFaculty(
-                    facultiesRepository.get(
-                            idFaculty,
-                            name
-                    ))
-
-    @JsonView(View.REST::class)
-    @GetMapping(value = ["get/all-by-faculty-rest"])
-    fun getAllByFacultyRest(
-            @RequestParam(
-                    value = "id_faculty",
-                    required = false) idFaculty: Int?,
-            @RequestParam(
-                    value = "name",
-                    required = false) name: String?
-    ) =
-            departmentsRepository.getAllByFaculty(
-                    facultiesRepository.get(
-                            idFaculty,
-                            name
-                    ))
-
-    @JsonView(View.TREE::class)
-    @GetMapping(value = ["get/all-by-faculty-tree"])
-    fun getAllByFacultyTree(
-            @RequestParam(
-                    value = "id_faculty",
-                    required = false) idFaculty: Int?,
-            @RequestParam(
-                    value = "name",
-                    required = false) name: String?
-    ) =
-            departmentsRepository.getAllByFaculty(
-                    facultiesRepository.get(
-                            idFaculty,
-                            name
-                    ))
-
-/*
-
-    */
-/** ============================== ONE
-     *                                 BY
-     *                                 USER ============================== *//*
-
+     *                                 USER ============================== */
 
 
     @JsonView(View.UI::class)
@@ -231,19 +110,48 @@ class DepartmentsRestController(
                     value = "id_contact_info",
                     required = false) idContactInfo: Int?,
             @RequestParam(
+                    value = "phone_number",
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "email",
+                    required = false) email: String?,
+            @RequestParam(
                     value = "id_study_info",
                     required = false) idStudyInfo: Int?,
             @RequestParam(
                     value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?
+                    required = false) idScientificLinks: Int?,
+            @RequestParam(
+                    value = "orcid",
+                    required = false) orcid: String?,
+            @RequestParam(
+                    value = "researcherid",
+                    required = false) researcherid: String?,
+            @RequestParam(
+                    value = "google_scholar_id",
+                    required = false) googleScholarId: String?,
+            @RequestParam(
+                    value = "scopus_author_id",
+                    required = false) scopusAuthorId: String?
     ) =
-            departmentsRepository.getByUser(
+            departmentsRepository.get(
                     usersRepository.get(
                             idUser,
-                            idContactInfo,
-                            idStudyInfo,
-                            idScientificLinks
-                    ))
+                            contactInfoRepository.get(
+                                    idContactInfo,
+                                    phoneNumber,
+                                    email
+                            ),
+                            studyInfoRepository.get(idStudyInfo),
+                            scientificLinksRepository.get(
+                                    idScientificLinks,
+                                    orcid,
+                                    researcherid,
+                                    googleScholarId,
+                                    scopusAuthorId
+                            )
+                    )
+            )
 
     @JsonView(View.REST::class)
     @GetMapping(value = ["get/one-by-user-rest"])
@@ -255,19 +163,48 @@ class DepartmentsRestController(
                     value = "id_contact_info",
                     required = false) idContactInfo: Int?,
             @RequestParam(
+                    value = "phone_number",
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "email",
+                    required = false) email: String?,
+            @RequestParam(
                     value = "id_study_info",
                     required = false) idStudyInfo: Int?,
             @RequestParam(
                     value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?
+                    required = false) idScientificLinks: Int?,
+            @RequestParam(
+                    value = "orcid",
+                    required = false) orcid: String?,
+            @RequestParam(
+                    value = "researcherid",
+                    required = false) researcherid: String?,
+            @RequestParam(
+                    value = "google_scholar_id",
+                    required = false) googleScholarId: String?,
+            @RequestParam(
+                    value = "scopus_author_id",
+                    required = false) scopusAuthorId: String?
     ) =
-            departmentsRepository.getByUser(
+            departmentsRepository.get(
                     usersRepository.get(
                             idUser,
-                            idContactInfo,
-                            idStudyInfo,
-                            idScientificLinks
-                    ))
+                            contactInfoRepository.get(
+                                    idContactInfo,
+                                    phoneNumber,
+                                    email
+                            ),
+                            studyInfoRepository.get(idStudyInfo),
+                            scientificLinksRepository.get(
+                                    idScientificLinks,
+                                    orcid,
+                                    researcherid,
+                                    googleScholarId,
+                                    scopusAuthorId
+                            )
+                    )
+            )
 
     @JsonView(View.TREE::class)
     @GetMapping(value = ["get/one-by-user-tree"])
@@ -279,54 +216,184 @@ class DepartmentsRestController(
                     value = "id_contact_info",
                     required = false) idContactInfo: Int?,
             @RequestParam(
+                    value = "phone_number",
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "email",
+                    required = false) email: String?,
+            @RequestParam(
                     value = "id_study_info",
                     required = false) idStudyInfo: Int?,
             @RequestParam(
                     value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?
+                    required = false) idScientificLinks: Int?,
+            @RequestParam(
+                    value = "orcid",
+                    required = false) orcid: String?,
+            @RequestParam(
+                    value = "researcherid",
+                    required = false) researcherid: String?,
+            @RequestParam(
+                    value = "google_scholar_id",
+                    required = false) googleScholarId: String?,
+            @RequestParam(
+                    value = "scopus_author_id",
+                    required = false) scopusAuthorId: String?
     ) =
-            departmentsRepository.getByUser(
+            departmentsRepository.get(
                     usersRepository.get(
                             idUser,
-                            idContactInfo,
-                            idStudyInfo,
-                            idScientificLinks
-                    ))
-*/
+                            contactInfoRepository.get(
+                                    idContactInfo,
+                                    phoneNumber,
+                                    email
+                            ),
+                            studyInfoRepository.get(idStudyInfo),
+                            scientificLinksRepository.get(
+                                    idScientificLinks,
+                                    orcid,
+                                    researcherid,
+                                    googleScholarId,
+                                    scopusAuthorId
+                            )
+                    )
+            )
+
+
+    /** ============================== ALL ============================== */
+
+
+    @JsonView(View.UI::class)
+    @GetMapping(value = ["get/all-ui"])
+    fun getAllUI(@RequestParam(
+            value = "all_records",
+            required = false) allRecords: Boolean?,
+                 @RequestParam(
+                         value = "id_institute",
+                         required = false) idInstitute: Int?,
+                 @RequestParam(
+                         value = "institute_name",
+                         required = false) instituteName: String?,
+                 @RequestParam(
+                         value = "id_faculty",
+                         required = false) idFaculty: Int?,
+                 @RequestParam(
+                         value = "faculty_name",
+                         required = false) facultyName: String?
+    ) =
+            departmentsRepository.getAll(
+                    allRecords,
+                    institutesRepository.get(
+                            idInstitute,
+                            instituteName
+                    ),
+                    facultiesRepository.get(
+                            idFaculty,
+                            facultyName
+                    )
+            )
+
+    @JsonView(View.REST::class)
+    @GetMapping(value = ["get/all-rest"])
+    fun getAllRest(@RequestParam(
+            value = "all_records",
+            required = false) allRecords: Boolean?,
+                   @RequestParam(
+                           value = "id_institute",
+                           required = false) idInstitute: Int?,
+                   @RequestParam(
+                           value = "institute_name",
+                           required = false) instituteName: String?,
+                   @RequestParam(
+                           value = "id_faculty",
+                           required = false) idFaculty: Int?,
+                   @RequestParam(
+                           value = "faculty_name",
+                           required = false) facultyName: String?
+    ) =
+            departmentsRepository.getAll(
+                    allRecords,
+                    institutesRepository.get(
+                            idInstitute,
+                            instituteName
+                    ),
+                    facultiesRepository.get(
+                            idFaculty,
+                            facultyName
+                    )
+            )
+
+    @JsonView(View.TREE::class)
+    @GetMapping(value = ["get/all-tree"])
+    fun getAllTree(
+            @RequestParam(
+                    value = "all_records",
+                    required = false) allRecords: Boolean?,
+            @RequestParam(
+                    value = "id_institute",
+                    required = false) idInstitute: Int?,
+            @RequestParam(
+                    value = "institute_name",
+                    required = false) instituteName: String?,
+            @RequestParam(
+                    value = "id_faculty",
+                    required = false) idFaculty: Int?,
+            @RequestParam(
+                    value = "faculty_name",
+                    required = false) facultyName: String?
+    ) =
+            departmentsRepository.getAll(
+                    allRecords,
+                    institutesRepository.get(
+                            idInstitute,
+                            instituteName
+                    ),
+                    facultiesRepository.get(
+                            idFaculty,
+                            facultyName
+                    )
+            )
 
 
     /**
      * Queries to
-     * UPDATE
+     * ADD / INSERT INTO
      * records
      */
 
 
-    /** ============================== INSERT ============================== */
+    /** ============================== ONE ============================== */
 
 
     @JsonView(View.UI::class)
-    @PostMapping(value = ["post/create-ui"])
-    fun createUI(@RequestBody department: Department?) =
-            departmentsRepository.create(department)
+    @PostMapping(value = ["post/add-ui"])
+    fun addUI(@RequestBody department: Department?) =
+            departmentsRepository.add(department)
 
     @JsonView(View.REST::class)
-    @PostMapping(value = ["post/create-rest"])
-    fun createRest(@RequestBody department: Department?) =
-            departmentsRepository.create(department)
+    @PostMapping(value = ["post/add-rest"])
+    fun addRest(@RequestBody department: Department?) =
+            departmentsRepository.add(department)
 
     @JsonView(View.TREE::class)
-    @PostMapping(value = ["post/create-tree"])
-    fun createTree(@RequestBody department: Department?) =
-            departmentsRepository.create(department)
+    @PostMapping(value = ["post/add-tree"])
+    fun addTree(@RequestBody department: Department?) =
+            departmentsRepository.add(department)
 
 
-    /** ============================== UPDATE ============================== */
+    /**
+     * Queries to
+     * SET / UPDATE
+     * records
+     */
+
+
+    /** ============================== ONE ============================== */
 
 
     @JsonView(View.UI::class)
-    @PutMapping(value = ["put/update-ui"])
-    fun updateUI(
+    @PutMapping(value = ["put/set-ui"])
+    fun setUI(
             @RequestBody newDepartment: Department?,
             @RequestParam(
                     value = "id_department",
@@ -334,16 +401,19 @@ class DepartmentsRestController(
             @RequestParam(
                     value = "name",
                     required = false) name: String?
-    ) =
-            departmentsRepository.update(
-                    newDepartment,
-                    idDepartment,
-                    name
-            )
+    ): Department? {
+        val department =
+                departmentsRepository.set(
+                        newDepartment,
+                        idDepartment,
+                        name
+                )
+        return departmentsRepository.get(department?.idDepartment)
+    }
 
     @JsonView(View.REST::class)
-    @PutMapping(value = ["put/update-rest"])
-    fun updateRest(
+    @PutMapping(value = ["put/set-rest"])
+    fun setRest(
             @RequestBody newDepartment: Department?,
             @RequestParam(
                     value = "id_department",
@@ -351,16 +421,19 @@ class DepartmentsRestController(
             @RequestParam(
                     value = "name",
                     required = false) name: String?
-    ) =
-            departmentsRepository.update(
-                    newDepartment,
-                    idDepartment,
-                    name
-            )
+    ): Department? {
+        val department =
+                departmentsRepository.set(
+                        newDepartment,
+                        idDepartment,
+                        name
+                )
+        return departmentsRepository.get(department?.idDepartment)
+    }
 
     @JsonView(View.TREE::class)
-    @PutMapping(value = ["put/update-tree"])
-    fun updateTree(
+    @PutMapping(value = ["put/set-tree"])
+    fun setTree(
             @RequestBody newDepartment: Department?,
             @RequestParam(
                     value = "id_department",
@@ -368,19 +441,29 @@ class DepartmentsRestController(
             @RequestParam(
                     value = "name",
                     required = false) name: String?
-    ) =
-            departmentsRepository.update(
-                    newDepartment,
-                    idDepartment,
-                    name
-            )
+    ): Department? {
+        val department =
+                departmentsRepository.set(
+                        newDepartment,
+                        idDepartment,
+                        name
+                )
+        return departmentsRepository.get(department?.idDepartment)
+    }
 
 
-    /** ============================== DELETE ============================== */
+    /**
+     * Queries to
+     * DELETE
+     * records
+     */
+
+
+    /** ============================== ONE ============================== */
 
 
     @JsonView(View.UI::class)
-    @DeleteMapping(value = ["delete/delete-ui"])
+    @DeleteMapping(value = ["delete/one-ui"])
     fun deleteUI(
             @RequestParam(
                     value = "id_department",
@@ -395,7 +478,7 @@ class DepartmentsRestController(
             )
 
     @JsonView(View.REST::class)
-    @DeleteMapping(value = ["delete/delete-rest"])
+    @DeleteMapping(value = ["delete/one-rest"])
     fun deleteRest(
             @RequestParam(
                     value = "id_department",
@@ -410,7 +493,7 @@ class DepartmentsRestController(
             )
 
     @JsonView(View.TREE::class)
-    @DeleteMapping(value = ["delete/delete-tree"])
+    @DeleteMapping(value = ["delete/one-tree"])
     fun deleteTree(
             @RequestParam(
                     value = "id_department",

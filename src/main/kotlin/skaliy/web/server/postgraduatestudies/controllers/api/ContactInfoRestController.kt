@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController
 
 import skaliy.web.server.postgraduatestudies.entities.ContactInfo
 import skaliy.web.server.postgraduatestudies.repositories.ContactInfoRepository
+import skaliy.web.server.postgraduatestudies.repositories.ScientificLinksRepository
+import skaliy.web.server.postgraduatestudies.repositories.StudyInfoRepository
 import skaliy.web.server.postgraduatestudies.repositories.UsersRepository
 import skaliy.web.server.postgraduatestudies.views.View
 
@@ -25,6 +27,8 @@ import skaliy.web.server.postgraduatestudies.views.View
 @RestController
 class ContactInfoRestController(
         val contactInfoRepository: ContactInfoRepository,
+        val scientificLinksRepository: ScientificLinksRepository,
+        val studyInfoRepository: StudyInfoRepository,
         val usersRepository: UsersRepository
 ) {
 
@@ -49,13 +53,45 @@ class ContactInfoRestController(
                     value = "phone_number",
                     required = false) phoneNumber: String?,
             @RequestParam(
-                    value = "branch",
-                    required = false) email: String?
+                    value = "email",
+                    required = false) email: String?,
+            @RequestParam(
+                    value = "id_user",
+                    required = false) idUser: Int?,
+            @RequestParam(
+                    value = "id_study_info",
+                    required = false) idStudyInfo: Int?,
+            @RequestParam(
+                    value = "id_scientific_links",
+                    required = false) idScientificLinks: Int?,
+            @RequestParam(
+                    value = "orcid",
+                    required = false) orcid: String?,
+            @RequestParam(
+                    value = "researcherid",
+                    required = false) researcherid: String?,
+            @RequestParam(
+                    value = "google_scholar_id",
+                    required = false) googleScholarId: String?,
+            @RequestParam(
+                    value = "scopus_author_id",
+                    required = false) scopusAuthorId: String?
     ) =
             contactInfoRepository.get(
                     idContactInfo,
                     phoneNumber,
-                    email
+                    email,
+                    usersRepository.get(
+                            idUser,
+                            studyInfo = studyInfoRepository.get(idStudyInfo),
+                            scientificLinks = scientificLinksRepository.get(
+                                    idScientificLinks,
+                                    orcid,
+                                    researcherid,
+                                    googleScholarId,
+                                    scopusAuthorId
+                            )
+                    )
             )
 
     @JsonView(View.REST::class)
@@ -68,13 +104,45 @@ class ContactInfoRestController(
                     value = "phone_number",
                     required = false) phoneNumber: String?,
             @RequestParam(
-                    value = "branch",
-                    required = false) email: String?
+                    value = "email",
+                    required = false) email: String?,
+            @RequestParam(
+                    value = "id_user",
+                    required = false) idUser: Int?,
+            @RequestParam(
+                    value = "id_study_info",
+                    required = false) idStudyInfo: Int?,
+            @RequestParam(
+                    value = "id_scientific_links",
+                    required = false) idScientificLinks: Int?,
+            @RequestParam(
+                    value = "orcid",
+                    required = false) orcid: String?,
+            @RequestParam(
+                    value = "researcherid",
+                    required = false) researcherid: String?,
+            @RequestParam(
+                    value = "google_scholar_id",
+                    required = false) googleScholarId: String?,
+            @RequestParam(
+                    value = "scopus_author_id",
+                    required = false) scopusAuthorId: String?
     ) =
             contactInfoRepository.get(
                     idContactInfo,
                     phoneNumber,
-                    email
+                    email,
+                    usersRepository.get(
+                            idUser,
+                            studyInfo = studyInfoRepository.get(idStudyInfo),
+                            scientificLinks = scientificLinksRepository.get(
+                                    idScientificLinks,
+                                    orcid,
+                                    researcherid,
+                                    googleScholarId,
+                                    scopusAuthorId
+                            )
+                    )
             )
 
     @JsonView(View.TREE::class)
@@ -87,13 +155,45 @@ class ContactInfoRestController(
                     value = "phone_number",
                     required = false) phoneNumber: String?,
             @RequestParam(
-                    value = "branch",
-                    required = false) email: String?
+                    value = "email",
+                    required = false) email: String?,
+            @RequestParam(
+                    value = "id_user",
+                    required = false) idUser: Int?,
+            @RequestParam(
+                    value = "id_study_info",
+                    required = false) idStudyInfo: Int?,
+            @RequestParam(
+                    value = "id_scientific_links",
+                    required = false) idScientificLinks: Int?,
+            @RequestParam(
+                    value = "orcid",
+                    required = false) orcid: String?,
+            @RequestParam(
+                    value = "researcherid",
+                    required = false) researcherid: String?,
+            @RequestParam(
+                    value = "google_scholar_id",
+                    required = false) googleScholarId: String?,
+            @RequestParam(
+                    value = "scopus_author_id",
+                    required = false) scopusAuthorId: String?
     ) =
             contactInfoRepository.get(
                     idContactInfo,
                     phoneNumber,
-                    email
+                    email,
+                    usersRepository.get(
+                            idUser,
+                            studyInfo = studyInfoRepository.get(idStudyInfo),
+                            scientificLinks = scientificLinksRepository.get(
+                                    idScientificLinks,
+                                    orcid,
+                                    researcherid,
+                                    googleScholarId,
+                                    scopusAuthorId
+                            )
+                    )
             )
 
 
@@ -113,117 +213,45 @@ class ContactInfoRestController(
     fun getAllTree() = contactInfoRepository.getAll()
 
 
-    /** ============================== ONE
-     *                                 BY
-     *                                 USER ============================== */
-/*
-
-    @JsonView(View.UI::class)
-    @GetMapping(value = ["get/one-by-user-ui"])
-    fun getOneByUserUI(
-            @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
-                    value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
-            @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?
-    ) =
-            contactInfoRepository.getByUser(
-                    usersRepository.get(
-                            idUser,
-                            idContactInfo,
-                            idStudyInfo,
-                            idScientificLinks
-                    ))
-
-    @JsonView(View.REST::class)
-    @GetMapping(value = ["get/one-by-user-rest"])
-    fun getOneByUserRest(
-            @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
-                    value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
-            @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?
-    ) =
-            contactInfoRepository.getByUser(
-                    usersRepository.get(
-                            idUser,
-                            idContactInfo,
-                            idStudyInfo,
-                            idScientificLinks
-                    ))
-
-    @JsonView(View.TREE::class)
-    @GetMapping(value = ["get/one-by-user-tree"])
-    fun getOneByUserTree(
-            @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
-                    value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
-            @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?
-    ) =
-            contactInfoRepository.getByUser(
-                    usersRepository.get(
-                            idUser,
-                            idContactInfo,
-                            idStudyInfo,
-                            idScientificLinks
-                    ))
-*/
-
-
     /**
      * Queries to
-     * UPDATE
+     * ADD / INSERT INTO
      * records
      */
 
 
-    /** ============================== INSERT ============================== */
+    /** ============================== ONE ============================== */
 
 
     @JsonView(View.UI::class)
-    @PostMapping(value = ["post/create-ui"])
-    fun createUI(@RequestBody contactInfo: ContactInfo) =
-            contactInfoRepository.create(contactInfo)
+    @PostMapping(value = ["post/add-ui"])
+    fun addUI(@RequestBody contactInfo: ContactInfo) =
+            contactInfoRepository.add(contactInfo)
 
     @JsonView(View.REST::class)
-    @PostMapping(value = ["post/create-rest"])
-    fun createRest(@RequestBody contactInfo: ContactInfo) =
-            contactInfoRepository.create(contactInfo)
+    @PostMapping(value = ["post/add-rest"])
+    fun addRest(@RequestBody contactInfo: ContactInfo) =
+            contactInfoRepository.add(contactInfo)
 
     @JsonView(View.TREE::class)
-    @PostMapping(value = ["post/create-tree"])
-    fun createTree(@RequestBody contactInfo: ContactInfo) =
-            contactInfoRepository.create(contactInfo)
+    @PostMapping(value = ["post/add-tree"])
+    fun addTree(@RequestBody contactInfo: ContactInfo) =
+            contactInfoRepository.add(contactInfo)
 
 
-    /** ============================== UPDATE ============================== */
+    /**
+     * Queries to
+     * SET / UPDATE
+     * records
+     */
+
+
+    /** ============================== ONE ============================== */
 
 
     @JsonView(View.UI::class)
-    @PutMapping(value = ["put/update-ui"])
-    fun updateUI(
+    @PutMapping(value = ["put/set-ui"])
+    fun setUI(
             @RequestBody newContactInfo: ContactInfo?,
             @RequestParam(
                     value = "id_contact_info",
@@ -233,18 +261,53 @@ class ContactInfoRestController(
                     required = false) phoneNumber: String?,
             @RequestParam(
                     value = "email",
-                    required = false) email: String?
-    ) =
-            contactInfoRepository.update(
-                    newContactInfo,
-                    idContactInfo,
-                    phoneNumber,
-                    email
-            )
+                    required = false) email: String?,
+            @RequestParam(
+                    value = "id_user",
+                    required = false) idUser: Int?,
+            @RequestParam(
+                    value = "id_study_info",
+                    required = false) idStudyInfo: Int?,
+            @RequestParam(
+                    value = "id_scientific_links",
+                    required = false) idScientificLinks: Int?,
+            @RequestParam(
+                    value = "orcid",
+                    required = false) orcid: String?,
+            @RequestParam(
+                    value = "researcherid",
+                    required = false) researcherid: String?,
+            @RequestParam(
+                    value = "google_scholar_id",
+                    required = false) googleScholarId: String?,
+            @RequestParam(
+                    value = "scopus_author_id",
+                    required = false) scopusAuthorId: String?
+    ): ContactInfo? {
+        val contactInfo =
+                contactInfoRepository.set(
+                        newContactInfo,
+                        idContactInfo,
+                        phoneNumber,
+                        email,
+                        usersRepository.get(
+                                idUser,
+                                studyInfo = studyInfoRepository.get(idStudyInfo),
+                                scientificLinks = scientificLinksRepository.get(
+                                        idScientificLinks,
+                                        orcid,
+                                        researcherid,
+                                        googleScholarId,
+                                        scopusAuthorId
+                                )
+                        )
+                )
+        return contactInfoRepository.get(contactInfo?.idContactInfo)
+    }
 
     @JsonView(View.REST::class)
-    @PutMapping(value = ["put/update-rest"])
-    fun updateRest(
+    @PutMapping(value = ["put/set-rest"])
+    fun setRest(
             @RequestBody newContactInfo: ContactInfo?,
             @RequestParam(
                     value = "id_contact_info",
@@ -254,18 +317,53 @@ class ContactInfoRestController(
                     required = false) phoneNumber: String?,
             @RequestParam(
                     value = "email",
-                    required = false) email: String?
-    ) =
-            contactInfoRepository.update(
-                    newContactInfo,
-                    idContactInfo,
-                    phoneNumber,
-                    email
-            )
+                    required = false) email: String?,
+            @RequestParam(
+                    value = "id_user",
+                    required = false) idUser: Int?,
+            @RequestParam(
+                    value = "id_study_info",
+                    required = false) idStudyInfo: Int?,
+            @RequestParam(
+                    value = "id_scientific_links",
+                    required = false) idScientificLinks: Int?,
+            @RequestParam(
+                    value = "orcid",
+                    required = false) orcid: String?,
+            @RequestParam(
+                    value = "researcherid",
+                    required = false) researcherid: String?,
+            @RequestParam(
+                    value = "google_scholar_id",
+                    required = false) googleScholarId: String?,
+            @RequestParam(
+                    value = "scopus_author_id",
+                    required = false) scopusAuthorId: String?
+    ): ContactInfo? {
+        val contactInfo =
+                contactInfoRepository.set(
+                        newContactInfo,
+                        idContactInfo,
+                        phoneNumber,
+                        email,
+                        usersRepository.get(
+                                idUser,
+                                studyInfo = studyInfoRepository.get(idStudyInfo),
+                                scientificLinks = scientificLinksRepository.get(
+                                        idScientificLinks,
+                                        orcid,
+                                        researcherid,
+                                        googleScholarId,
+                                        scopusAuthorId
+                                )
+                        )
+                )
+        return contactInfoRepository.get(contactInfo?.idContactInfo)
+    }
 
     @JsonView(View.TREE::class)
-    @PutMapping(value = ["put/update-tree"])
-    fun updateTree(
+    @PutMapping(value = ["put/set-tree"])
+    fun setTree(
             @RequestBody newContactInfo: ContactInfo?,
             @RequestParam(
                     value = "id_contact_info",
@@ -275,139 +373,63 @@ class ContactInfoRestController(
                     required = false) phoneNumber: String?,
             @RequestParam(
                     value = "email",
-                    required = false) email: String?
-    ) =
-            contactInfoRepository.update(
-                    newContactInfo,
-                    idContactInfo,
-                    phoneNumber,
-                    email
-            )
+                    required = false) email: String?,
+            @RequestParam(
+                    value = "id_user",
+                    required = false) idUser: Int?,
+            @RequestParam(
+                    value = "id_study_info",
+                    required = false) idStudyInfo: Int?,
+            @RequestParam(
+                    value = "id_scientific_links",
+                    required = false) idScientificLinks: Int?,
+            @RequestParam(
+                    value = "orcid",
+                    required = false) orcid: String?,
+            @RequestParam(
+                    value = "researcherid",
+                    required = false) researcherid: String?,
+            @RequestParam(
+                    value = "google_scholar_id",
+                    required = false) googleScholarId: String?,
+            @RequestParam(
+                    value = "scopus_author_id",
+                    required = false) scopusAuthorId: String?
+    ): ContactInfo? {
+        val contactInfo =
+                contactInfoRepository.set(
+                        newContactInfo,
+                        idContactInfo,
+                        phoneNumber,
+                        email,
+                        usersRepository.get(
+                                idUser,
+                                studyInfo = studyInfoRepository.get(idStudyInfo),
+                                scientificLinks = scientificLinksRepository.get(
+                                        idScientificLinks,
+                                        orcid,
+                                        researcherid,
+                                        googleScholarId,
+                                        scopusAuthorId
+                                )
+                        )
+                )
+        return contactInfoRepository.get(contactInfo?.idContactInfo)
+    }
 
-/*
 
-    */
-/** ============================== UPDATE
-     *                                 BY
-     *                                 USER ============================== *//*
+    /**
+     * Queries to
+     * DELETE
+     * records
+     */
 
+
+    /** ============================== ONE ============================== */
 
 
     @JsonView(View.UI::class)
-    @PutMapping(value = ["put/update-by-user-ui"])
-    fun updateByUserUI(
-            @RequestBody newContactInfo: ContactInfo?,
-            @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
-                    value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
-            @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?
-    ): ContactInfo? {
-        val contactInfo =
-                contactInfoRepository.updateByUser(
-                        newContactInfo,
-                        usersRepository.get(
-                                idUser,
-                                idContactInfo,
-                                idStudyInfo,
-                                idScientificLinks
-                        )
-                )
-        return ContactInfo(
-                contactInfo?.idContactInfo!!,
-                newContactInfo?.phoneNumber,
-                newContactInfo?.email!!,
-                newContactInfo.address,
-                contactInfo.user
-        )
-    }
-
-    @JsonView(View.REST::class)
-    @PutMapping(value = ["put/update-by-user-rest"])
-    fun updateByUserRest(
-            @RequestBody newContactInfo: ContactInfo?,
-            @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
-                    value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
-            @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?
-    ): ContactInfo? {
-        val contactInfo =
-                contactInfoRepository.updateByUser(
-                        newContactInfo,
-                        usersRepository.get(
-                                idUser,
-                                idContactInfo,
-                                idStudyInfo,
-                                idScientificLinks
-                        )
-                )
-        return ContactInfo(
-                contactInfo?.idContactInfo!!,
-                newContactInfo?.phoneNumber,
-                newContactInfo?.email!!,
-                newContactInfo.address,
-                contactInfo.user
-        )
-    }
-
-    @JsonView(View.TREE::class)
-    @PutMapping(value = ["put/update-by-user-tree"])
-    fun updateByUserTree(
-            @RequestBody newContactInfo: ContactInfo?,
-            @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
-                    value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
-            @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?
-    ): ContactInfo? {
-        val contactInfo =
-                contactInfoRepository.updateByUser(
-                        newContactInfo,
-                        usersRepository.get(
-                                idUser,
-                                idContactInfo,
-                                idStudyInfo,
-                                idScientificLinks
-                        )
-                )
-        return ContactInfo(
-                contactInfo?.idContactInfo!!,
-                newContactInfo?.phoneNumber,
-                newContactInfo?.email!!,
-                newContactInfo.address,
-                contactInfo.user
-        )
-    }
-*/
-
-
-    /** ============================== DELETE ============================== */
-
-
-    @JsonView(View.UI::class)
-    @DeleteMapping(value = ["delete/delete-ui"])
+    @DeleteMapping(value = ["delete/one-ui"])
     fun deleteUI(
             @RequestParam(
                     value = "id_contact_info",
@@ -426,7 +448,7 @@ class ContactInfoRestController(
             )
 
     @JsonView(View.REST::class)
-    @DeleteMapping(value = ["delete/delete-rest"])
+    @DeleteMapping(value = ["delete/one-rest"])
     fun deleteRest(
             @RequestParam(
                     value = "id_contact_info",
@@ -445,7 +467,7 @@ class ContactInfoRestController(
             )
 
     @JsonView(View.TREE::class)
-    @DeleteMapping(value = ["delete/delete-tree"])
+    @DeleteMapping(value = ["delete/one-tree"])
     fun deleteTree(
             @RequestParam(
                     value = "id_contact_info",

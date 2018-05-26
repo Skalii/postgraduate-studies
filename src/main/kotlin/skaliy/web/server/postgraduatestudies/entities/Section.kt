@@ -89,7 +89,7 @@ data class Section(
             foreignKey = ForeignKey(name = "sections_users_fkey"))
     @JsonIgnoreProperties(value = ["students", "sections"])
     @JsonProperty(value = "user")
-    @JsonView(View.UI::class)
+    @JsonView(View.TREE::class)
     @ManyToOne(
             targetEntity = User::class,
             fetch = FetchType.LAZY,

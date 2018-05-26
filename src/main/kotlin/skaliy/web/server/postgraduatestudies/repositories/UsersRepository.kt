@@ -34,10 +34,10 @@ interface UsersRepository : JpaRepository<User, Int> {
                       )).*""",
             nativeQuery = true)
     fun get(
-            @Param("id_user") idUser: Int?,
-            @Param("contact_info") contactInfo: ContactInfo?,
-            @Param("study_info") studyInfo: StudyInfo?,
-            @Param("scientific_links") scientificLinks: ScientificLinks?
+            @Param("id_user") idUser: Int? = null,
+            @Param("contact_info") contactInfo: ContactInfo? = ContactInfo(),
+            @Param("study_info") studyInfo: StudyInfo? = StudyInfo(),
+            @Param("scientific_links") scientificLinks: ScientificLinks? = ScientificLinks()
     ): User?
 
     //language=PostgresPLSQL
@@ -52,17 +52,17 @@ interface UsersRepository : JpaRepository<User, Int> {
                       )).*""",
             nativeQuery = true)
     fun getAll(
-            @Param("degree") degree: Degree?,
-            @Param("branch") branch: Branch?,
-            @Param("speciality") speciality: Speciality?,
-            @Param("department") department: Department?,
-            @Param("faculty") faculty: Faculty?,
-            @Param("institute") institute: Institute?,
-            @Param("all_records") allRecords: Boolean?
+            @Param("all_records") allRecords: Boolean? = false,
+            @Param("degree") degree: Degree? = Degree(),
+            @Param("branch") branch: Branch? = Branch(),
+            @Param("speciality") speciality: Speciality? = Speciality(),
+            @Param("department") department: Department? = Department(),
+            @Param("faculty") faculty: Faculty? = Faculty(),
+            @Param("institute") institute: Institute? = Institute()
     ): MutableList<User>?
 
 
-    /** ============================== ADD / INSERT ============================== */
+    /** ============================== ADD / INSERT INTO ============================== */
 
 
     //language=PostgresPLSQL
@@ -71,10 +71,16 @@ interface UsersRepository : JpaRepository<User, Int> {
                           cast_text(:#{#user.hash}),
                           cast_text(:#{#user.fullNameUa}),
                           cast_text(:#{#user.fullNameEn}),
-                          cast_date(:#{#user.birthday}),
+                          :#{#user.birthday},
                           cast_family(:#{#user.familyStatus.value}),
                           cast_int(:#{#user.children}),
-                          cast_rank(:#{#user.academicRank.value})
+                          cast_rank(:#{#user.academicRank.value}),
+                          cast_int(:#{#user.degree.idDegree}),
+                          cast_int(:#{#user.speciality.idSpeciality}),
+                          cast_int(:#{#user.department.idDepartment}),
+                          cast_int(:#{#user.contactInfo.idContactInfo}),
+                          cast_int(:#{#user.studyInfo.idStudyInfo}),
+                          cast_int(:#{#user.scientificLinks.idScientificLinks})
                       )).*""",
             nativeQuery = true)
     fun add(@Param("user") user: User?): User?
@@ -89,7 +95,7 @@ interface UsersRepository : JpaRepository<User, Int> {
                           cast_text(:#{#user.hash}),
                           cast_text(:#{#user.fullNameUa}),
                           cast_text(:#{#user.fullNameEn}),
-                          cast_date(:#{#user.birthday}),
+                          :#{#user.birthday},
                           cast_family(:#{#user.familyStatus.value}),
                           cast_int(:#{#user.children}),
                           cast_rank(:#{#user.academicRank.value}),
@@ -104,10 +110,10 @@ interface UsersRepository : JpaRepository<User, Int> {
             nativeQuery = true)
     fun set(
             @Param("user") newUser: User?,
-            @Param("id_user") idUser: Int?,
-            @Param("contact_info") contactInfo: ContactInfo?,
-            @Param("study_info") studyInfo: StudyInfo?,
-            @Param("scientific_links") scientificLinks: ScientificLinks?
+            @Param("id_user") idUser: Int? = null,
+            @Param("contact_info") contactInfo: ContactInfo? = ContactInfo(),
+            @Param("study_info") studyInfo: StudyInfo? = StudyInfo(),
+            @Param("scientific_links") scientificLinks: ScientificLinks? = ScientificLinks()
     ): User?
 
 
@@ -123,10 +129,10 @@ interface UsersRepository : JpaRepository<User, Int> {
                       )).*""",
             nativeQuery = true)
     fun delete(
-            @Param("id_user") idUser: Int?,
-            @Param("contact_info") contactInfo: ContactInfo?,
-            @Param("study_info") studyInfo: StudyInfo?,
-            @Param("scientific_links") scientificLinks: ScientificLinks?
+            @Param("id_user") idUser: Int? = null,
+            @Param("contact_info") contactInfo: ContactInfo? = ContactInfo(),
+            @Param("study_info") studyInfo: StudyInfo? = StudyInfo(),
+            @Param("scientific_links") scientificLinks: ScientificLinks? = ScientificLinks()
     ): User?
 
 

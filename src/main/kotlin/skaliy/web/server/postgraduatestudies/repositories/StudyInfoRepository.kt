@@ -11,29 +11,30 @@ import skaliy.web.server.postgraduatestudies.entities.User
 
 
 @Repository
-interface StudyInfoRepository : JpaRepository<StudyInfo, Long> {
+interface StudyInfoRepository : JpaRepository<StudyInfo, Int> {
 
 
-    /** ============================== GET ============================== */
+    /** ============================== GET / SELECT ============================== */
 
 
     //language=PostgresPLSQL
-    @Query(value = "select (study_info_record(cast_int(:id_study_info))).*",
+    @Query(value = """select (study_info_record(
+                          cast_int(:id_study_info),
+                          cast_int(:#{#user.idUser})
+                      )).*""",
             nativeQuery = true)
-    fun get(@Param("id_study_info") idStudyInfo: Int?): StudyInfo?
+    fun get(
+            @Param("id_study_info") idStudyInfo: Int? = null,
+            @Param("user") user: User? = User()
+    ): StudyInfo?
 
     //language=PostgresPLSQL
     @Query(value = "select (study_info_record(all_records => true)).*",
             nativeQuery = true)
     fun getAll(): MutableList<StudyInfo>?
 
-    //language=PostgresPLSQL
-    @Query(value = "select (study_info_record(_id_user => cast_int(:#{#user.idUser}))).*",
-            nativeQuery = true)
-    fun getByUser(@Param("user") user: User?): StudyInfo?
 
-
-    /** ============================== INSERT ============================== */
+    /** ============================== ADD / INSERT INTO ============================== */
 
 
     //language=PostgresPLSQL
@@ -42,12 +43,13 @@ interface StudyInfoRepository : JpaRepository<StudyInfo, Long> {
                           cast_form(:#{#study_info.form.value}),
                           cast_basis(:#{#study_info.basis.value}),
                           cast_text(:#{#study_info.themeTitle}),
-                          cast_int(:#{#study_info.instructor.idUser}))).*""",
+                          cast_int(:#{#study_info.instructor.idUser})
+                      )).*""",
             nativeQuery = true)
-    fun create(@Param("study_info") studyInfo: StudyInfo?): StudyInfo?
+    fun add(@Param("study_info") studyInfo: StudyInfo?): StudyInfo?
 
 
-    /** ============================== UPDATE ============================== */
+    /** ============================== SET / UPDATE ============================== */
 
 
     //language=PostgresPLSQL
@@ -57,25 +59,14 @@ interface StudyInfoRepository : JpaRepository<StudyInfo, Long> {
                           cast_basis(:#{#study_info.basis.value}),
                           cast_text(:#{#study_info.themeTitle}),
                           cast_int(:#{#study_info.instructor.idUser}),
-                          cast_int(:id_study_info))).*""",
+                          cast_int(:id_study_info),
+                          cast_int(:#{#user.idUser})
+                      )).*""",
             nativeQuery = true)
-    fun update(
-            @Param("study_info") newStudyInfo: StudyInfo?,
-            @Param("id_study_info") idStudyInfo: Int?
-    ): StudyInfo?
-
-    //language=PostgresPLSQL
-    @Query(value = """select (study_info_update(
-                          cast_int(:#{#study_info.year}),
-                          cast_form(:#{#study_info.form.value}),
-                          cast_basis(:#{#study_info.basis.value}),
-                          cast_text(:#{#study_info.themeTitle}),
-                          cast_int(:#{#study_info.instructor.idUser}),
-                          _id_user => cast_int(:#{#user.idUser}))).*""",
-            nativeQuery = true)
-    fun updateByUser(
-            @Param("study_info") newStudyInfo: StudyInfo?,
-            @Param("user") user: User?
+    fun set(
+            @Param("study_info") newStudyInfo: StudyInfo? = null,
+            @Param("id_study_info") idStudyInfo: Int? = null,
+            @Param("user") user: User? = User()
     ): StudyInfo?
 
 
@@ -83,13 +74,14 @@ interface StudyInfoRepository : JpaRepository<StudyInfo, Long> {
 
 
     //language=PostgresPLSQL
-    @Query(value = "select (study_info_delete(cast_int(:id_study_info))).*",
+    @Query(value = """select (study_info_delete(
+                          cast_int(:id_study_info),
+                          cast_int(:#{#user.idUser})
+                      )).*""",
             nativeQuery = true)
-    fun delete(@Param("id_study_info") idStudyInfo: Int?): StudyInfo?
-
-    //language=PostgresPLSQL
-    @Query(value = "select (study_info_delete(_id_user => cast_int(:#{#user.idUser}))).*",
-            nativeQuery = true)
-    fun deleteByUser(@Param("user") user: User?): StudyInfo?
+    fun delete(
+            @Param("id_study_info") idStudyInfo: Int? = null,
+            @Param("user") user: User? = User()
+    ): StudyInfo?
 
 }

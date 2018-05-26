@@ -15,59 +15,40 @@ import skaliy.web.server.postgraduatestudies.entities.User
 interface TasksRepository : JpaRepository<Task, Int> {
 
 
-    /** ============================== GET ============================== */
+    /** ============================== GET / SELECT ============================== */
 
 
     //language=PostgresPLSQL
-    @Query(value = "select (task_record(cast_int(:id_task))).*",
+    @Query(value = """select (task_record(
+                          cast_int(:id_task),
+                          cast_int(:#{#section.idSection}),
+                          cast_int(:#{#user.idUser}),
+                          cast_int(:number),
+                          cast_text(:title)
+                      )).*""",
             nativeQuery = true)
-    fun get(@Param("id_task") idTask: Int?): Task?
-
-    //language=PostgresPLSQL
-    @Query(value = "select (task_record(all_records => true)).*",
-            nativeQuery = true)
-    fun getAll(): MutableList<Task>?
+    fun get(
+            @Param("id_task") idTask: Int? = null,
+            @Param("section") section: Section? = Section(),
+            @Param("user") user: User? = User(),
+            @Param("number") number: Int? = null,
+            @Param("title") title: String? = null
+    ): Task?
 
     //language=PostgresPLSQL
     @Query(value = """select (task_record(
                           _id_section => cast_int(:#{#section.idSection}),
-                          _number => cast_int(:number),
-                          _title => cast_text(:title))).*""",
-            nativeQuery = true)
-    fun getBySection(
-            @Param("section") section: Section?,
-            @Param("number") number: Int?,
-            @Param("title") title: String?
-    ): Task?
-
-    //language=PostgresPLSQL
-    @Query(value = """select (task_record(
-                          _id_section => :#{#section.idSection},
-                          all_records => true)).*""",
-            nativeQuery = true)
-    fun getAllBySection(@Param("section") section: Section?): MutableList<Task>?
-
-    //language=PostgresPLSQL
-    @Query(value = """select (task_record(
                           _id_user => cast_int(:#{#user.idUser}),
-                          _number => cast_int(:number),
-                          _title => cast_text(:title))).*""",
+                          all_records => true
+                      )).*""",
             nativeQuery = true)
-    fun getByUser(
-            @Param("user") user: User?,
-            @Param("number") number: Int?,
-            @Param("title") title: String?
-    ): Task?
-
-    //language=PostgresPLSQL
-    @Query(value = """select (task_record(
-                          _id_user => :#{#user.idUser},
-                          all_records => true)).*""",
-            nativeQuery = true)
-    fun getAllByUser(@Param("user") user: User?): MutableList<Task>?
+    fun getAll(
+            @Param("section") section: Section? = Section(),
+            @Param("user") user: User? = User()
+    ): MutableList<Task>?
 
 
-    /** ============================== INSERT ============================== */
+    /** ============================== ADD / INSERT INTO ============================== */
 
 
     //language=PostgresPLSQL
@@ -77,12 +58,13 @@ interface TasksRepository : JpaRepository<Task, Int> {
                           cast_text(:#{#task.title}),
                           cast_ts(:#{#task.balkline} :: timestamp),
                           cast_ts(:#{#task.deadline} :: timestamp),
-                          cast_text(:#{#task.link}))).*""",
+                          cast_text(:#{#task.link})
+                      )).*""",
             nativeQuery = true)
-    fun create(@Param("task") task: Task?): Task?
+    fun add(@Param("task") task: Task?): Task?
 
 
-    /** ============================== UPDATE ============================== */
+    /** ============================== SET / UPDATE ============================== */
 
 
     //language=PostgresPLSQL
@@ -96,55 +78,20 @@ interface TasksRepository : JpaRepository<Task, Int> {
                           cast_text(:#{#task.link}),
                           cast_ts(:#{#task.timestampDoneUser} :: timestamp),
                           cast_ts(:#{#task.timestampDoneInstructor} :: timestamp),
-                          cast_int(:id_task))).*""",
+                          cast_int(:id_task),
+                          cast_int(:#{#section.idSection}),
+                          cast_int(:#{#user.idUser}),
+                          cast_int(:number),
+                          cast_text(:title)
+                      )).*""",
             nativeQuery = true)
-    fun update(
+    fun set(
             @Param("task") newTask: Task?,
-            @Param("id_task") idTask: Int?
-    ): Task?
-
-    //language=PostgresPLSQL
-    @Query(value = """select (task_update(
-                          cast_int(:#{#task.number}),
-                          cast_text(:#{#task.title}),
-                          cast_ts(:#{#task.balkline} :: timestamp),
-                          cast_ts(:#{#task.deadline} :: timestamp),
-                          cast_bool(:#{#task.markDoneUser} :: timestamp),
-                          cast_bool(:#{#task.markDoneInstructor} :: timestamp),
-                          cast_text(:#{#task.link}),
-                          cast_ts(:#{#task.timestampDoneUser} :: timestamp),
-                          cast_ts(:#{#task.timestampDoneInstructor} :: timestamp),
-                          _id_section => cast_int(:#{#section.idSection}),
-                          _number => :number,
-                          _title => :title)).*""",
-            nativeQuery = true)
-    fun updateBySection(
-            @Param("task") newTask: Task?,
-            @Param("section") section: Section?,
-            @Param("number") number: Int?,
-            @Param("title") title: String?
-    ): Task?
-
-    //language=PostgresPLSQL
-    @Query(value = """select (task_update(
-                          cast_int(:#{#task.number}),
-                          cast_text(:#{#task.title}),
-                          cast_ts(:#{#task.balkline} :: timestamp),
-                          cast_ts(:#{#task.deadline} :: timestamp),
-                          cast_bool(:#{#task.markDoneUser} :: timestamp),
-                          cast_bool(:#{#task.markDoneInstructor} :: timestamp),
-                          cast_text(:#{#task.link}),
-                          cast_ts(:#{#task.timestampDoneUser} :: timestamp),
-                          cast_ts(:#{#task.timestampDoneInstructor} :: timestamp),
-                          _id_user => cast_int(:#{#user.idUser}),
-                          _number => cast_int(:number),
-                          _title => cast_text(:title))).*""",
-            nativeQuery = true)
-    fun updateByUser(
-            @Param("task") newTask: Task?,
-            @Param("user") user: User?,
-            @Param("number") number: Int?,
-            @Param("title") title: String?
+            @Param("id_task") idTask: Int? = null,
+            @Param("section") section: Section? = Section(),
+            @Param("user") user: User? = User(),
+            @Param("number") number: Int? = null,
+            @Param("title") title: String? = null
     ): Task?
 
 
@@ -152,27 +99,26 @@ interface TasksRepository : JpaRepository<Task, Int> {
 
 
     //language=PostgresPLSQL
-    @Query(value = "select (task_delete(cast_int(:id_task))).*",
-            nativeQuery = true)
-    fun delete(@Param("id_task") idTask: Int?): Task?
-
-    //language=PostgresPLSQL
     @Query(value = """select (task_delete(
-                          _id_section => cast_int(:#{#section.idSection}),
-                          _number => cast_int(:number),
-                          _title => cast_text(:title))).*""",
+                          cast_int(:id_task),
+                          cast_int(:#{#section.idSection}),
+                          cast_int(:number),
+                          cast_text(:title)
+                      )).*""",
             nativeQuery = true)
-    fun deleteBySection(
-            @Param("section") section: Section?,
-            @Param("number") number: Int?,
-            @Param("title") title: String?
+    fun delete(
+            @Param("id_task") idTask: Int? = null,
+            @Param("section") section: Section? = Section(),
+            @Param("number") number: Int? = null,
+            @Param("title") title: String? = null
     ): Task?
 
     //language=PostgresPLSQL
     @Query(value = """select (task_delete(
-                          cast_int(:#{#section.idSection}),
-                          all_from_section => true )).*""",
+                          _id_section => cast_int(:#{#section.idSection}),
+                          all_from_section => true
+                      )).*""",
             nativeQuery = true)
-    fun deleteAllBySection(@Param("section") section: Section?): MutableList<Task>?
+    fun deleteAll(@Param("section") section: Section? = Section()): MutableList<Task>?
 
 }
