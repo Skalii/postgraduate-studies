@@ -4,7 +4,7 @@
 <ul>
 <li>Spring Boot DevTools
 <li>Spring Data JPA
-<li>Spring Security
+<li><s>Spring Security</s>
 <li>Spring Web MWC
 <li>Apache Tomcat
 <li>PostgreSQL
