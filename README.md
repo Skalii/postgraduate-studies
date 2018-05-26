@@ -8,3 +8,69 @@
 <li>Apache Tomcat
 <li>PostgreSQL
 </ul>
+<pre>
+        ---api---
+                 `
+                  `
+                   ¦
+                   ¦`
+                   ¦ `---branches---
+                   ¦                ` 
+                   ¦                 `
+                   ¦    
+                   ¦`
+                   ¦ `---contact-info---
+                   ¦                    `
+                   ¦                     `
+                   ¦
+                   ¦`
+                   ¦ `---degrees---
+                   ¦               `
+                   ¦                `
+                   ¦
+                   ¦`
+                   ¦ `---departments---
+                   ¦                   `
+                   ¦                    `
+                   ¦
+                   ¦`
+                   ¦ `---faculties---
+                   ¦                 `
+                   ¦                  `
+                   ¦
+                   ¦`
+                   ¦ `---institutes---
+                   ¦                  `
+                   ¦                   `
+                   ¦
+                   ¦`
+                   ¦ `---scientific-links---
+                   ¦                        `
+                   ¦                         `
+                   ¦
+                   ¦`
+                   ¦ `---sections---
+                   ¦                `
+                   ¦                 `
+                   ¦
+                   ¦`
+                   ¦ `---specialities---
+                   ¦                    `
+                   ¦                     `
+                   ¦
+                   ¦`
+                   ¦ `---study-info---
+                   ¦                  `
+                   ¦                   `
+                   ¦
+                   ¦`
+                   ¦ `---tasks---
+                   ¦             `
+                   ¦              `
+                   '
+                    `
+                     `---users---
+                                 `
+                                  `
+
+</pre>
