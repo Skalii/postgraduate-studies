@@ -18,8 +18,8 @@ import javax.persistence.SequenceGenerator
 import javax.persistence.Table
 import javax.validation.constraints.NotNull
 
-import skaliy.web.server.postgraduatestudies.enums.AcademicDegree
-import skaliy.web.server.postgraduatestudies.enums.BranchOfScience
+import skaliy.web.server.postgraduatestudies.entities.enums.AcademicDegree
+import skaliy.web.server.postgraduatestudies.entities.enums.BranchOfScience
 import skaliy.web.server.postgraduatestudies.views.View
 
 

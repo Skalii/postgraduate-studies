@@ -1,4 +1,4 @@
-package skaliy.web.server.postgraduatestudies.enums
+package skaliy.web.server.postgraduatestudies.entities.enums
 
 
 import com.fasterxml.jackson.annotation.JsonValue

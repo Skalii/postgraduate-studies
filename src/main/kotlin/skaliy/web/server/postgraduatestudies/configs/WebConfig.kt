@@ -1,8 +1,9 @@
 package skaliy.web.server.postgraduatestudies.configs
 
-import org.springframework.context.ApplicationContext
-import org.springframework.context.ApplicationContextAware
-import org.springframework.context.annotation.*
+//import org.springframework.context.ApplicationContext
+//import org.springframework.context.ApplicationContextAware
+import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.Configuration
 //import org.springframework.http.MediaType
 //import org.springframework.web.servlet.View
 //import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer
@@ -16,14 +17,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @ComponentScan(value = ["skaliy.web.server.postgraduatestudies"])
 @Configuration
 open class WebConfig :
-        WebMvcConfigurerAdapter(),
-        ApplicationContextAware {
+        WebMvcConfigurerAdapter()/*,
+        ApplicationContextAware*/ {
 
-    private lateinit var applicationContext: ApplicationContext
+    /*private lateinit var applicationContext: ApplicationContext
 
     override fun setApplicationContext(applicationContext: ApplicationContext) {
         this.applicationContext = applicationContext
-    }
+    }*/
 
     /*override fun addViewControllers(registry: ViewControllerRegistry) {
         super.addViewControllers(registry)

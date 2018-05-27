@@ -22,8 +22,8 @@ import javax.persistence.Table
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
-import skaliy.web.server.postgraduatestudies.enums.StudyBasis
-import skaliy.web.server.postgraduatestudies.enums.StudyForm
+import skaliy.web.server.postgraduatestudies.entities.enums.StudyBasis
+import skaliy.web.server.postgraduatestudies.entities.enums.StudyForm
 import skaliy.web.server.postgraduatestudies.views.View
 
 
