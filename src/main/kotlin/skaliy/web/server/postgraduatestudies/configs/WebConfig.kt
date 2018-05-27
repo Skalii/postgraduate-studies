@@ -14,7 +14,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 
 @EnableWebMvc
-@ComponentScan(value = ["skaliy.web.server.postgraduatestudies"])
 @Configuration
 open class WebConfig :
         WebMvcConfigurerAdapter()/*,

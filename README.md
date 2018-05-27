@@ -2,12 +2,13 @@
 <h2><b>RESTful API</b></h2>
 <h4>Used technologies:</h5>
 <ul>
+<li>Kotlin
+<li>PostgreSQL
 <li>Spring Boot DevTools
 <li>Spring Data JPA
 <li><s>Spring Security</s>
 <li>Spring Web MWC
 <li>Apache Tomcat
-<li>PostgreSQL
 </ul>
 <h4>API calls:</h4>
 <pre><small><b><i><big>Parameters:</big></i></b>

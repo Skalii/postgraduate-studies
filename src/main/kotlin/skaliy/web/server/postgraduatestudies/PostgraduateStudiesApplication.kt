@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 
 @SpringBootApplication
 @PropertySource(value = ["classpath:application.properties"])
-@ComponentScan(value = ["skaliy.web.server.postgraduatestudies"])
+@ComponentScan(basePackages = ["skaliy.web.server.postgraduatestudies"])
 @EntityScan(basePackages = ["skaliy.web.server.postgraduatestudies.entities"])
 @EnableJpaRepositories(value = ["skaliy.web.server.postgraduatestudies.repositories"])
 class PostgraduateStudiesApplication
