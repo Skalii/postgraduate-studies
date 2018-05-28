@@ -1,3 +1,4 @@
+/*
 package skaliy.web.server.postgraduatestudies.configs.initializers
 
 
@@ -14,4 +15,4 @@ class WebInitializer : AbstractAnnotationConfigDispatcherServletInitializer() {
 
     override fun getServletConfigClasses() = arrayOf(WebConfig::class.java)
 
-}
+}*/

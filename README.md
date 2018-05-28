@@ -1,5 +1,5 @@
 # postgraduate-studies
-<h2><b>RESTful API</b></h2>
+<h2><b>REST API</b></h2>
 <h4>Used technologies:</h5>
 <ul>
 <li>Kotlin
@@ -7,12 +7,12 @@
 <li>Spring Boot DevTools
 <li>Spring Data JPA
 <li><s>Spring Security</s>
-<li>Spring Web MWC
+<li><s>Spring Web MWC</s>
 <li>Apache Tomcat
 </ul>
 <h4>API calls:</h4>
 <pre><small><b><i><big>Parameters:</big></i></b>
-<br><i> |view|   = ui / rest / tree</i>
+<br> |view|   = <b><i>ui</b> / <b>rest</b> / <b>tree</b></i>
         <u>                                              </u>
        | ui |------|------| = data / <s> id </s> / <s> foreign </s> | 
        |----| rest |------| = data /  id  / <s> foreign </s> |
@@ -23,7 +23,7 @@
 <br>|i| = integer
 |s| = string
 |b| = boolean</small><small>
-<br><b><i><big>Map:</big></i></b>
+<br><b><i><big>Map URL:</big></i></b>
         ---api---
                  `
                   `

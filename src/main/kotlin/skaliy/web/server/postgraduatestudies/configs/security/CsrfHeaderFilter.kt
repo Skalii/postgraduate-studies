@@ -5,19 +5,23 @@ import org.springframework.security.web.csrf.CsrfToken
 import org.springframework.web.filter.OncePerRequestFilter
 import org.springframework.web.util.WebUtils
 
+import java.io.IOException
+
 import javax.servlet.FilterChain
 import javax.servlet.ServletException
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-import java.io.IOException
-
 
 class CsrfHeaderFilter : OncePerRequestFilter() {
+
     @Throws(ServletException::class, IOException::class)
-    override fun doFilterInternal(request: HttpServletRequest,
-                                  response: HttpServletResponse, filterChain: FilterChain) {
+    override fun doFilterInternal(
+            request: HttpServletRequest,
+            response: HttpServletResponse,
+            filterChain: FilterChain
+    ) {
         val csrf = request.getAttribute(CsrfToken::class.java
                 .name) as CsrfToken
         if (csrf != null) {
@@ -31,4 +35,5 @@ class CsrfHeaderFilter : OncePerRequestFilter() {
         }
         filterChain.doFilter(request, response)
     }
+
 }

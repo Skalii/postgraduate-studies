@@ -4,6 +4,7 @@ package skaliy.web.server.postgraduatestudies.repositories
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository
 import org.springframework.stereotype.Repository
 
 import skaliy.web.server.postgraduatestudies.entities.Branch
@@ -135,5 +136,13 @@ interface UsersRepository : JpaRepository<User, Int> {
             @Param("scientific_links") scientificLinks: ScientificLinks? = ScientificLinks()
     ): User?
 
+
+    /** ============================== **CODE ============================== */
+
+
+    //language=PostgresPLSQL
+    @Query(value = "select generate_pass_decrypt(:id_user)",
+            nativeQuery = true)
+    fun getPassword(@Param("id_user") idUser: Int?): String?
 
 }
