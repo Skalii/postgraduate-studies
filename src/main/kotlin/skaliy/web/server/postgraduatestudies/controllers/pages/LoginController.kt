@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 class LoginController {
 
     @GetMapping(value = ["index"])
-    fun get() = "redirect:/pages/login/"
+    fun get() = "redirect:/login/"
 
     @GetMapping
     fun get(model: Model) = "pages/login/index"

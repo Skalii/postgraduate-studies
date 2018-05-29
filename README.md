@@ -6,7 +6,7 @@
 <li>PostgreSQL
 <li>Spring Boot DevTools
 <li>Spring Data JPA
-<li><s>Spring Security</s>
+<li>Spring Security
 <li><s>Spring Web MWC</s>
 <li>Apache Tomcat
 </ul>
@@ -17,9 +17,10 @@
        | ui |------|------| = data / <s> id </s> / <s> foreign </s> | 
        |----| rest |------| = data /  id  / <s> foreign </s> |
        |<u>----|------| tree | = data /  id  /  foreign  </u>|
-<br>  |?|     = request parameters, <b><i>all optional</i></b>
- |body|   = request body / <b><i>json object</i></b>, <b><i>required</i></b>
-|content| = <b><i>content-type: application/json; charset=UTF8</i></b>
+<br>  (?)     = request parameters, <b><i>all optional</i></b>
+ {body}   = request body / <b><i>json object</i></b>, <b><i>required</i></b>
+{content} = <b><i>content-type: application/json; charset=UTF8</i></b>
+ [auth]   = authorized user
 <br>|i| = integer
 |s| = string
 |b| = boolean</small><small>
@@ -34,19 +35,22 @@
                    ¦               `
                    ¦                ¦--get--
                    ¦                ¦       `
-                   ¦                ¦        ¦--one-|view||?|
+                   ¦                ¦        ¦--me-|view|[auth]
+                   ¦                ¦        ¦               
+                   ¦                ¦        ¦               
+                   ¦                ¦        ¦--one-|view|(?)
                    ¦                ¦        ¦               `
                    ¦                ¦        ¦            |i| ¦--id_branch
                    ¦                ¦        ¦            |s| ¦--number
                    ¦                ¦        ¦            's' '--name
                    ¦                ¦        ¦               
-                   ¦                ¦        ¦--one-by-speciality-|view||?|
+                   ¦                ¦        ¦--one-by-speciality-|view|(?)
                    ¦                ¦        ¦                             `
                    ¦                ¦        ¦                          |i| ¦--id_speciality
                    ¦                ¦        ¦                          |s| ¦--number
                    ¦                ¦        ¦                          's' '--name
                    ¦                ¦        ¦                              
-                   ¦                ¦        ¦--one-by-user-|view||?|
+                   ¦                ¦        ¦--one-by-user-|view|(?)
                    ¦                ¦        ¦                       `
                    ¦                ¦        ¦                    |i| ¦--id_user
                    ¦                ¦        ¦                    |i| ¦--id_contact_info
@@ -63,11 +67,11 @@
                    ¦                ¦        
                    ¦                ¦--post--
                    ¦                ¦        `
-                   ¦                ¦         '--add-|view||body||content|
+                   ¦                ¦         '--add-|view|{body}{content}
                    ¦                ¦
                    ¦                ¦--put--
                    ¦                ¦       `
-                   ¦                ¦        '--set-|view||?||body||content|
+                   ¦                ¦        '--set-|view|(?){body}{content}
                    ¦                ¦                        `
                    ¦                ¦                     |i| ¦--id_speciality
                    ¦                ¦                     |s| ¦--number
@@ -75,13 +79,13 @@
                    ¦                ¦
                    ¦                '--delete--
                    ¦                           `
-                   ¦                            ¦--one-|view||?|
+                   ¦                            ¦--one-|view|(?)
                    ¦                            ¦               `
                    ¦                            ¦            |i| ¦--id_branch
                    ¦                            ¦            |s| ¦--number
                    ¦                            ¦            's' '--name
                    ¦                            ¦                
-                   ¦                            '--one-by-speciality-|view||?|
+                   ¦                            '--one-by-speciality-|view|(?)
                    ¦                                                          `
                    ¦                                                       |i| ¦--id_speciality
                    ¦                                                       |s| ¦--number

@@ -4,6 +4,8 @@ package skaliy.web.server.postgraduatestudies.controllers.api
 import com.fasterxml.jackson.annotation.JsonView
 
 import org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -50,6 +52,117 @@ class UsersRestController(
      * GET / SELECT
      * records
      */
+
+
+    /** ============================== ME ============================== */
+
+
+    @JsonView(View.UI::class)
+    @GetMapping(value = ["get/me-ui"])
+    fun getMeUI(@AuthenticationPrincipal authUser: UserDetails) =
+            usersRepository.get(
+                    contactInfo = contactInfoRepository.get(
+                            email = authUser.username
+                    )
+            )
+
+    @JsonView(View.REST::class)
+    @GetMapping(value = ["get/me-rest"])
+    fun getMeRest(@AuthenticationPrincipal authUser: UserDetails) =
+            usersRepository.get(
+                    contactInfo = contactInfoRepository.get(
+                            email = authUser.username
+                    )
+            )
+
+    @JsonView(View.TREE::class)
+    @GetMapping(value = ["get/me-tree"])
+    fun getMeTree(@AuthenticationPrincipal authUser: UserDetails) =
+            usersRepository.get(
+                    contactInfo = contactInfoRepository.get(
+                            email = authUser.username
+                    )
+            )
+
+
+    /** ============================== MY INSTRUCTOR ============================== */
+
+
+    @JsonView(View.UI::class)
+    @GetMapping(value = ["get/my-instructor-ui"])
+    fun getMyInstructorUI(@AuthenticationPrincipal authUser: UserDetails) =
+            usersRepository.get(
+                    contactInfo = contactInfoRepository.get(
+                            email = authUser.username
+                    )
+            )?.studyInfo?.instructor
+
+    @JsonView(View.REST::class)
+    @GetMapping(value = ["get/my-instructor-rest"])
+    fun getMyInstructorRest(@AuthenticationPrincipal authUser: UserDetails) =
+            usersRepository.get(
+                    contactInfo = contactInfoRepository.get(
+                            email = authUser.username
+                    )
+            )?.studyInfo?.instructor
+
+    @JsonView(View.TREE::class)
+    @GetMapping(value = ["get/my-instructor-tree"])
+    fun getMyInstructorTree(@AuthenticationPrincipal authUser: UserDetails) =
+            usersRepository.get(
+                    contactInfo = contactInfoRepository.get(
+                            email = authUser.username
+                    )
+            )?.studyInfo?.instructor
+
+
+    /** ============================== MY STUDENTS ============================== */
+
+
+    @JsonView(View.UI::class)
+    @GetMapping(value = ["get/my-students-ui"])
+    fun getMyStudentsUI(@AuthenticationPrincipal authUser: UserDetails): MutableList<User>? {
+
+        val myStudents: MutableList<User> = mutableListOf()
+
+        usersRepository.get(
+                contactInfo = contactInfoRepository.get(
+                        email = authUser.username
+                )
+        )?.students?.forEach { myStudents.add(it.user!!) }
+
+        return myStudents
+    }
+
+    @JsonView(View.REST::class)
+    @GetMapping(value = ["get/my-students-rest"])
+    fun getMyStudentsRest(@AuthenticationPrincipal authUser: UserDetails): MutableList<User>? {
+
+        val myStudents: MutableList<User> = mutableListOf()
+
+        usersRepository.get(
+                contactInfo = contactInfoRepository.get(
+                        email = authUser.username
+                )
+        )?.students?.forEach { myStudents.add(it.user!!) }
+
+        return myStudents
+    }
+
+    @JsonView(View.TREE::class)
+    @GetMapping(value = ["get/my-students-tree"])
+    fun getMyStudentsTree(@AuthenticationPrincipal authUser: UserDetails): MutableList<User>? {
+
+        val myStudents: MutableList<User> = mutableListOf()
+
+        usersRepository.get(
+                contactInfo = contactInfoRepository.get(
+                        email = authUser.username
+                )
+        )?.students?.forEach { myStudents.add(it.user!!) }
+
+        return myStudents
+    }
 
 
     /** ============================== ONE ============================== */
@@ -493,6 +606,64 @@ class UsersRestController(
      * SET / UPDATE
      * records
      */
+
+
+    /** ============================== ME ============================== */
+
+
+    @JsonView(View.UI::class)
+    @PutMapping(value = ["put/set-me-ui"])
+    fun updateMeUI(
+            @RequestBody newUser: User?,
+            @AuthenticationPrincipal authUser: UserDetails
+    ): User? {
+        val user =
+                usersRepository.set(
+                        newUser,
+                        usersRepository.get(
+                                contactInfo = contactInfoRepository.get(
+                                        email = authUser.username
+                                )
+                        )?.idUser
+                )
+        return usersRepository.get(user?.idUser)
+    }
+
+    @JsonView(View.REST::class)
+    @PutMapping(value = ["put/set-me-rest"])
+    fun updateMeRest(
+            @RequestBody newUser: User?,
+            @AuthenticationPrincipal authUser: UserDetails
+    ): User? {
+        val user =
+                usersRepository.set(
+                        newUser,
+                        usersRepository.get(
+                                contactInfo = contactInfoRepository.get(
+                                        email = authUser.username
+                                )
+                        )?.idUser
+                )
+        return usersRepository.get(user?.idUser)
+    }
+
+    @JsonView(View.TREE::class)
+    @PutMapping(value = ["put/set-me-tree"])
+    fun updateMeTree(
+            @RequestBody newUser: User?,
+            @AuthenticationPrincipal authUser: UserDetails
+    ): User? {
+        val user =
+                usersRepository.set(
+                        newUser,
+                        usersRepository.get(
+                                contactInfo = contactInfoRepository.get(
+                                        email = authUser.username
+                                )
+                        )?.idUser
+                )
+        return usersRepository.get(user?.idUser)
+    }
 
 
     /** ============================== ONE ============================== */

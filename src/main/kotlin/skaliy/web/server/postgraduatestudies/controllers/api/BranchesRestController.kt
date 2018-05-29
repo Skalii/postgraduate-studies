@@ -4,6 +4,8 @@ package skaliy.web.server.postgraduatestudies.controllers.api
 import com.fasterxml.jackson.annotation.JsonView
 
 import org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -42,6 +44,43 @@ class BranchesRestController(
      * GET
      * records
      */
+
+
+    /** ============================== ONE ============================== */
+
+
+    @JsonView(View.UI::class)
+    @GetMapping(value = ["get/me-ui"])
+    fun getMeUI(@AuthenticationPrincipal authUser: UserDetails) =
+            branchesRepository.get(
+                    usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    )?.speciality?.branch?.idBranch
+            )
+
+    @JsonView(View.REST::class)
+    @GetMapping(value = ["get/me-rest"])
+    fun getMeRest(@AuthenticationPrincipal authUser: UserDetails) =
+            branchesRepository.get(
+                    usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    )?.speciality?.branch?.idBranch
+            )
+
+    @JsonView(View.TREE::class)
+    @GetMapping(value = ["get/me-tree"])
+    fun getMeTree(@AuthenticationPrincipal authUser: UserDetails) =
+            branchesRepository.get(
+                    usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    )?.speciality?.branch?.idBranch
+            )
 
 
     /** ============================== ONE ============================== */
