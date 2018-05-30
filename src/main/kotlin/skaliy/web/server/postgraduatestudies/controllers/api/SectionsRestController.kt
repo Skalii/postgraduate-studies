@@ -4,6 +4,8 @@ package skaliy.web.server.postgraduatestudies.controllers.api
 import com.fasterxml.jackson.annotation.JsonView
 
 import org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -42,6 +44,124 @@ class SectionsRestController(
      * GET / SELECT
      * records
      */
+
+
+    /** ============================== MY
+     *                                 ONE ============================== */
+
+
+    @JsonView(View.UI::class)
+    @GetMapping(value = ["get/my-one-ui"])
+    fun getMyOneUI(
+            @RequestParam(
+                    value = "id_section",
+                    required = false) idSection: Int?,
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestParam(
+                    value = "number",
+                    required = false) number: Int?,
+            @RequestParam(
+                    value = "title",
+                    required = false) title: String?
+    ) =
+            sectionsRepository.get(
+                    idSection,
+                    usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    ),
+                    number,
+                    title
+            )
+
+    @JsonView(View.REST::class)
+    @GetMapping(value = ["get/my-one-rest"])
+    fun getMyOneRest(
+            @RequestParam(
+                    value = "id_section",
+                    required = false) idSection: Int?,
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestParam(
+                    value = "number",
+                    required = false) number: Int?,
+            @RequestParam(
+                    value = "title",
+                    required = false) title: String?
+    ) =
+            sectionsRepository.get(
+                    idSection,
+                    usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    ),
+                    number,
+                    title
+            )
+
+    @JsonView(View.TREE::class)
+    @GetMapping(value = ["get/my-one-tree"])
+    fun getMyOneTree(
+            @RequestParam(
+                    value = "id_section",
+                    required = false) idSection: Int?,
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestParam(
+                    value = "number",
+                    required = false) number: Int?,
+            @RequestParam(
+                    value = "title",
+                    required = false) title: String?
+    ) =
+            sectionsRepository.get(
+                    idSection,
+                    usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    ),
+                    number,
+                    title
+            )
+
+
+    /** ============================== MY
+     *                                 ALL ============================== */
+
+
+    @JsonView(View.UI::class)
+    @GetMapping(value = ["get/my-all-ui"])
+    fun getMyAllUI(@AuthenticationPrincipal authUser: UserDetails) =
+            sectionsRepository.getAll(
+                    usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    )
+            )
+
+    @JsonView(View.REST::class)
+    @GetMapping(value = ["get/my-all-rest"])
+    fun getMyAllRest(@AuthenticationPrincipal authUser: UserDetails) =
+            sectionsRepository.getAll(
+                    usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    )
+            )
+
+    @JsonView(View.TREE::class)
+    @GetMapping(value = ["get/my-all-tree"])
+    fun getMyAllTree(@AuthenticationPrincipal authUser: UserDetails) =
+            sectionsRepository.getAll(
+                    usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    )
+            )
 
 
     /** ============================== ONE ============================== */
@@ -480,23 +600,51 @@ class SectionsRestController(
      */
 
 
-    /** ============================== ONE ============================== */
+    /** ============================== MY ============================== */
 
 
     @JsonView(View.UI::class)
-    @PostMapping(value = ["post/add-ui"])
-    fun addUI(@RequestBody section: Section) =
-            sectionsRepository.add(section)
+    @PostMapping(value = ["post/add-my-ui"])
+    fun addMyUI(
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestBody section: Section
+    ) =
+            sectionsRepository.add(
+                    usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    ),
+                    section
+            )
 
     @JsonView(View.REST::class)
-    @PostMapping(value = ["post/add-rest"])
-    fun addRest(@RequestBody section: Section) =
-            sectionsRepository.add(section)
+    @PostMapping(value = ["post/add-my-rest"])
+    fun addMyRest(@AuthenticationPrincipal authUser: UserDetails,
+                  @RequestBody section: Section
+    ) =
+            sectionsRepository.add(
+                    usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    ),
+                    section
+            )
 
     @JsonView(View.TREE::class)
-    @PostMapping(value = ["post/add-tree"])
-    fun addTree(@RequestBody section: Section) =
-            sectionsRepository.add(section)
+    @PostMapping(value = ["post/add-my-tree"])
+    fun addMyTree(@AuthenticationPrincipal authUser: UserDetails,
+                  @RequestBody section: Section
+    ) =
+            sectionsRepository.add(
+                    usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    ),
+                    section
+            )
 
 
     /**
@@ -504,6 +652,88 @@ class SectionsRestController(
      * SET / UPDATE
      * records
      */
+
+
+    /** ============================== MY ============================== */
+
+
+    @JsonView(View.UI::class)
+    @PutMapping(value = ["put/set-my-ui"])
+    fun setMyUI(
+            @RequestBody newSection: Section?,
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestParam(
+                    value = "number",
+                    required = false) number: Int?,
+            @RequestParam(
+                    value = "title",
+                    required = false) title: String?
+    ): Section? {
+        val section =
+                sectionsRepository.set(
+                        newSection,
+                        user = usersRepository.get(
+                                contactInfo = contactInfoRepository.get(
+                                        email = authUser.username
+                                )
+                        ),
+                        number = number,
+                        title = title
+                )
+        return sectionsRepository.get(section?.idSection)
+    }
+
+    @JsonView(View.REST::class)
+    @PutMapping(value = ["put/set-my-rest"])
+    fun setMyRest(
+            @RequestBody newSection: Section?,
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestParam(
+                    value = "number",
+                    required = false) number: Int?,
+            @RequestParam(
+                    value = "title",
+                    required = false) title: String?
+    ): Section? {
+        val section =
+                sectionsRepository.set(
+                        newSection,
+                        user = usersRepository.get(
+                                contactInfo = contactInfoRepository.get(
+                                        email = authUser.username
+                                )
+                        ),
+                        number = number,
+                        title = title
+                )
+        return sectionsRepository.get(section?.idSection)
+    }
+
+    @JsonView(View.TREE::class)
+    @PutMapping(value = ["put/set-my-tree"])
+    fun setMyTree(
+            @RequestBody newSection: Section?,
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestParam(
+                    value = "number",
+                    required = false) number: Int?,
+            @RequestParam(
+                    value = "title",
+                    required = false) title: String?
+    ): Section? {
+        val section =
+                sectionsRepository.set(
+                        newSection,
+                        user = usersRepository.get(
+                                contactInfo = contactInfoRepository.get(
+                                        email = authUser.username
+                                )
+                        ),
+                        number = number,
+                        title = title
+                )
+        return sectionsRepository.get(section?.idSection)
+    }
 
 
     /** ============================== ONE ============================== */
@@ -748,7 +978,8 @@ class SectionsRestController(
         val section =
                 sectionsRepository.set(
                         newSection,
-                        tasksRepository.get(idTask))
+                        tasksRepository.get(idTask)
+                )
         return sectionsRepository.get(section?.idSection)
     }
 
@@ -775,7 +1006,8 @@ class SectionsRestController(
         val section =
                 sectionsRepository.set(
                         newSection,
-                        tasksRepository.get(idTask))
+                        tasksRepository.get(idTask)
+                )
         return sectionsRepository.get(section?.idSection)
     }
 
@@ -802,7 +1034,8 @@ class SectionsRestController(
         val section =
                 sectionsRepository.set(
                         newSection,
-                        tasksRepository.get(idTask))
+                        tasksRepository.get(idTask)
+                )
         return sectionsRepository.get(section?.idSection)
     }
 
@@ -812,6 +1045,73 @@ class SectionsRestController(
      * DELETE
      * records
      */
+
+
+    /** ============================== MY ============================== */
+
+
+    @JsonView(View.UI::class)
+    @DeleteMapping(value = ["delete/my-ui"])
+    fun deleteMyUI(
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestParam(
+                    value = "number",
+                    required = false) number: Int?,
+            @RequestParam(
+                    value = "title",
+                    required = false) title: String?
+    ) =
+            sectionsRepository.delete(
+                    user = usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    ),
+                    number = number,
+                    title = title
+            )
+
+    @JsonView(View.REST::class)
+    @DeleteMapping(value = ["delete/my-rest"])
+    fun deleteMyRest(
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestParam(
+                    value = "number",
+                    required = false) number: Int?,
+            @RequestParam(
+                    value = "title",
+                    required = false) title: String?
+    ) =
+            sectionsRepository.delete(
+                    user = usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    ),
+                    number = number,
+                    title = title
+            )
+
+    @JsonView(View.TREE::class)
+    @DeleteMapping(value = ["delete/my-tree"])
+    fun deleteMyTree(
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestParam(
+                    value = "number",
+                    required = false) number: Int?,
+            @RequestParam(
+                    value = "title",
+                    required = false) title: String?
+    ) =
+            sectionsRepository.delete(
+                    user = usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    ),
+                    number = number,
+                    title = title
+            )
 
 
     /** ============================== ONE ============================== */
@@ -879,7 +1179,8 @@ class SectionsRestController(
                             )
                     ),
                     number,
-                    title)
+                    title
+            )
 
     @JsonView(View.REST::class)
     @DeleteMapping(value = ["delete/one-rest"])
@@ -943,7 +1244,8 @@ class SectionsRestController(
                             )
                     ),
                     number,
-                    title)
+                    title
+            )
 
     @JsonView(View.TREE::class)
     @DeleteMapping(value = ["delete/one-tree"])
@@ -1007,7 +1309,8 @@ class SectionsRestController(
                             )
                     ),
                     number,
-                    title)
+                    title
+            )
 
 
     /** ============================== ONE

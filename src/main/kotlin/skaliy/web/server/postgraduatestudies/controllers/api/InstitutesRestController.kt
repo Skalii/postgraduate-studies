@@ -4,6 +4,8 @@ package skaliy.web.server.postgraduatestudies.controllers.api
 import com.fasterxml.jackson.annotation.JsonView
 
 import org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -44,6 +46,44 @@ class InstitutesRestController(
      * GET / SELECT
      * records
      */
+
+
+    /** ============================== MY ============================== */
+
+
+    @JsonView(View.UI::class)
+    @GetMapping(value = ["get/my-ui"])
+    fun getOneUI(@AuthenticationPrincipal authUser: UserDetails) =
+            institutesRepository.get(
+                    usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    )
+            )
+
+    @JsonView(View.REST::class)
+    @GetMapping(value = ["get/my-rest"])
+    fun getOneRest(@AuthenticationPrincipal authUser: UserDetails) =
+            institutesRepository.get(
+                    usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    )
+            )
+
+    @JsonView(View.TREE::class)
+    @GetMapping(value = ["get/my-tree"])
+    fun getOneTree(@AuthenticationPrincipal authUser: UserDetails) =
+            institutesRepository.get(
+                    usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    )
+            )
+
 
 
     /** ============================== ONE ============================== */

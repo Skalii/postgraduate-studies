@@ -34,20 +34,59 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity?) {
         http!!
                 .authorizeRequests()
-                .antMatchers("/").authenticated()
-                .antMatchers("/api/contact-info/get/all**").hasRole(UserRole.ADMIN.value)
-                .antMatchers("/api/scientific-links/get/all**").hasRole(UserRole.ADMIN.value)
-                .antMatchers("/api/study-info/get/all**").hasRole(UserRole.ADMIN.value)
-                .antMatchers("/api/users/get/me**").authenticated()
-                .antMatchers("/api/users/get/my-instructor**").hasAnyRole(
+//                .antMatchers("/").authenticated()
+
+                .antMatchers(
+                        "/api/contact-info/get/one**",
+                        "/api/contact-info/get/all**",
+                        "/api/scientific-links/get/one**",
+                        "/api/scientific-links/get/all**",
+                        "/api/study-info/get/one**",
+                        "/api/study-info/get/all**",
+                        "/api/users/get/one**",
+                        "/api/users/get/all**"
+                ).hasRole(
+                        UserRole.ADMIN.value
+                )
+
+                /*.antMatchers(
+                        "/api/branches/get/my**",
+                        "/api/contact-info/get/my**",
+                        "/api/contact-info/put/set-my**",
+                        "/api/degrees/get/my**",
+                        "/api/degrees/put/set-my**",
+                        "/api/departments/get/my**",
+                        "/api/departments/put/set-my**",
+                        "/api/faculties/get/my**",
+                        "/api/institutes/get/my**",
+                        "/api/scientific-links/get/my**",
+                        "/api/scientific-links/put/set-my**",
+                        "/api/specialities/get/my**",
+                        "/api/users/get/me**",
+                        "/api/users/put/set-me**"
+                ).authenticated()*/
+
+                .antMatchers(
+                        "/api/sections/get/my-one**",
+                        "/api/sections/get/my-all**",
+                        "/api/sections/post/add-my**",
+                        "/api/sections/put/set-my**",
+                        "/api/sections/delete/my**",
+                        "/api/study-info/get/my**",
+                        "/api/study-info/put/set-my**",
+                        "/api/users/get/my-instructor**"
+                ).hasAnyRole(
                         UserRole.GRADUATE_STUDENT.value,
-                        UserRole.DOCTORAL_STUDENT.value)
-                .antMatchers("/api/users/get/my-students**").hasAnyRole(UserRole.INSTRUCTOR.value)
-                .antMatchers("/api/users/get/one**").hasRole(UserRole.ADMIN.value)
-                .antMatchers("/api/users/get/all**").hasRole(UserRole.ADMIN.value)
-                .antMatchers("/api/users/put/set-me**").authenticated()
-                .antMatchers("/api/**").authenticated()
-                .antMatchers("/api/branches/get/me**").authenticated()
+                        UserRole.DOCTORAL_STUDENT.value
+                )
+
+                .antMatchers(
+                        "/api/users/get/my-students**"
+                ).hasRole(
+                        UserRole.INSTRUCTOR.value
+                )
+
+//                .antMatchers("/api/**").authenticated()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()

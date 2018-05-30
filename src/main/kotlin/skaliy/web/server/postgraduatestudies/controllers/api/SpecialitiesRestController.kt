@@ -4,6 +4,8 @@ package skaliy.web.server.postgraduatestudies.controllers.api
 import com.fasterxml.jackson.annotation.JsonView
 
 import org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -42,6 +44,43 @@ class SpecialitiesRestController(
      * GET / SELECt
      * records
      */
+
+
+    /** ============================== MY ============================== */
+
+
+    @JsonView(View.UI::class)
+    @GetMapping(value = ["get/my-ui"])
+    fun getMyUI(@AuthenticationPrincipal authUser: UserDetails) =
+            specialitiesRepository.get(
+                    usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    )?.speciality?.idSpeciality
+            )
+
+    @JsonView(View.REST::class)
+    @GetMapping(value = ["get/my-rest"])
+    fun getMyRest(@AuthenticationPrincipal authUser: UserDetails) =
+            specialitiesRepository.get(
+                    usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    )?.speciality?.idSpeciality
+            )
+
+    @JsonView(View.TREE::class)
+    @GetMapping(value = ["get/my-tree"])
+    fun getMyTree(@AuthenticationPrincipal authUser: UserDetails) =
+            specialitiesRepository.get(
+                    usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    )?.speciality?.idSpeciality
+            )
 
 
     /** ============================== ONE ============================== */
@@ -517,11 +556,13 @@ class SpecialitiesRestController(
             )
 
 
-    /** ============================== ALL ============================== */
+    /** ============================== ALL
+     *                                 BY
+     *                                 BRANCH ============================== */
 
 
     @JsonView(View.UI::class)
-    @DeleteMapping(value = ["delete/all-ui"])
+    @DeleteMapping(value = ["delete/all-by-branch-ui"])
     fun deleteAllByBranchUI(
             @RequestParam(
                     value = "id_branch",
@@ -542,7 +583,7 @@ class SpecialitiesRestController(
             )
 
     @JsonView(View.REST::class)
-    @DeleteMapping(value = ["delete/all-rest"])
+    @DeleteMapping(value = ["delete/all-by-branch-rest"])
     fun deleteAllByBranchRest(
             @RequestParam(
                     value = "id_branch",
@@ -563,7 +604,7 @@ class SpecialitiesRestController(
             )
 
     @JsonView(View.TREE::class)
-    @DeleteMapping(value = ["delete/all-tree"])
+    @DeleteMapping(value = ["delete/all-by-branch-tree"])
     fun deleteAllByBranchTree(
             @RequestParam(
                     value = "id_branch",

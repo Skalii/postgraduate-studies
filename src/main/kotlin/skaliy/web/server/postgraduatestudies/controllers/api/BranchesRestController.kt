@@ -46,12 +46,12 @@ class BranchesRestController(
      */
 
 
-    /** ============================== ONE ============================== */
+    /** ============================== MY ============================== */
 
 
     @JsonView(View.UI::class)
-    @GetMapping(value = ["get/me-ui"])
-    fun getMeUI(@AuthenticationPrincipal authUser: UserDetails) =
+    @GetMapping(value = ["get/my-ui"])
+    fun getMyUI(@AuthenticationPrincipal authUser: UserDetails) =
             branchesRepository.get(
                     usersRepository.get(
                             contactInfo = contactInfoRepository.get(
@@ -61,8 +61,8 @@ class BranchesRestController(
             )
 
     @JsonView(View.REST::class)
-    @GetMapping(value = ["get/me-rest"])
-    fun getMeRest(@AuthenticationPrincipal authUser: UserDetails) =
+    @GetMapping(value = ["get/my-rest"])
+    fun getMyRest(@AuthenticationPrincipal authUser: UserDetails) =
             branchesRepository.get(
                     usersRepository.get(
                             contactInfo = contactInfoRepository.get(
@@ -72,8 +72,8 @@ class BranchesRestController(
             )
 
     @JsonView(View.TREE::class)
-    @GetMapping(value = ["get/me-tree"])
-    fun getMeTree(@AuthenticationPrincipal authUser: UserDetails) =
+    @GetMapping(value = ["get/my-tree"])
+    fun getMyTree(@AuthenticationPrincipal authUser: UserDetails) =
             branchesRepository.get(
                     usersRepository.get(
                             contactInfo = contactInfoRepository.get(

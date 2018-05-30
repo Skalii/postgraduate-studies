@@ -4,6 +4,8 @@ package skaliy.web.server.postgraduatestudies.controllers.api
 import com.fasterxml.jackson.annotation.JsonView
 
 import org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -38,6 +40,43 @@ class ScientificLinksRestController(
      * GET / SELECT
      * records
      */
+
+
+    /** ============================== MY ============================== */
+
+
+    @JsonView(View.UI::class)
+    @GetMapping(value = ["get/my-ui"])
+    fun getMyUI(@AuthenticationPrincipal authUser: UserDetails) =
+            scientificLinksRepository.get(
+                    user = usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    )
+            )
+
+    @JsonView(View.REST::class)
+    @GetMapping(value = ["get/my-rest"])
+    fun getMyRest(@AuthenticationPrincipal authUser: UserDetails) =
+            scientificLinksRepository.get(
+                    user = usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    )
+            )
+
+    @JsonView(View.TREE::class)
+    @GetMapping(value = ["get/my-tree"])
+    fun getMyTree(@AuthenticationPrincipal authUser: UserDetails) =
+            scientificLinksRepository.get(
+                    user = usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    )
+            )
 
 
     /** ============================== ONE ============================== */
@@ -244,6 +283,65 @@ class ScientificLinksRestController(
      * SET / UPDATE
      * records
      */
+
+
+    /** ============================== MY ============================== */
+
+
+    @JsonView(View.UI::class)
+    @PutMapping(value = ["put/set-my-ui"])
+    fun setMyUI(
+            @RequestBody newScientificLinks: ScientificLinks?,
+            @AuthenticationPrincipal authUser: UserDetails
+    ): ScientificLinks? {
+        val scientificLinks =
+                scientificLinksRepository.set(
+                        newScientificLinks,
+                        user = usersRepository.get(
+                                contactInfo = contactInfoRepository.get(
+                                        email = authUser.username
+                                )
+                        )
+                )
+        return scientificLinksRepository.get(scientificLinks?.idScientificLinks)
+    }
+
+    @JsonView(View.REST::class)
+    @PutMapping(value = ["put/set-my-rest"])
+    fun setMyRest(
+            @RequestBody newScientificLinks: ScientificLinks?,
+            @AuthenticationPrincipal authUser: UserDetails
+    ): ScientificLinks? {
+        val scientificLinks =
+                scientificLinksRepository.set(
+                        newScientificLinks,
+                        user = usersRepository.get(
+                                contactInfo = contactInfoRepository.get(
+                                        email = authUser.username
+                                )
+                        )
+                )
+        return scientificLinksRepository.get(scientificLinks?.idScientificLinks)
+    }
+
+    @JsonView(View.TREE::class)
+    @PutMapping(value = ["put/set-my-tree"])
+    fun setMyTree(
+            @RequestBody newScientificLinks: ScientificLinks?,
+            @AuthenticationPrincipal authUser: UserDetails
+    ): ScientificLinks? {
+        val scientificLinks =
+                scientificLinksRepository.set(
+                        newScientificLinks,
+                        user = usersRepository.get(
+                                contactInfo = contactInfoRepository.get(
+                                        email = authUser.username
+                                )
+                        )
+                )
+        return scientificLinksRepository.get(scientificLinks?.idScientificLinks)
+    }
+
 
     /** ============================== ONE ============================== */
 

@@ -4,6 +4,8 @@ package skaliy.web.server.postgraduatestudies.controllers.api
 import com.fasterxml.jackson.annotation.JsonView
 
 import org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -38,6 +40,25 @@ class ContactInfoRestController(
      * GET
      * records
      */
+
+
+    /** ============================== MY ============================== */
+
+
+    @JsonView(View.UI::class)
+    @GetMapping(value = ["get/my-ui"])
+    fun getMyUI(@AuthenticationPrincipal authUser: UserDetails) =
+            contactInfoRepository.get(email = authUser.username)
+
+    @JsonView(View.REST::class)
+    @GetMapping(value = ["get/my-rest"])
+    fun getMyRest(@AuthenticationPrincipal authUser: UserDetails) =
+            contactInfoRepository.get(email = authUser.username)
+
+    @JsonView(View.TREE::class)
+    @GetMapping(value = ["get/my-tree"])
+    fun getMyTree(@AuthenticationPrincipal authUser: UserDetails) =
+            contactInfoRepository.get(email = authUser.username)
 
 
     /** ============================== ONE ============================== */
@@ -244,6 +265,52 @@ class ContactInfoRestController(
      * SET / UPDATE
      * records
      */
+
+
+    /** ============================== MY ============================== */
+
+
+    @JsonView(View.UI::class)
+    @PutMapping(value = ["put/set-my-ui"])
+    fun setMyUI(
+            @RequestBody newContactInfo: ContactInfo?,
+            @AuthenticationPrincipal authUser: UserDetails
+    ): ContactInfo? {
+        val contactInfo =
+                contactInfoRepository.set(
+                        newContactInfo,
+                        email = authUser.username
+                )
+        return contactInfoRepository.get(contactInfo?.idContactInfo)
+    }
+
+    @JsonView(View.REST::class)
+    @PutMapping(value = ["put/set-my-rest"])
+    fun setMyRest(
+            @RequestBody newContactInfo: ContactInfo?,
+            @AuthenticationPrincipal authUser: UserDetails
+    ): ContactInfo? {
+        val contactInfo =
+                contactInfoRepository.set(
+                        newContactInfo,
+                        email = authUser.username
+                )
+        return contactInfoRepository.get(contactInfo?.idContactInfo)
+    }
+
+    @JsonView(View.TREE::class)
+    @PutMapping(value = ["put/set-my-tree"])
+    fun setMyTree(
+            @RequestBody newContactInfo: ContactInfo?,
+            @AuthenticationPrincipal authUser: UserDetails
+    ): ContactInfo? {
+        val contactInfo =
+                contactInfoRepository.set(
+                        newContactInfo,
+                        email = authUser.username
+                )
+        return contactInfoRepository.get(contactInfo?.idContactInfo)
+    }
 
 
     /** ============================== ONE ============================== */

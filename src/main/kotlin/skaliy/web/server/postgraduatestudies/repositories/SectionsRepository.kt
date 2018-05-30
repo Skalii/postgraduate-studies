@@ -52,12 +52,14 @@ interface SectionsRepository : JpaRepository<Section, Int> {
 
     //language=PostgresPLSQL
     @Query(value = """select (section_insert(
-                          cast_int(:#{#section.idUser}),
+                          cast_int(:#{#user.idUser}),
                           cast_int(:#{#section.number}),
                           cast_text(:#{#section.title})
                       )).*""",
             nativeQuery = true)
-    fun add(@Param("section") section: Section?): Section?
+    fun add(@Param("user") user: User?,
+            @Param("section") section: Section?
+    ): Section?
 
 
     /** ============================== SET / UPDATE ============================== */
