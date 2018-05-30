@@ -53,9 +53,6 @@ class SectionsRestController(
     @JsonView(View.UI::class)
     @GetMapping(value = ["get/my-one-ui"])
     fun getMyOneUI(
-            @RequestParam(
-                    value = "id_section",
-                    required = false) idSection: Int?,
             @AuthenticationPrincipal authUser: UserDetails,
             @RequestParam(
                     value = "number",
@@ -65,22 +62,18 @@ class SectionsRestController(
                     required = false) title: String?
     ) =
             sectionsRepository.get(
-                    idSection,
-                    usersRepository.get(
+                    user = usersRepository.get(
                             contactInfo = contactInfoRepository.get(
                                     email = authUser.username
                             )
                     ),
-                    number,
-                    title
+                    number = number,
+                    title = title
             )
 
     @JsonView(View.REST::class)
     @GetMapping(value = ["get/my-one-rest"])
     fun getMyOneRest(
-            @RequestParam(
-                    value = "id_section",
-                    required = false) idSection: Int?,
             @AuthenticationPrincipal authUser: UserDetails,
             @RequestParam(
                     value = "number",
@@ -90,22 +83,18 @@ class SectionsRestController(
                     required = false) title: String?
     ) =
             sectionsRepository.get(
-                    idSection,
-                    usersRepository.get(
+                    user = usersRepository.get(
                             contactInfo = contactInfoRepository.get(
                                     email = authUser.username
                             )
                     ),
-                    number,
-                    title
+                    number = number,
+                    title = title
             )
 
     @JsonView(View.TREE::class)
     @GetMapping(value = ["get/my-one-tree"])
     fun getMyOneTree(
-            @RequestParam(
-                    value = "id_section",
-                    required = false) idSection: Int?,
             @AuthenticationPrincipal authUser: UserDetails,
             @RequestParam(
                     value = "number",
@@ -115,14 +104,13 @@ class SectionsRestController(
                     required = false) title: String?
     ) =
             sectionsRepository.get(
-                    idSection,
-                    usersRepository.get(
+                    user = usersRepository.get(
                             contactInfo = contactInfoRepository.get(
                                     email = authUser.username
                             )
                     ),
-                    number,
-                    title
+                    number = number,
+                    title = title
             )
 
 
@@ -373,19 +361,7 @@ class SectionsRestController(
     fun getOneByTaskUI(
             @RequestParam(
                     value = "id_task",
-                    required = false) idTask: Int?,
-            @RequestParam(
-                    value = "id_section",
-                    required = false) idSection: Int?,
-            @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
-                    value = "number",
-                    required = false) number: Int?,
-            @RequestParam(
-                    value = "title",
-                    required = false) title: String?
+                    required = false) idTask: Int?
     ) =
             sectionsRepository.get(tasksRepository.get(idTask))
 
@@ -394,19 +370,7 @@ class SectionsRestController(
     fun getOneByTaskRest(
             @RequestParam(
                     value = "id_task",
-                    required = false) idTask: Int?,
-            @RequestParam(
-                    value = "id_section",
-                    required = false) idSection: Int?,
-            @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
-                    value = "number",
-                    required = false) number: Int?,
-            @RequestParam(
-                    value = "title",
-                    required = false) title: String?
+                    required = false) idTask: Int?
     ) =
             sectionsRepository.get(tasksRepository.get(idTask))
 
@@ -415,19 +379,7 @@ class SectionsRestController(
     fun getOneByTaskTree(
             @RequestParam(
                     value = "id_task",
-                    required = false) idTask: Int?,
-            @RequestParam(
-                    value = "id_section",
-                    required = false) idSection: Int?,
-            @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
-                    value = "number",
-                    required = false) number: Int?,
-            @RequestParam(
-                    value = "title",
-                    required = false) title: String?
+                    required = false) idTask: Int?
     ) =
             sectionsRepository.get(tasksRepository.get(idTask))
 

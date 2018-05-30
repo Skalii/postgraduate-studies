@@ -4,6 +4,8 @@ package skaliy.web.server.postgraduatestudies.controllers.api
 import com.fasterxml.jackson.annotation.JsonView
 
 import org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -42,6 +44,233 @@ class TasksRestController(
      * GET
      * records
      */
+
+
+    /** ============================== MY
+     *                                 ONE ============================== */
+
+
+    @JsonView(View.UI::class)
+    @GetMapping(value = ["get/my-one-ui"])
+    fun getMyOneUI(
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestParam(
+                    value = "section_number",
+                    required = false) sectionNumber: Int?,
+            @RequestParam(
+                    value = "section_title",
+                    required = false) sectionTitle: String?,
+            @RequestParam(
+                    value = "task_number",
+                    required = false) taskNumber: Int?,
+            @RequestParam(
+                    value = "task_title",
+                    required = false) taskTitle: String?
+    ) =
+            tasksRepository.get(
+                    section = sectionsRepository.get(
+                            user = usersRepository.get(
+                                    contactInfo = contactInfoRepository.get(
+                                            email = authUser.username
+                                    )
+                            ),
+                            number = sectionNumber,
+                            title = sectionTitle
+                    ),
+                    user = usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    ),
+                    number = taskNumber,
+                    title = taskTitle
+            )
+
+    @JsonView(View.REST::class)
+    @GetMapping(value = ["get/my-one-rest"])
+    fun getMyOneRest(
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestParam(
+                    value = "section_number",
+                    required = false) sectionNumber: Int?,
+            @RequestParam(
+                    value = "section_title",
+                    required = false) sectionTitle: String?,
+            @RequestParam(
+                    value = "task_number",
+                    required = false) taskNumber: Int?,
+            @RequestParam(
+                    value = "task_title",
+                    required = false) taskTitle: String?
+    ) =
+            tasksRepository.get(
+                    section = sectionsRepository.get(
+                            user = usersRepository.get(
+                                    contactInfo = contactInfoRepository.get(
+                                            email = authUser.username
+                                    )
+                            ),
+                            number = sectionNumber,
+                            title = sectionTitle
+                    ),
+                    user = usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    ),
+                    number = taskNumber,
+                    title = taskTitle
+            )
+
+    @JsonView(View.TREE::class)
+    @GetMapping(value = ["get/my-one-tree"])
+    fun getMyOneTree(
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestParam(
+                    value = "section_number",
+                    required = false) sectionNumber: Int?,
+            @RequestParam(
+                    value = "section_title",
+                    required = false) sectionTitle: String?,
+            @RequestParam(
+                    value = "task_number",
+                    required = false) taskNumber: Int?,
+            @RequestParam(
+                    value = "task_title",
+                    required = false) taskTitle: String?
+    ) =
+            tasksRepository.get(
+                    section = sectionsRepository.get(
+                            user = usersRepository.get(
+                                    contactInfo = contactInfoRepository.get(
+                                            email = authUser.username
+                                    )
+                            ),
+                            number = sectionNumber,
+                            title = sectionTitle
+                    ),
+                    user = usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    ),
+                    number = taskNumber,
+                    title = taskTitle
+            )
+
+
+    /** ============================== MY
+     *                                 ALL ============================== */
+
+
+    @JsonView(View.UI::class)
+    @GetMapping(value = ["get/my-all-ui"])
+    fun getMyAllUI(@AuthenticationPrincipal authUser: UserDetails) =
+            tasksRepository.getAll(
+                    user = usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    )
+            )
+
+    @JsonView(View.REST::class)
+    @GetMapping(value = ["get/my-all-rest"])
+    fun getMyAllRest(@AuthenticationPrincipal authUser: UserDetails) =
+            tasksRepository.getAll(
+                    user = usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    )
+            )
+
+    @JsonView(View.TREE::class)
+    @GetMapping(value = ["get/my-all-tree"])
+    fun getMyAllTree(@AuthenticationPrincipal authUser: UserDetails) =
+            tasksRepository.getAll(
+                    user = usersRepository.get(
+                            contactInfo = contactInfoRepository.get(
+                                    email = authUser.username
+                            )
+                    )
+            )
+
+
+    /** ============================== MY
+     *                                 ALL
+     *                                 BY
+     *                                 SECTION ============================== */
+
+
+    @JsonView(View.UI::class)
+    @GetMapping(value = ["get/my-all-by-section-ui"])
+    fun getMyAllBySectionUI(
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestParam(
+                    value = "section_number",
+                    required = false) sectionNumber: Int?,
+            @RequestParam(
+                    value = "section_title",
+                    required = false) sectionTitle: String?
+    ) =
+            tasksRepository.getAll(
+                    sectionsRepository.get(
+                            user = usersRepository.get(
+                                    contactInfo = contactInfoRepository.get(
+                                            email = authUser.username
+                                    )
+                            ),
+                            number = sectionNumber,
+                            title = sectionTitle
+                    )
+            )
+
+    @JsonView(View.REST::class)
+    @GetMapping(value = ["get/my-all-by-section-rest"])
+    fun getMyAllBySectionRest(
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestParam(
+                    value = "section_number",
+                    required = false) sectionNumber: Int?,
+            @RequestParam(
+                    value = "section_title",
+                    required = false) sectionTitle: String?
+    ) =
+            tasksRepository.getAll(
+                    sectionsRepository.get(
+                            user = usersRepository.get(
+                                    contactInfo = contactInfoRepository.get(
+                                            email = authUser.username
+                                    )
+                            ),
+                            number = sectionNumber,
+                            title = sectionTitle
+                    )
+            )
+
+    @JsonView(View.TREE::class)
+    @GetMapping(value = ["get/my-all-by-section-tree"])
+    fun getMyAllBySectionTree(
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestParam(
+                    value = "section_number",
+                    required = false) sectionNumber: Int?,
+            @RequestParam(
+                    value = "section_title",
+                    required = false) sectionTitle: String?
+    ) =
+            tasksRepository.getAll(
+                    sectionsRepository.get(
+                            user = usersRepository.get(
+                                    contactInfo = contactInfoRepository.get(
+                                            email = authUser.username
+                                    )
+                            ),
+                            number = sectionNumber,
+                            title = sectionTitle
+                    )
+            )
 
 
     /** ============================== ONE ============================== */
@@ -87,10 +316,10 @@ class TasksRestController(
                     value = "scopus_author_id",
                     required = false) scopusAuthorId: String?,
             @RequestParam(
-                    value = "number",
+                    value = "task_number",
                     required = false) number: Int?,
             @RequestParam(
-                    value = "title",
+                    value = "task_title",
                     required = false) title: String?
     ) =
             tasksRepository.get(
@@ -156,10 +385,10 @@ class TasksRestController(
                     value = "scopus_author_id",
                     required = false) scopusAuthorId: String?,
             @RequestParam(
-                    value = "number",
+                    value = "task_number",
                     required = false) number: Int?,
             @RequestParam(
-                    value = "title",
+                    value = "task_title",
                     required = false) title: String?
     ) =
             tasksRepository.get(
@@ -225,10 +454,10 @@ class TasksRestController(
                     value = "scopus_author_id",
                     required = false) scopusAuthorId: String?,
             @RequestParam(
-                    value = "number",
+                    value = "task_number",
                     required = false) number: Int?,
             @RequestParam(
-                    value = "title",
+                    value = "task_title",
                     required = false) title: String?
     ) =
             tasksRepository.get(
@@ -437,23 +666,83 @@ class TasksRestController(
      */
 
 
-    /** ============================== ONE ============================== */
+    /** ============================== MY ============================== */
 
 
     @JsonView(View.UI::class)
-    @PostMapping(value = ["post/add-ui"])
-    fun addUI(@RequestBody task: Task) =
-            tasksRepository.add(task)
+    @PostMapping(value = ["post/add-my-ui"])
+    fun addUI(
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestParam(
+                    value = "section_number",
+                    required = false) sectionNumber: Int?,
+            @RequestParam(
+                    value = "section_title",
+                    required = false) sectionTitle: String?,
+            @RequestBody task: Task
+    ) =
+            tasksRepository.add(
+                    sectionsRepository.get(
+                            user = usersRepository.get(
+                                    contactInfo = contactInfoRepository.get(
+                                            email = authUser.username
+                                    )
+                            ),
+                            number = sectionNumber,
+                            title = sectionTitle
+                    ),
+                    task
+            )
 
     @JsonView(View.REST::class)
-    @PostMapping(value = ["post/add-rest"])
-    fun addRest(@RequestBody task: Task) =
-            tasksRepository.add(task)
+    @PostMapping(value = ["post/add-my-rest"])
+    fun addRest(
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestParam(
+                    value = "section_number",
+                    required = false) sectionNumber: Int?,
+            @RequestParam(
+                    value = "section_title",
+                    required = false) sectionTitle: String?,
+            @RequestBody task: Task
+    ) =
+            tasksRepository.add(
+                    sectionsRepository.get(
+                            user = usersRepository.get(
+                                    contactInfo = contactInfoRepository.get(
+                                            email = authUser.username
+                                    )
+                            ),
+                            number = sectionNumber,
+                            title = sectionTitle
+                    ),
+                    task
+            )
 
     @JsonView(View.TREE::class)
-    @PostMapping(value = ["post/add-tree"])
-    fun addTree(@RequestBody task: Task) =
-            tasksRepository.add(task)
+    @PostMapping(value = ["post/add-my-tree"])
+    fun addTree(
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestParam(
+                    value = "section_number",
+                    required = false) sectionNumber: Int?,
+            @RequestParam(
+                    value = "section_title",
+                    required = false) sectionTitle: String?,
+            @RequestBody task: Task
+    ) =
+            tasksRepository.add(
+                    sectionsRepository.get(
+                            user = usersRepository.get(
+                                    contactInfo = contactInfoRepository.get(
+                                            email = authUser.username
+                                    )
+                            ),
+                            number = sectionNumber,
+                            title = sectionTitle
+                    ),
+                    task
+            )
 
 
     /**
@@ -461,6 +750,182 @@ class TasksRestController(
      * SET / UPDATE
      * records
      */
+
+
+    /** ============================== MY ============================== */
+
+
+    @JsonView(View.UI::class)
+    @PutMapping(value = ["put/set-my-ui"])
+    fun setMyUI(
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestBody newTask: Task?,
+            @RequestParam(
+                    value = "section_number",
+                    required = false) sectionNumber: Int?,
+            @RequestParam(
+                    value = "section_title",
+                    required = false) sectionTitle: String?,
+            @RequestParam(
+                    value = "task_number",
+                    required = false) taskNumber: Int?,
+            @RequestParam(
+                    value = "task_title",
+                    required = false) taskTitle: String?
+    ): Task? {
+        val task =
+                tasksRepository.set(
+                        newTask,
+                        section = sectionsRepository.get(
+                                user = usersRepository.get(
+                                        contactInfo = contactInfoRepository.get(
+                                                email = authUser.username
+                                        )
+                                ),
+                                number = sectionNumber,
+                                title = sectionTitle
+                        ),
+                        user = usersRepository.get(
+                                contactInfo = contactInfoRepository.get(
+                                        email = authUser.username
+                                )
+                        ),
+                        number = taskNumber,
+                        title = taskTitle
+                )
+        return tasksRepository.get(task?.idTask)
+    }
+
+    @JsonView(View.REST::class)
+    @PutMapping(value = ["put/set-my-rest"])
+    fun setMyRest(
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestBody newTask: Task?,
+            @RequestParam(
+                    value = "section_number",
+                    required = false) sectionNumber: Int?,
+            @RequestParam(
+                    value = "section_title",
+                    required = false) sectionTitle: String?,
+            @RequestParam(
+                    value = "task_number",
+                    required = false) taskNumber: Int?,
+            @RequestParam(
+                    value = "task_title",
+                    required = false) taskTitle: String?
+    ): Task? {
+        val task =
+                tasksRepository.set(
+                        newTask,
+                        section = sectionsRepository.get(
+                                user = usersRepository.get(
+                                        contactInfo = contactInfoRepository.get(
+                                                email = authUser.username
+                                        )
+                                ),
+                                number = sectionNumber,
+                                title = sectionTitle
+                        ),
+                        user = usersRepository.get(
+                                contactInfo = contactInfoRepository.get(
+                                        email = authUser.username
+                                )
+                        ),
+                        number = taskNumber,
+                        title = taskTitle
+                )
+        return tasksRepository.get(task?.idTask)
+    }
+
+    @JsonView(View.TREE::class)
+    @PutMapping(value = ["put/set-my-tree"])
+    fun setMyTree(
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestBody newTask: Task?,
+            @RequestParam(
+                    value = "section_number",
+                    required = false) sectionNumber: Int?,
+            @RequestParam(
+                    value = "section_title",
+                    required = false) sectionTitle: String?,
+            @RequestParam(
+                    value = "task_number",
+                    required = false) taskNumber: Int?,
+            @RequestParam(
+                    value = "task_title",
+                    required = false) taskTitle: String?
+    ): Task? {
+        val task =
+                tasksRepository.set(
+                        newTask,
+                        section = sectionsRepository.get(
+                                user = usersRepository.get(
+                                        contactInfo = contactInfoRepository.get(
+                                                email = authUser.username
+                                        )
+                                ),
+                                number = sectionNumber,
+                                title = sectionTitle
+                        ),
+                        user = usersRepository.get(
+                                contactInfo = contactInfoRepository.get(
+                                        email = authUser.username
+                                )
+                        ),
+                        number = taskNumber,
+                        title = taskTitle
+                )
+        return tasksRepository.get(task?.idTask)
+    }
+
+
+    /** ============================== MARK
+     *                                 INSTRUCTOR ============================== */
+
+//todo finish it later
+
+    @JsonView(View.UI::class)
+    @PutMapping(value = ["put/set-mark-instructor-ui"])
+    fun setMarkInstructorUI(
+//            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestParam(
+                    value = "new_mark",
+                    required = false) markDoneInstructor: Boolean?,
+            @RequestParam(
+                    value = "section_number",
+                    required = false) sectionNumber: Int?,
+            @RequestParam(
+                    value = "section_title",
+                    required = false) sectionTitle: String?,
+            @RequestParam(
+                    value = "task_number",
+                    required = false) taskNumber: Int?,
+            @RequestParam(
+                    value = "task_title",
+                    required = false) taskTitle: String?
+    ): Task? {
+        val task =
+                tasksRepository.setMarkInstructor(
+                        markDoneInstructor,
+                        section = sectionsRepository.get(
+                                /*user = usersRepository.get(
+                                        contactInfo = contactInfoRepository.get(
+                                                email = authUser.username
+                                        )
+                                ),*/
+                                number = sectionNumber,
+                                title = sectionTitle
+                        ),
+                        /*user = usersRepository.get(
+                                contactInfo = contactInfoRepository.get(
+                                        email = authUser.username
+                                )
+                        ),*/
+                        number = taskNumber,
+                        title = taskTitle
+                )
+        return tasksRepository.get(task?.idTask)
+    }
 
 
     /** ============================== ONE ============================== */
@@ -507,10 +972,10 @@ class TasksRestController(
                     value = "scopus_author_id",
                     required = false) scopusAuthorId: String?,
             @RequestParam(
-                    value = "number",
+                    value = "task_number",
                     required = false) number: Int?,
             @RequestParam(
-                    value = "title",
+                    value = "task_title",
                     required = false) title: String?
     ): Task? {
         val task =
@@ -694,6 +1159,103 @@ class TasksRestController(
      * DELETE
      * records
      */
+
+
+    /** ============================== MY ============================== */
+
+
+    @JsonView(View.UI::class)
+    @DeleteMapping(value = ["delete/my-ui"])
+    fun deleteMyUI(
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestParam(
+                    value = "section_number",
+                    required = false) sectionNumber: Int?,
+            @RequestParam(
+                    value = "section_title",
+                    required = false) sectionTitle: String?,
+            @RequestParam(
+                    value = "task_number",
+                    required = false) taskNumber: Int?,
+            @RequestParam(
+                    value = "task_title",
+                    required = false) taskTitle: String?
+    ) =
+            tasksRepository.delete(
+                    section = sectionsRepository.get(
+                            user = usersRepository.get(
+                                    contactInfo = contactInfoRepository.get(
+                                            email = authUser.username
+                                    )
+                            ),
+                            number = sectionNumber,
+                            title = sectionTitle
+                    ),
+                    number = taskNumber,
+                    title = taskTitle
+            )
+
+    @JsonView(View.REST::class)
+    @DeleteMapping(value = ["delete/my-rest"])
+    fun deleteMyRest(
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestParam(
+                    value = "section_number",
+                    required = false) sectionNumber: Int?,
+            @RequestParam(
+                    value = "section_title",
+                    required = false) sectionTitle: String?,
+            @RequestParam(
+                    value = "task_number",
+                    required = false) taskNumber: Int?,
+            @RequestParam(
+                    value = "task_title",
+                    required = false) taskTitle: String?
+    ) =
+            tasksRepository.delete(
+                    section = sectionsRepository.get(
+                            user = usersRepository.get(
+                                    contactInfo = contactInfoRepository.get(
+                                            email = authUser.username
+                                    )
+                            ),
+                            number = sectionNumber,
+                            title = sectionTitle
+                    ),
+                    number = taskNumber,
+                    title = taskTitle
+            )
+
+    @JsonView(View.TREE::class)
+    @DeleteMapping(value = ["delete/my-tree"])
+    fun deleteMyTree(
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestParam(
+                    value = "section_number",
+                    required = false) sectionNumber: Int?,
+            @RequestParam(
+                    value = "section_title",
+                    required = false) sectionTitle: String?,
+            @RequestParam(
+                    value = "task_number",
+                    required = false) taskNumber: Int?,
+            @RequestParam(
+                    value = "task_title",
+                    required = false) taskTitle: String?
+    ) =
+            tasksRepository.delete(
+                    section = sectionsRepository.get(
+                            user = usersRepository.get(
+                                    contactInfo = contactInfoRepository.get(
+                                            email = authUser.username
+                                    )
+                            ),
+                            number = sectionNumber,
+                            title = sectionTitle
+                    ),
+                    number = taskNumber,
+                    title = taskTitle
+            )
 
 
     /** ============================== ONE ============================== */

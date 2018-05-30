@@ -23,16 +23,18 @@ interface TasksRepository : JpaRepository<Task, Int> {
                           cast_int(:id_task),
                           cast_int(:#{#section.idSection}),
                           cast_int(:#{#user.idUser}),
-                          cast_int(:number),
-                          cast_text(:title)
+                          cast_int(:task_number),
+                          cast_text(:task_title),
+                          cast_int(:#{#section.number}),
+                          cast_int(:#{#section.title})
                       )).*""",
             nativeQuery = true)
     fun get(
             @Param("id_task") idTask: Int? = null,
             @Param("section") section: Section? = Section(),
             @Param("user") user: User? = User(),
-            @Param("number") number: Int? = null,
-            @Param("title") title: String? = null
+            @Param("task_number") number: Int? = null,
+            @Param("task_title") title: String? = null
     ): Task?
 
     //language=PostgresPLSQL
@@ -53,7 +55,7 @@ interface TasksRepository : JpaRepository<Task, Int> {
 
     //language=PostgresPLSQL
     @Query(value = """select (task_insert(
-                          cast_int(:#{#task.section.idSection}),
+                          cast_int(:#{#section.idSection}),
                           cast_int(:#{#task.number}),
                           cast_text(:#{#task.title}),
                           cast_ts(:#{#task.balkline} :: timestamp),
@@ -61,7 +63,10 @@ interface TasksRepository : JpaRepository<Task, Int> {
                           cast_text(:#{#task.link})
                       )).*""",
             nativeQuery = true)
-    fun add(@Param("task") task: Task?): Task?
+    fun add(
+            @Param("section") section: Section?,
+            @Param("task") task: Task?
+    ): Task?
 
 
     /** ============================== SET / UPDATE ============================== */
@@ -73,25 +78,44 @@ interface TasksRepository : JpaRepository<Task, Int> {
                           cast_text(:#{#task.title}),
                           cast_ts(:#{#task.balkline} :: timestamp),
                           cast_ts(:#{#task.deadline} :: timestamp),
-                          cast_bool(:#{#task.markDoneUser} :: timestamp),
-                          cast_bool(:#{#task.markDoneInstructor} :: timestamp),
+                          cast_bool(:#{#task.markDoneUser}),
+                          cast_bool(:#{#task.markDoneInstructor}),
                           cast_text(:#{#task.link}),
-                          cast_ts(:#{#task.timestampDoneUser} :: timestamp),
-                          cast_ts(:#{#task.timestampDoneInstructor} :: timestamp),
                           cast_int(:id_task),
                           cast_int(:#{#section.idSection}),
                           cast_int(:#{#user.idUser}),
-                          cast_int(:number),
-                          cast_text(:title)
-                      )).*""",
+                          cast_int(:task_number),
+                          cast_text(:task_title),
+                          cast_int(:#{#section.number}),
+                          cast_int(:#{#section.title})
+)).*""",
             nativeQuery = true)
     fun set(
             @Param("task") newTask: Task?,
             @Param("id_task") idTask: Int? = null,
             @Param("section") section: Section? = Section(),
             @Param("user") user: User? = User(),
-            @Param("number") number: Int? = null,
-            @Param("title") title: String? = null
+            @Param("task_number") number: Int? = null,
+            @Param("task_title") title: String? = null
+    ): Task?
+
+    //language=PostgresPLSQL
+    @Query(value = """select (task_update(
+                          new_mark_done_instructor => cast_bool(:mark_done_instructor),
+                          _id_section => cast_int(:#{#section.idSection}),
+                          _id_user => cast_int(:#{#user.idUser}),
+                          task_number => cast_int(:task_number),
+                          task_title => cast_text(:task_title),
+                          section_number => cast_int(:#{#section.number}),
+                          section_title => cast_int(:#{#section.title})
+)).*""",
+            nativeQuery = true)
+    fun setMarkInstructor(
+            @Param("mark_done_instructor") markDoneInstructor: Boolean?,
+            @Param("section") section: Section? = Section(),
+            @Param("user") user: User? = User(),
+            @Param("task_number") number: Int? = null,
+            @Param("task_title") title: String? = null
     ): Task?
 
 

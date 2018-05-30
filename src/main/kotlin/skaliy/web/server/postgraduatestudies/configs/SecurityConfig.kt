@@ -67,13 +67,16 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 ).authenticated()*/
 
                 .antMatchers(
-                        "/api/sections/get/my-one**",
-                        "/api/sections/get/my-all**",
+                        "/api/sections/get/my**",
                         "/api/sections/post/add-my**",
                         "/api/sections/put/set-my**",
                         "/api/sections/delete/my**",
                         "/api/study-info/get/my**",
                         "/api/study-info/put/set-my**",
+                        "/api/tasks/get/my**",
+                        "/api/tasks/post/add-my**",
+                        "/api/tasks/put/set-my**",
+                        "/api/tasks/delete/my**",
                         "/api/users/get/my-instructor**"
                 ).hasAnyRole(
                         UserRole.GRADUATE_STUDENT.value,
@@ -81,7 +84,8 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 )
 
                 .antMatchers(
-                        "/api/users/get/my-students**"
+                        "/api/users/get/my-students**",
+                        "/api/tasks/put/set-mark-instructor**"
                 ).hasRole(
                         UserRole.INSTRUCTOR.value
                 )
