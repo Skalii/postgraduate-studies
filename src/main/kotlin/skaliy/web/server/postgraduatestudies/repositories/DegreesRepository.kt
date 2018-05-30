@@ -31,7 +31,7 @@ interface DegreesRepository : JpaRepository<Degree, Int> {
     ): Degree?
 
     //language=PostgresPLSQL
-    @Query(value = "select (degree_record(:#{#user.idDegree})).*",
+    @Query(value = "select (degree_record(:#{#user.degree.idDegree})).*",
             nativeQuery = true)
     fun get(@Param("user") user: User? = User()): Degree?
 

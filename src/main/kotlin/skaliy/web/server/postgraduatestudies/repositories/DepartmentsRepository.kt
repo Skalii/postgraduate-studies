@@ -55,8 +55,8 @@ interface DepartmentsRepository : JpaRepository<Department, Int> {
     //language=PostgresPLSQL
     @Query(value = """select (department_insert(
                           cast_text(:#{#department.name}),
-                          cast_int(:#{#department.idInstitute}),
-                          cast_int(:#{#department.idFaculty})
+                          cast_int(:#{#department.institute.idInstitute}),
+                          cast_int(:#{#department.faculty.idFaculty})
                       )).*""",
             nativeQuery = true)
     fun add(@Param("department") department: Department?): Department?
@@ -68,8 +68,8 @@ interface DepartmentsRepository : JpaRepository<Department, Int> {
     //language=PostgresPLSQL
     @Query(value = """select (department_update(
                           cast_text(:#{#department.name}),
-                          cast_int(:#{#department.idInstitute}),
-                          cast_int(:#{#department.idFaculty}),
+                          cast_int(:#{#department.institute.idInstitute}),
+                          cast_int(:#{#department.faculty.idFaculty}),
                           cast_int(:id_department),
                           cast_text(:name)
                       )).*""",

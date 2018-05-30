@@ -31,17 +31,17 @@ interface InstitutesRepository : JpaRepository<Institute, Int> {
     ): Institute?
 
     //language=PostgresPLSQL
-    @Query(value = "select (institute_record(cast_int(:#{#faculty.department.idInstitute}))).*",
+    @Query(value = "select (institute_record(cast_int(:#{#faculty.department.institute.idInstitute}))).*",
             nativeQuery = true)
     fun get(@Param("faculty") faculty: Faculty? = Faculty()): Institute?
 
     //language=PostgresPLSQL
-    @Query(value = "select (institute_record(cast_int(:#{#department.idInstitute}))).*",
+    @Query(value = "select (institute_record(cast_int(:#{#department.institute.idInstitute}))).*",
             nativeQuery = true)
     fun get(@Param("department") department: Department? = Department()): Institute?
 
     //language=PostgresPLSQL
-    @Query(value = "select (institute_record(cast_int(:#{#user.department.idInstitute}))).*",
+    @Query(value = "select (institute_record(cast_int(:#{#user.department.institute.idInstitute}))).*",
             nativeQuery = true)
     fun get(@Param("user") user: User? = User()): Institute?
 

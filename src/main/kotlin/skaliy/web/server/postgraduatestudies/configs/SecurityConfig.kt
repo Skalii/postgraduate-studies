@@ -44,7 +44,8 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                         "/api/study-info/get/one**",
                         "/api/study-info/get/all**",
                         "/api/users/get/one**",
-                        "/api/users/get/all**"
+                        "/api/users/get/all**",
+                        "/api/users/post/add**"
                 ).hasRole(
                         UserRole.ADMIN.value
                 )
@@ -93,7 +94,8 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
 //                .antMatchers("/api/**").authenticated()
                 .anyRequest().authenticated()
                 .and()
-                .formLogin()
+                .httpBasic()
+//                .formLogin()
 //                .loginPage("pages/login/index").permitAll()
 //                .usernameParameter("username")
 //                .passwordParameter("password")
@@ -122,6 +124,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
         usersRepository.getAll(true)?.forEach { user ->
             println()
             println("ID: ${user.idUser}")
+            println("Name: ${user.fullNameUa}")
             println("Email: ${user.contactInfo.email}")
             println("Password: ${usersRepository.getPassword(user.idUser)}")
             println("Salt: ${user.salt}")

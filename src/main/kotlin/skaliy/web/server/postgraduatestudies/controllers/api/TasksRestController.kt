@@ -761,6 +761,9 @@ class TasksRestController(
             @AuthenticationPrincipal authUser: UserDetails,
             @RequestBody newTask: Task?,
             @RequestParam(
+                    value = "id_task",
+                    required = false) idTask: Int?,
+            @RequestParam(
                     value = "section_number",
                     required = false) sectionNumber: Int?,
             @RequestParam(
@@ -776,7 +779,8 @@ class TasksRestController(
         val task =
                 tasksRepository.set(
                         newTask,
-                        section = sectionsRepository.get(
+                        idTask,
+                        sectionsRepository.get(
                                 user = usersRepository.get(
                                         contactInfo = contactInfoRepository.get(
                                                 email = authUser.username
@@ -785,13 +789,13 @@ class TasksRestController(
                                 number = sectionNumber,
                                 title = sectionTitle
                         ),
-                        user = usersRepository.get(
+                        usersRepository.get(
                                 contactInfo = contactInfoRepository.get(
                                         email = authUser.username
                                 )
                         ),
-                        number = taskNumber,
-                        title = taskTitle
+                        taskNumber,
+                        taskTitle
                 )
         return tasksRepository.get(task?.idTask)
     }
@@ -802,6 +806,9 @@ class TasksRestController(
             @AuthenticationPrincipal authUser: UserDetails,
             @RequestBody newTask: Task?,
             @RequestParam(
+                    value = "id_task",
+                    required = false) idTask: Int?,
+            @RequestParam(
                     value = "section_number",
                     required = false) sectionNumber: Int?,
             @RequestParam(
@@ -817,7 +824,8 @@ class TasksRestController(
         val task =
                 tasksRepository.set(
                         newTask,
-                        section = sectionsRepository.get(
+                        idTask,
+                        sectionsRepository.get(
                                 user = usersRepository.get(
                                         contactInfo = contactInfoRepository.get(
                                                 email = authUser.username
@@ -826,13 +834,13 @@ class TasksRestController(
                                 number = sectionNumber,
                                 title = sectionTitle
                         ),
-                        user = usersRepository.get(
+                        usersRepository.get(
                                 contactInfo = contactInfoRepository.get(
                                         email = authUser.username
                                 )
                         ),
-                        number = taskNumber,
-                        title = taskTitle
+                        taskNumber,
+                        taskTitle
                 )
         return tasksRepository.get(task?.idTask)
     }
@@ -843,6 +851,9 @@ class TasksRestController(
             @AuthenticationPrincipal authUser: UserDetails,
             @RequestBody newTask: Task?,
             @RequestParam(
+                    value = "id_task",
+                    required = false) idTask: Int?,
+            @RequestParam(
                     value = "section_number",
                     required = false) sectionNumber: Int?,
             @RequestParam(
@@ -858,7 +869,8 @@ class TasksRestController(
         val task =
                 tasksRepository.set(
                         newTask,
-                        section = sectionsRepository.get(
+                        idTask,
+                        sectionsRepository.get(
                                 user = usersRepository.get(
                                         contactInfo = contactInfoRepository.get(
                                                 email = authUser.username
@@ -867,13 +879,13 @@ class TasksRestController(
                                 number = sectionNumber,
                                 title = sectionTitle
                         ),
-                        user = usersRepository.get(
+                        usersRepository.get(
                                 contactInfo = contactInfoRepository.get(
                                         email = authUser.username
                                 )
                         ),
-                        number = taskNumber,
-                        title = taskTitle
+                        taskNumber,
+                        taskTitle
                 )
         return tasksRepository.get(task?.idTask)
     }

@@ -52,7 +52,7 @@ interface SpecialitiesRepository : JpaRepository<Speciality, Int> {
 
     //language=PostgresPLSQL
     @Query(value = """select (speciality_insert(
-                          cast_int(:#{#speciality.idBranch}),
+                          cast_int(:#{#speciality.branch.idBranch}),
                           cast_text(:#{#speciality.number}),
                           cast_text(:#{#speciality.name})
                       )).*""",
@@ -65,7 +65,7 @@ interface SpecialitiesRepository : JpaRepository<Speciality, Int> {
 
     //language=PostgresPLSQL
     @Query(value = """select (speciality_update(
-                          cast_int(:#{#specialitwy.idBranch}),
+                          cast_int(:#{#specialitwy.branch.idBranch}),
                           cast_text(:#{#speciality.number}),
                           cast_text(:#{#speciality.name}),
                           cast_int(:id_speciality),

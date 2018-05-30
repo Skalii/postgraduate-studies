@@ -31,12 +31,12 @@ interface FacultiesRepository : JpaRepository<Faculty, Int> {
     ): Faculty?
 
     //language=PostgresPLSQL
-    @Query(value = "select (faculty_record(cast_int(:#{#department.idFaculty}))).*",
+    @Query(value = "select (faculty_record(cast_int(:#{#department.faculty.idFaculty}))).*",
             nativeQuery = true)
     fun get(@Param("department") department: Department? = Department()): Faculty?
 
     //language=PostgresPLSQL
-    @Query(value = "select (faculty_record(cast_int(:#{#user.department.idFaculty}))).*",
+    @Query(value = "select (faculty_record(cast_int(:#{#user.department.faculty.idFaculty}))).*",
             nativeQuery = true)
     fun get(@Param("user") user: User? = User()): Faculty?
 
