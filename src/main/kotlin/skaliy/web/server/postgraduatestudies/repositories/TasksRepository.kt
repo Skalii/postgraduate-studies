@@ -26,7 +26,7 @@ interface TasksRepository : JpaRepository<Task, Int> {
                           cast_int(:task_number),
                           cast_text(:task_title),
                           cast_int(:#{#section.number}),
-                          cast_int(:#{#section.title})
+                          cast_text(:#{#section.title})
                       )).*""",
             nativeQuery = true)
     fun get(
@@ -87,8 +87,8 @@ interface TasksRepository : JpaRepository<Task, Int> {
                           cast_int(:task_number),
                           cast_text(:task_title),
                           cast_int(:#{#section.number}),
-                          cast_int(:#{#section.title})
-)).*""",
+                          cast_text(:#{#section.title})
+                      )).*""",
             nativeQuery = true)
     fun set(
             @Param("task") newTask: Task?,
@@ -101,22 +101,11 @@ interface TasksRepository : JpaRepository<Task, Int> {
 
     //language=PostgresPLSQL
     @Query(value = """select (task_update(
-                          new_mark_done_instructor => cast_bool(:mark_done_instructor),
-                          _id_section => cast_int(:#{#section.idSection}),
-                          _id_user => cast_int(:#{#user.idUser}),
-                          task_number => cast_int(:task_number),
-                          task_title => cast_text(:task_title),
-                          section_number => cast_int(:#{#section.number}),
-                          section_title => cast_int(:#{#section.title})
-)).*""",
+                          new_mark_done_instructor => cast_bool(:#{#task.mark_done_instructor}),
+                          _id_task => cast_int(:#{#task.id_task})
+                      )).*""",
             nativeQuery = true)
-    fun setMarkInstructor(
-            @Param("mark_done_instructor") markDoneInstructor: Boolean?,
-            @Param("section") section: Section? = Section(),
-            @Param("user") user: User? = User(),
-            @Param("task_number") number: Int? = null,
-            @Param("task_title") title: String? = null
-    ): Task?
+    fun setMarkInstructor(@Param("task") task: Task?): Task?
 
 
     /** ============================== DELETE ============================== */

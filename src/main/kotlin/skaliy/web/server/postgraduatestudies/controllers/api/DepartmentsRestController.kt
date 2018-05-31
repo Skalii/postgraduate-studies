@@ -489,7 +489,7 @@ class DepartmentsRestController(
 
 
     @JsonView(View.UI::class)
-    @PutMapping(value = ["put/set-ui"])
+    @PutMapping(value = ["put/set-one-ui"])
     fun setUI(
             @RequestBody newDepartment: Department?,
             @RequestParam(
@@ -509,7 +509,7 @@ class DepartmentsRestController(
     }
 
     @JsonView(View.REST::class)
-    @PutMapping(value = ["put/set-rest"])
+    @PutMapping(value = ["put/set-one-rest"])
     fun setRest(
             @RequestBody newDepartment: Department?,
             @RequestParam(
@@ -529,7 +529,7 @@ class DepartmentsRestController(
     }
 
     @JsonView(View.TREE::class)
-    @PutMapping(value = ["put/set-tree"])
+    @PutMapping(value = ["put/set-one-tree"])
     fun setTree(
             @RequestBody newDepartment: Department?,
             @RequestParam(

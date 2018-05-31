@@ -692,7 +692,7 @@ class SectionsRestController(
 
 
     @JsonView(View.UI::class)
-    @PutMapping(value = ["put/set-ui"])
+    @PutMapping(value = ["put/set-one-ui"])
     fun setUI(
             @RequestBody newSection: Section?,
             @RequestParam(
@@ -762,7 +762,7 @@ class SectionsRestController(
     }
 
     @JsonView(View.REST::class)
-    @PutMapping(value = ["put/set-rest"])
+    @PutMapping(value = ["put/set-one-rest"])
     fun setRest(
             @RequestBody newSection: Section?,
             @RequestParam(
@@ -832,7 +832,7 @@ class SectionsRestController(
     }
 
     @JsonView(View.TREE::class)
-    @PutMapping(value = ["put/set-tree"])
+    @PutMapping(value = ["put/set-one-tree"])
     fun setTree(
             @RequestBody newSection: Section?,
             @RequestParam(
@@ -908,7 +908,7 @@ class SectionsRestController(
 
 
     @JsonView(View.UI::class)
-    @GetMapping(value = ["put/set-by-task-ui"])
+    @GetMapping(value = ["put/set-one-by-task-ui"])
     fun setByTaskUI(
             @RequestBody newSection: Section?,
             @RequestParam(
@@ -936,7 +936,7 @@ class SectionsRestController(
     }
 
     @JsonView(View.REST::class)
-    @GetMapping(value = ["put/set-by-task-rest"])
+    @GetMapping(value = ["put/set-one-by-task-rest"])
     fun setByTaskRest(
             @RequestBody newSection: Section?,
             @RequestParam(
@@ -964,7 +964,7 @@ class SectionsRestController(
     }
 
     @JsonView(View.TREE::class)
-    @GetMapping(value = ["put/set-by-task-tree"])
+    @GetMapping(value = ["put/set-one-by-task-tree"])
     fun setByTaskTree(
             @RequestBody newSection: Section?,
             @RequestParam(

@@ -34,39 +34,58 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity?) {
         http!!
                 .authorizeRequests()
-//                .antMatchers("/").authenticated()
-
                 .antMatchers(
+                        "/api/branches/post/**",
+                        "/api/branches/put/**",
+                        "/api/branches/delete/**",
                         "/api/contact-info/get/one**",
                         "/api/contact-info/get/all**",
+                        "/api/contact-info/post/**",
+                        "/api/contact-info/put/set-one**",
+                        "/api/contact-info/delete/**",
+                        "/api/degrees/post/**",
+                        "/api/degrees/put/set-one**",
+                        "/api/degrees/delete/**",
+                        "/api/departments/post/**",
+                        "/api/departments/put/set-one**",
+                        "/api/departments/delete/**",
+                        "/api/faculties/post/**",
+                        "/api/faculties/put/**",
+                        "/api/faculties/delete/**",
+                        "/api/institutes/post/**",
+                        "/api/institutes/put/**",
+                        "/api/institutes/delete/**",
                         "/api/scientific-links/get/one**",
                         "/api/scientific-links/get/all**",
+                        "/api/scientific-links/post/**",
+                        "/api/scientific-links/set/one**",
+                        "/api/scientific-links/delete/**",
+                        "/api/sections/get/one**",
+                        "/api/sections/get/all**",
+                        "/api/sections/put/set-one**",
+                        "/api/sections/delete/one**",
+                        "/api/sections/delete/all**",
+                        "/api/specialities/post/**",
+                        "/api/specialities/put/**",
+                        "/api/specialities/delete/**",
                         "/api/study-info/get/one**",
                         "/api/study-info/get/all**",
+                        "/api/study-info/post/**",
+                        "/api/study-info/put/set-one**",
+                        "/api/study-info/delete/**",
+                        "/api/tasks/get/one**",
+                        "/api/tasks/get/all**",
+                        "/api/tasks/set/one**",
+                        "/api/tasks/delete/one**",
+                        "/api/tasks/delete/all**",
                         "/api/users/get/one**",
                         "/api/users/get/all**",
-                        "/api/users/post/add**"
+                        "/api/users/post/**",
+                        "/api/users/put/set-one**",
+                        "/api/users/delete/**"
                 ).hasRole(
                         UserRole.ADMIN.value
                 )
-
-                /*.antMatchers(
-                        "/api/branches/get/my**",
-                        "/api/contact-info/get/my**",
-                        "/api/contact-info/put/set-my**",
-                        "/api/degrees/get/my**",
-                        "/api/degrees/put/set-my**",
-                        "/api/departments/get/my**",
-                        "/api/departments/put/set-my**",
-                        "/api/faculties/get/my**",
-                        "/api/institutes/get/my**",
-                        "/api/scientific-links/get/my**",
-                        "/api/scientific-links/put/set-my**",
-                        "/api/specialities/get/my**",
-                        "/api/users/get/me**",
-                        "/api/users/put/set-me**"
-                ).authenticated()*/
-
                 .antMatchers(
                         "/api/sections/get/my**",
                         "/api/sections/post/add-my**",
@@ -90,8 +109,6 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 ).hasRole(
                         UserRole.INSTRUCTOR.value
                 )
-
-//                .antMatchers("/api/**").authenticated()
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic()

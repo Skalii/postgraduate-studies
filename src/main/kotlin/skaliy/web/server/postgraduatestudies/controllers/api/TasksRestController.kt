@@ -891,52 +891,62 @@ class TasksRestController(
     }
 
 
+    //todo forbidden
     /** ============================== MARK
      *                                 INSTRUCTOR ============================== */
-
-//todo finish it later
 
     @JsonView(View.UI::class)
     @PutMapping(value = ["put/set-mark-instructor-ui"])
     fun setMarkInstructorUI(
-//            @AuthenticationPrincipal authUser: UserDetails,
-            @RequestParam(
-                    value = "new_mark",
-                    required = false) markDoneInstructor: Boolean?,
-            @RequestParam(
-                    value = "section_number",
-                    required = false) sectionNumber: Int?,
-            @RequestParam(
-                    value = "section_title",
-                    required = false) sectionTitle: String?,
-            @RequestParam(
-                    value = "task_number",
-                    required = false) taskNumber: Int?,
-            @RequestParam(
-                    value = "task_title",
-                    required = false) taskTitle: String?
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestBody task: Task
     ): Task? {
-        val task =
-                tasksRepository.setMarkInstructor(
-                        markDoneInstructor,
-                        section = sectionsRepository.get(
-                                /*user = usersRepository.get(
-                                        contactInfo = contactInfoRepository.get(
-                                                email = authUser.username
-                                        )
-                                ),*/
-                                number = sectionNumber,
-                                title = sectionTitle
-                        ),
-                        /*user = usersRepository.get(
-                                contactInfo = contactInfoRepository.get(
-                                        email = authUser.username
-                                )
-                        ),*/
-                        number = taskNumber,
-                        title = taskTitle
-                )
-        return tasksRepository.get(task?.idTask)
+
+        if (task.section.user.studyInfo?.instructor?.contactInfo?.email == authUser.username) {
+
+            val newTask =
+                    tasksRepository.setMarkInstructor(task)
+
+            return tasksRepository.get(newTask?.idTask)
+        }
+
+        return Task()
+    }
+
+    @JsonView(View.REST::class)
+    @PutMapping(value = ["put/set-mark-instructor-rest"])
+    fun setMarkInstructorRest(
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestBody task: Task
+    ): Task? {
+
+        if (task.section.user.studyInfo?.instructor?.contactInfo?.email == authUser.username) {
+
+            val newTask =
+                    tasksRepository.setMarkInstructor(task)
+
+            return tasksRepository.get(newTask?.idTask)
+        }
+
+        return Task()
+    }
+
+    @JsonView(View.TREE::class)
+    @PutMapping(value = ["put/set-mark-instructor-tree"])
+    fun setMarkInstructorTree(
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestBody task: Task
+    ): Task? {
+
+        if (task.section.user.studyInfo?.instructor?.contactInfo?.email == authUser.username) {
+
+            val newTask =
+                    tasksRepository.setMarkInstructor(task)
+
+            return tasksRepository.get(newTask?.idTask)
+        }
+
+        return Task()
     }
 
 
@@ -944,7 +954,7 @@ class TasksRestController(
 
 
     @JsonView(View.UI::class)
-    @PutMapping(value = ["put/set-ui"])
+    @PutMapping(value = ["put/set-one-ui"])
     fun setUI(
             @RequestBody newTask: Task?,
             @RequestParam(
@@ -1018,7 +1028,7 @@ class TasksRestController(
     }
 
     @JsonView(View.REST::class)
-    @PutMapping(value = ["put/set-rest"])
+    @PutMapping(value = ["put/set-one-rest"])
     fun setRest(
             @RequestBody newTask: Task?,
             @RequestParam(
@@ -1092,7 +1102,7 @@ class TasksRestController(
     }
 
     @JsonView(View.TREE::class)
-    @PutMapping(value = ["put/set-tree"])
+    @PutMapping(value = ["put/set-one-tree"])
     fun setTree(
             @RequestBody newTask: Task?,
             @RequestParam(

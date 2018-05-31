@@ -670,7 +670,7 @@ class UsersRestController(
 
 
     @JsonView(View.UI::class)
-    @PutMapping(value = ["put/set-ui"])
+    @PutMapping(value = ["put/set-one-ui"])
     fun updateUI(
             @RequestBody newUser: User?,
             @RequestParam(
@@ -726,7 +726,7 @@ class UsersRestController(
     }
 
     @JsonView(View.REST::class)
-    @PutMapping(value = ["put/set-rest"])
+    @PutMapping(value = ["put/set-one-rest"])
     fun updateRest(
             @RequestBody newUser: User?,
             @RequestParam(
@@ -782,7 +782,7 @@ class UsersRestController(
     }
 
     @JsonView(View.TREE::class)
-    @PutMapping(value = ["put/set-tree"])
+    @PutMapping(value = ["put/set-one-tree"])
     fun updateTree(
             @RequestBody newUser: User?,
             @RequestParam(
