@@ -1,4 +1,4 @@
-package skaliy.web.server.postgraduatestudies.configs.security
+package skaliy.web.server.postgraduatestudies.security
 
 
 import org.springframework.security.web.csrf.CsrfToken
@@ -24,15 +24,17 @@ class CsrfHeaderFilter : OncePerRequestFilter() {
     ) {
         val csrf = request.getAttribute(CsrfToken::class.java
                 .name) as CsrfToken
-        if (csrf != null) {
-            var cookie: Cookie? = WebUtils.getCookie(request, "XSRF-TOKEN")
-            val token = csrf.token
-            if (cookie == null || token != null && token != cookie.value) {
-                cookie = Cookie("XSRF-TOKEN", token)
-                cookie.path = "/"
-                response.addCookie(cookie)
-            }
-        }
+
+        var cookie: Cookie? = WebUtils.getCookie(request, "XSRF-TOKEN")
+
+        val token = csrf.token
+
+//        if (cookie == null || token != null && token != cookie.value) {
+            cookie = Cookie("XSRF-TOKEN", token)
+            cookie.path = "/"
+            response.addCookie(cookie)
+//        }
+
         filterChain.doFilter(request, response)
     }
 

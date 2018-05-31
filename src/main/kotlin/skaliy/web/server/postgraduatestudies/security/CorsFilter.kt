@@ -1,4 +1,4 @@
-package skaliy.web.server.postgraduatestudies.configs.security
+package skaliy.web.server.postgraduatestudies.security
 
 
 import org.springframework.core.Ordered

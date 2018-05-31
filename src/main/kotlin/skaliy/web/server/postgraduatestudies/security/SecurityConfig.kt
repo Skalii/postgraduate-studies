@@ -1,4 +1,4 @@
-package skaliy.web.server.postgraduatestudies.configs
+package skaliy.web.server.postgraduatestudies.security
 
 
 import org.springframework.context.annotation.Configuration
@@ -15,7 +15,6 @@ import org.springframework.security.web.csrf.CsrfFilter
 import org.springframework.security.web.csrf.CsrfTokenRepository
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository
 
-import skaliy.web.server.postgraduatestudies.configs.security.CsrfHeaderFilter
 import skaliy.web.server.postgraduatestudies.entities.enums.UserRole
 import skaliy.web.server.postgraduatestudies.repositories.UsersRepository
 
@@ -58,7 +57,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                         "/api/scientific-links/get/one**",
                         "/api/scientific-links/get/all**",
                         "/api/scientific-links/post/**",
-                        "/api/scientific-links/set/one**",
+                        "/api/scientific-links/put/set-one**",
                         "/api/scientific-links/delete/**",
                         "/api/sections/get/one**",
                         "/api/sections/get/all**",
@@ -75,7 +74,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                         "/api/study-info/delete/**",
                         "/api/tasks/get/one**",
                         "/api/tasks/get/all**",
-                        "/api/tasks/set/one**",
+                        "/api/tasks/put/set-one**",
                         "/api/tasks/delete/one**",
                         "/api/tasks/delete/all**",
                         "/api/users/get/one**",
@@ -112,13 +111,8 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic()
-//                .formLogin()
-//                .loginPage("pages/login/index").permitAll()
-//                .usernameParameter("username")
-//                .passwordParameter("password")
-//                .failureForwardUrl("pages/error/index")
-//                .and()
-//                .logout().permitAll()
+                .and()
+                .logout().permitAll()
                 .and()
                 .addFilterAfter(CsrfHeaderFilter(), CsrfFilter::class.java)
                 .csrf().csrfTokenRepository(csrfTokenRepository())
@@ -139,15 +133,6 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     @Throws(Exception::class)
     fun configureGlobal(auth: AuthenticationManagerBuilder) {
         usersRepository.getAll(true)?.forEach { user ->
-            println()
-            println("ID: ${user.idUser}")
-            println("Name: ${user.fullNameUa}")
-            println("Email: ${user.contactInfo.email}")
-            println("Password: ${usersRepository.getPassword(user.idUser)}")
-            println("Salt: ${user.salt}")
-            println("Hash: ${user.hash}")
-            println("Role: ${user.role.name} - ${user.role.value}")
-            println()
             auth
                     .inMemoryAuthentication()
                     .withUser(user.contactInfo.email)

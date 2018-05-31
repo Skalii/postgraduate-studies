@@ -1,5 +1,5 @@
 # postgraduate-studies
-<h2><b>REST API</b></h2>
+<h2><b>RESTful API</b></h2>
 <h4>Used technologies:</h5>
 <ul>
 <li>Kotlin
@@ -7,7 +7,6 @@
 <li>Spring Boot DevTools
 <li>Spring Data JPA
 <li>Spring Security
-<li><s>Spring Web MWC</s>
 <li>Apache Tomcat
 </ul>
 <h4>API calls:</h4>
