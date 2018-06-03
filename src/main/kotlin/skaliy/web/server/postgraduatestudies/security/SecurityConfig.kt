@@ -71,12 +71,12 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                         "/api/study-info/get/all**",
                         "/api/study-info/post/**",
                         "/api/study-info/put/set-one**",
-                        "/api/study-info/delete/**",
+                        "/api/study-info/delete/**",/*
                         "/api/tasks/get/one**",
                         "/api/tasks/get/all**",
                         "/api/tasks/put/set-one**",
                         "/api/tasks/delete/one**",
-                        "/api/tasks/delete/all**",
+                        "/api/tasks/delete/all**",*/
                         "/api/users/get/one**",
                         "/api/users/get/all**",
                         "/api/users/post/**",
@@ -91,11 +91,11 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                         "/api/sections/put/set-my**",
                         "/api/sections/delete/my**",
                         "/api/study-info/get/my**",
-                        "/api/study-info/put/set-my**",
+                        "/api/study-info/put/set-my**",/*
                         "/api/tasks/get/my**",
                         "/api/tasks/post/add-my**",
                         "/api/tasks/put/set-my**",
-                        "/api/tasks/delete/my**",
+                        "/api/tasks/delete/my**",*/
                         "/api/users/get/my-instructor**"
                 ).hasAnyRole(
                         UserRole.GRADUATE_STUDENT.value,
@@ -103,8 +103,8 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 )
 
                 .antMatchers(
-                        "/api/users/get/my-students**",
-                        "/api/tasks/put/set-mark-instructor**"
+                        "/api/users/get/my-students**"//,
+//                        "/api/tasks/put/set-mark-instructor**"
                 ).hasRole(
                         UserRole.INSTRUCTOR.value
                 )

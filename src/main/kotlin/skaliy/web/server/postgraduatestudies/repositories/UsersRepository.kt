@@ -4,7 +4,6 @@ package skaliy.web.server.postgraduatestudies.repositories
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
-import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository
 import org.springframework.stereotype.Repository
 
 import skaliy.web.server.postgraduatestudies.entities.Branch
@@ -13,9 +12,7 @@ import skaliy.web.server.postgraduatestudies.entities.Degree
 import skaliy.web.server.postgraduatestudies.entities.Department
 import skaliy.web.server.postgraduatestudies.entities.Faculty
 import skaliy.web.server.postgraduatestudies.entities.Institute
-import skaliy.web.server.postgraduatestudies.entities.ScientificLinks
 import skaliy.web.server.postgraduatestudies.entities.Speciality
-import skaliy.web.server.postgraduatestudies.entities.StudyInfo
 import skaliy.web.server.postgraduatestudies.entities.User
 
 
@@ -29,16 +26,12 @@ interface UsersRepository : JpaRepository<User, Int> {
     //language=PostgresPLSQL
     @Query(value = """select (user_record(
                           cast_int(:id_user),
-                          cast_int(:#{#contact_info.idContactInfo}),
-                          cast_int(:#{#study_info.idStudyInfo}),
-                          cast_int(:#{#scientific_links.idScientificLinks})
+                          cast_int(:#{#contact_info.idContactInfo})
                       )).*""",
             nativeQuery = true)
     fun get(
             @Param("id_user") idUser: Int? = null,
-            @Param("contact_info") contactInfo: ContactInfo? = ContactInfo(),
-            @Param("study_info") studyInfo: StudyInfo? = StudyInfo(),
-            @Param("scientific_links") scientificLinks: ScientificLinks? = ScientificLinks()
+            @Param("contact_info") contactInfo: ContactInfo? = ContactInfo()
     ): User?
 
     //language=PostgresPLSQL
@@ -104,17 +97,13 @@ interface UsersRepository : JpaRepository<User, Int> {
                           cast_int(:#{#user.speciality.idSpeciality}),
                           cast_int(:#{#user.department.idDepartment}),
                           cast_int(:id_user),
-                          cast_int(:#{#contact_info.idContactInfo}),
-                          cast_int(:#{#study_info.idStudyInfo}),
-                          cast_int(:#{#scientific_links.idScientificLinks})
+                          cast_int(:#{#contact_info.idContactInfo})
                       )).*""",
             nativeQuery = true)
     fun set(
             @Param("user") newUser: User?,
             @Param("id_user") idUser: Int? = null,
-            @Param("contact_info") contactInfo: ContactInfo? = ContactInfo(),
-            @Param("study_info") studyInfo: StudyInfo? = StudyInfo(),
-            @Param("scientific_links") scientificLinks: ScientificLinks? = ScientificLinks()
+            @Param("contact_info") contactInfo: ContactInfo? = ContactInfo()
     ): User?
 
 
@@ -124,16 +113,12 @@ interface UsersRepository : JpaRepository<User, Int> {
     //language=PostgresPLSQL
     @Query(value = """select (user_delete(
                           cast_int(:id_user),
-                          cast_int(:#{#contact_info.idContactInfo}),
-                          cast_int(:#{#study_info.idStudyInfo}),
-                          cast_int(:#{#scientific_links.idScientificLinks})
+                          cast_int(:#{#contact_info.idContactInfo})
                       )).*""",
             nativeQuery = true)
     fun delete(
             @Param("id_user") idUser: Int? = null,
-            @Param("contact_info") contactInfo: ContactInfo? = ContactInfo(),
-            @Param("study_info") studyInfo: StudyInfo? = StudyInfo(),
-            @Param("scientific_links") scientificLinks: ScientificLinks? = ScientificLinks()
+            @Param("contact_info") contactInfo: ContactInfo? = ContactInfo()
     ): User?
 
 

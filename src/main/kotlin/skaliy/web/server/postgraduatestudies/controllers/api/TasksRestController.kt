@@ -4,6 +4,8 @@ package skaliy.web.server.postgraduatestudies.controllers.api
 import com.fasterxml.jackson.annotation.JsonView
 
 import org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE
+import org.springframework.security.access.annotation.Secured
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -17,9 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 
 import skaliy.web.server.postgraduatestudies.entities.Task
 import skaliy.web.server.postgraduatestudies.repositories.ContactInfoRepository
-import skaliy.web.server.postgraduatestudies.repositories.ScientificLinksRepository
 import skaliy.web.server.postgraduatestudies.repositories.SectionsRepository
-import skaliy.web.server.postgraduatestudies.repositories.StudyInfoRepository
 import skaliy.web.server.postgraduatestudies.repositories.TasksRepository
 import skaliy.web.server.postgraduatestudies.repositories.UsersRepository
 import skaliy.web.server.postgraduatestudies.views.View
@@ -31,18 +31,17 @@ import skaliy.web.server.postgraduatestudies.views.View
 @RestController
 class TasksRestController(
         val contactInfoRepository: ContactInfoRepository,
-        val scientificLinksRepository: ScientificLinksRepository,
         val sectionsRepository: SectionsRepository,
-        val studyInfoRepository: StudyInfoRepository,
         val tasksRepository: TasksRepository,
         val usersRepository: UsersRepository
 ) {
 
 
     /**
-     * Queries to
-     * GET
-     * records
+     *
+     *      GET / SELECT
+     *      requests
+     *
      */
 
 
@@ -69,19 +68,15 @@ class TasksRestController(
     ) =
             tasksRepository.get(
                     section = sectionsRepository.get(
-                            user = usersRepository.get(
-                                    contactInfo = contactInfoRepository.get(
-                                            email = authUser.username
-                                    )
-                            ),
+                            user = contactInfoRepository.get(
+                                    email = authUser.username
+                            )?.user,
                             number = sectionNumber,
                             title = sectionTitle
                     ),
-                    user = usersRepository.get(
-                            contactInfo = contactInfoRepository.get(
-                                    email = authUser.username
-                            )
-                    ),
+                    user = contactInfoRepository.get(
+                            email = authUser.username
+                    )?.user,
                     number = taskNumber,
                     title = taskTitle
             )
@@ -105,19 +100,15 @@ class TasksRestController(
     ) =
             tasksRepository.get(
                     section = sectionsRepository.get(
-                            user = usersRepository.get(
-                                    contactInfo = contactInfoRepository.get(
-                                            email = authUser.username
-                                    )
-                            ),
+                            user = contactInfoRepository.get(
+                                    email = authUser.username
+                            )?.user,
                             number = sectionNumber,
                             title = sectionTitle
                     ),
-                    user = usersRepository.get(
-                            contactInfo = contactInfoRepository.get(
-                                    email = authUser.username
-                            )
-                    ),
+                    user = contactInfoRepository.get(
+                            email = authUser.username
+                    )?.user,
                     number = taskNumber,
                     title = taskTitle
             )
@@ -141,19 +132,15 @@ class TasksRestController(
     ) =
             tasksRepository.get(
                     section = sectionsRepository.get(
-                            user = usersRepository.get(
-                                    contactInfo = contactInfoRepository.get(
-                                            email = authUser.username
-                                    )
-                            ),
+                            user = contactInfoRepository.get(
+                                    email = authUser.username
+                            )?.user,
                             number = sectionNumber,
                             title = sectionTitle
                     ),
-                    user = usersRepository.get(
-                            contactInfo = contactInfoRepository.get(
-                                    email = authUser.username
-                            )
-                    ),
+                    user = contactInfoRepository.get(
+                            email = authUser.username
+                    )?.user,
                     number = taskNumber,
                     title = taskTitle
             )
@@ -167,33 +154,27 @@ class TasksRestController(
     @GetMapping(value = ["get/my-all-ui"])
     fun getMyAllUI(@AuthenticationPrincipal authUser: UserDetails) =
             tasksRepository.getAll(
-                    user = usersRepository.get(
-                            contactInfo = contactInfoRepository.get(
-                                    email = authUser.username
-                            )
-                    )
+                    user = contactInfoRepository.get(
+                            email = authUser.username
+                    )?.user
             )
 
     @JsonView(View.REST::class)
     @GetMapping(value = ["get/my-all-rest"])
     fun getMyAllRest(@AuthenticationPrincipal authUser: UserDetails) =
             tasksRepository.getAll(
-                    user = usersRepository.get(
-                            contactInfo = contactInfoRepository.get(
-                                    email = authUser.username
-                            )
-                    )
+                    user = contactInfoRepository.get(
+                            email = authUser.username
+                    )?.user
             )
 
     @JsonView(View.TREE::class)
     @GetMapping(value = ["get/my-all-tree"])
     fun getMyAllTree(@AuthenticationPrincipal authUser: UserDetails) =
             tasksRepository.getAll(
-                    user = usersRepository.get(
-                            contactInfo = contactInfoRepository.get(
-                                    email = authUser.username
-                            )
-                    )
+                    user = contactInfoRepository.get(
+                            email = authUser.username
+                    )?.user
             )
 
 
@@ -216,11 +197,9 @@ class TasksRestController(
     ) =
             tasksRepository.getAll(
                     sectionsRepository.get(
-                            user = usersRepository.get(
-                                    contactInfo = contactInfoRepository.get(
-                                            email = authUser.username
-                                    )
-                            ),
+                            user = contactInfoRepository.get(
+                                    email = authUser.username
+                            )?.user,
                             number = sectionNumber,
                             title = sectionTitle
                     )
@@ -239,11 +218,9 @@ class TasksRestController(
     ) =
             tasksRepository.getAll(
                     sectionsRepository.get(
-                            user = usersRepository.get(
-                                    contactInfo = contactInfoRepository.get(
-                                            email = authUser.username
-                                    )
-                            ),
+                            user = contactInfoRepository.get(
+                                    email = authUser.username
+                            )?.user,
                             number = sectionNumber,
                             title = sectionTitle
                     )
@@ -262,11 +239,9 @@ class TasksRestController(
     ) =
             tasksRepository.getAll(
                     sectionsRepository.get(
-                            user = usersRepository.get(
-                                    contactInfo = contactInfoRepository.get(
-                                            email = authUser.username
-                                    )
-                            ),
+                            user = contactInfoRepository.get(
+                                    email = authUser.username
+                            )?.user,
                             number = sectionNumber,
                             title = sectionTitle
                     )
@@ -298,24 +273,6 @@ class TasksRestController(
                     value = "email",
                     required = false) email: String?,
             @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "orcid",
-                    required = false) orcid: String?,
-            @RequestParam(
-                    value = "researcherid",
-                    required = false) researcherid: String?,
-            @RequestParam(
-                    value = "google_scholar_id",
-                    required = false) googleScholarId: String?,
-            @RequestParam(
-                    value = "scopus_author_id",
-                    required = false) scopusAuthorId: String?,
-            @RequestParam(
                     value = "task_number",
                     required = false) number: Int?,
             @RequestParam(
@@ -331,14 +288,6 @@ class TasksRestController(
                                     idContactInfo,
                                     phoneNumber,
                                     email
-                            ),
-                            studyInfoRepository.get(idStudyInfo),
-                            scientificLinksRepository.get(
-                                    idScientificLinks,
-                                    orcid,
-                                    researcherid,
-                                    googleScholarId,
-                                    scopusAuthorId
                             )
                     ),
                     number,
@@ -350,46 +299,28 @@ class TasksRestController(
     fun getOneRest(
             @RequestParam(
                     value = "id_task",
-                    required = false) idTask: Int?,
+                    required = false) idTask: Int? = null,
             @RequestParam(
                     value = "id_section",
-                    required = false) idSection: Int?,
+                    required = false) idSection: Int? = null,
             @RequestParam(
                     value = "id_user",
-                    required = false) idUser: Int?,
+                    required = false) idUser: Int? = null,
             @RequestParam(
                     value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
+                    required = false) idContactInfo: Int? = null,
             @RequestParam(
                     value = "phone_number",
-                    required = false) phoneNumber: String?,
+                    required = false) phoneNumber: String? = null,
             @RequestParam(
                     value = "email",
-                    required = false) email: String?,
-            @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "orcid",
-                    required = false) orcid: String?,
-            @RequestParam(
-                    value = "researcherid",
-                    required = false) researcherid: String?,
-            @RequestParam(
-                    value = "google_scholar_id",
-                    required = false) googleScholarId: String?,
-            @RequestParam(
-                    value = "scopus_author_id",
-                    required = false) scopusAuthorId: String?,
+                    required = false) email: String? = null,
             @RequestParam(
                     value = "task_number",
-                    required = false) number: Int?,
+                    required = false) number: Int? = null,
             @RequestParam(
                     value = "task_title",
-                    required = false) title: String?
+                    required = false) title: String? = null
     ) =
             tasksRepository.get(
                     idTask,
@@ -400,14 +331,6 @@ class TasksRestController(
                                     idContactInfo,
                                     phoneNumber,
                                     email
-                            ),
-                            studyInfoRepository.get(idStudyInfo),
-                            scientificLinksRepository.get(
-                                    idScientificLinks,
-                                    orcid,
-                                    researcherid,
-                                    googleScholarId,
-                                    scopusAuthorId
                             )
                     ),
                     number,
@@ -436,24 +359,6 @@ class TasksRestController(
                     value = "email",
                     required = false) email: String?,
             @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "orcid",
-                    required = false) orcid: String?,
-            @RequestParam(
-                    value = "researcherid",
-                    required = false) researcherid: String?,
-            @RequestParam(
-                    value = "google_scholar_id",
-                    required = false) googleScholarId: String?,
-            @RequestParam(
-                    value = "scopus_author_id",
-                    required = false) scopusAuthorId: String?,
-            @RequestParam(
                     value = "task_number",
                     required = false) number: Int?,
             @RequestParam(
@@ -469,14 +374,6 @@ class TasksRestController(
                                     idContactInfo,
                                     phoneNumber,
                                     email
-                            ),
-                            studyInfoRepository.get(idStudyInfo),
-                            scientificLinksRepository.get(
-                                    idScientificLinks,
-                                    orcid,
-                                    researcherid,
-                                    googleScholarId,
-                                    scopusAuthorId
                             )
                     ),
                     number,
@@ -504,25 +401,7 @@ class TasksRestController(
                     required = false) phoneNumber: String?,
             @RequestParam(
                     value = "email",
-                    required = false) email: String?,
-            @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "orcid",
-                    required = false) orcid: String?,
-            @RequestParam(
-                    value = "researcherid",
-                    required = false) researcherid: String?,
-            @RequestParam(
-                    value = "google_scholar_id",
-                    required = false) googleScholarId: String?,
-            @RequestParam(
-                    value = "scopus_author_id",
-                    required = false) scopusAuthorId: String?
+                    required = false) email: String?
     ) =
             tasksRepository.getAll(
                     sectionsRepository.get(idSection),
@@ -532,14 +411,6 @@ class TasksRestController(
                                     idContactInfo,
                                     phoneNumber,
                                     email
-                            ),
-                            studyInfoRepository.get(idStudyInfo),
-                            scientificLinksRepository.get(
-                                    idScientificLinks,
-                                    orcid,
-                                    researcherid,
-                                    googleScholarId,
-                                    scopusAuthorId
                             )
                     )
             )
@@ -561,25 +432,7 @@ class TasksRestController(
                     required = false) phoneNumber: String?,
             @RequestParam(
                     value = "email",
-                    required = false) email: String?,
-            @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "orcid",
-                    required = false) orcid: String?,
-            @RequestParam(
-                    value = "researcherid",
-                    required = false) researcherid: String?,
-            @RequestParam(
-                    value = "google_scholar_id",
-                    required = false) googleScholarId: String?,
-            @RequestParam(
-                    value = "scopus_author_id",
-                    required = false) scopusAuthorId: String?
+                    required = false) email: String?
     ) =
             tasksRepository.getAll(
                     sectionsRepository.get(idSection),
@@ -589,14 +442,6 @@ class TasksRestController(
                                     idContactInfo,
                                     phoneNumber,
                                     email
-                            ),
-                            studyInfoRepository.get(idStudyInfo),
-                            scientificLinksRepository.get(
-                                    idScientificLinks,
-                                    orcid,
-                                    researcherid,
-                                    googleScholarId,
-                                    scopusAuthorId
                             )
                     )
             )
@@ -618,25 +463,7 @@ class TasksRestController(
                     required = false) phoneNumber: String?,
             @RequestParam(
                     value = "email",
-                    required = false) email: String?,
-            @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "orcid",
-                    required = false) orcid: String?,
-            @RequestParam(
-                    value = "researcherid",
-                    required = false) researcherid: String?,
-            @RequestParam(
-                    value = "google_scholar_id",
-                    required = false) googleScholarId: String?,
-            @RequestParam(
-                    value = "scopus_author_id",
-                    required = false) scopusAuthorId: String?
+                    required = false) email: String?
     ) =
             tasksRepository.getAll(
                     sectionsRepository.get(idSection),
@@ -646,23 +473,16 @@ class TasksRestController(
                                     idContactInfo,
                                     phoneNumber,
                                     email
-                            ),
-                            studyInfoRepository.get(idStudyInfo),
-                            scientificLinksRepository.get(
-                                    idScientificLinks,
-                                    orcid,
-                                    researcherid,
-                                    googleScholarId,
-                                    scopusAuthorId
                             )
                     )
             )
 
 
     /**
-     * Queries to
-     * ADD / INSERT INTO
-     * records
+     *
+     *      ADD / INSERT INTO
+     *      requests
+     *
      */
 
 
@@ -683,11 +503,9 @@ class TasksRestController(
     ) =
             tasksRepository.add(
                     sectionsRepository.get(
-                            user = usersRepository.get(
-                                    contactInfo = contactInfoRepository.get(
-                                            email = authUser.username
-                                    )
-                            ),
+                            user = contactInfoRepository.get(
+                                    email = authUser.username
+                            )?.user,
                             number = sectionNumber,
                             title = sectionTitle
                     ),
@@ -708,11 +526,9 @@ class TasksRestController(
     ) =
             tasksRepository.add(
                     sectionsRepository.get(
-                            user = usersRepository.get(
-                                    contactInfo = contactInfoRepository.get(
-                                            email = authUser.username
-                                    )
-                            ),
+                            user = contactInfoRepository.get(
+                                    email = authUser.username
+                            )?.user,
                             number = sectionNumber,
                             title = sectionTitle
                     ),
@@ -733,11 +549,9 @@ class TasksRestController(
     ) =
             tasksRepository.add(
                     sectionsRepository.get(
-                            user = usersRepository.get(
-                                    contactInfo = contactInfoRepository.get(
-                                            email = authUser.username
-                                    )
-                            ),
+                            user = contactInfoRepository.get(
+                                    email = authUser.username
+                            )?.user,
                             number = sectionNumber,
                             title = sectionTitle
                     ),
@@ -746,9 +560,10 @@ class TasksRestController(
 
 
     /**
-     * Queries to
-     * SET / UPDATE
-     * records
+     *
+     *      SET / UPDATE
+     *      requests
+     *
      */
 
 
@@ -781,19 +596,15 @@ class TasksRestController(
                         newTask,
                         idTask,
                         sectionsRepository.get(
-                                user = usersRepository.get(
-                                        contactInfo = contactInfoRepository.get(
-                                                email = authUser.username
-                                        )
-                                ),
+                                user = contactInfoRepository.get(
+                                        email = authUser.username
+                                )?.user,
                                 number = sectionNumber,
                                 title = sectionTitle
                         ),
-                        usersRepository.get(
-                                contactInfo = contactInfoRepository.get(
-                                        email = authUser.username
-                                )
-                        ),
+                        contactInfoRepository.get(
+                                email = authUser.username
+                        )?.user,
                         taskNumber,
                         taskTitle
                 )
@@ -826,19 +637,15 @@ class TasksRestController(
                         newTask,
                         idTask,
                         sectionsRepository.get(
-                                user = usersRepository.get(
-                                        contactInfo = contactInfoRepository.get(
-                                                email = authUser.username
-                                        )
-                                ),
+                                user = contactInfoRepository.get(
+                                        email = authUser.username
+                                )?.user,
                                 number = sectionNumber,
                                 title = sectionTitle
                         ),
-                        usersRepository.get(
-                                contactInfo = contactInfoRepository.get(
-                                        email = authUser.username
-                                )
-                        ),
+                        contactInfoRepository.get(
+                                email = authUser.username
+                        )?.user,
                         taskNumber,
                         taskTitle
                 )
@@ -871,27 +678,23 @@ class TasksRestController(
                         newTask,
                         idTask,
                         sectionsRepository.get(
-                                user = usersRepository.get(
-                                        contactInfo = contactInfoRepository.get(
-                                                email = authUser.username
-                                        )
-                                ),
+                                user = contactInfoRepository.get(
+                                        email = authUser.username
+                                )?.user,
                                 number = sectionNumber,
                                 title = sectionTitle
                         ),
-                        usersRepository.get(
-                                contactInfo = contactInfoRepository.get(
-                                        email = authUser.username
-                                )
-                        ),
+                        contactInfoRepository.get(
+                                email = authUser.username
+                        )?.user,
                         taskNumber,
                         taskTitle
                 )
         return tasksRepository.get(task?.idTask)
     }
 
-
     //todo forbidden
+
     /** ============================== MARK
      *                                 INSTRUCTOR ============================== */
 
@@ -906,10 +709,11 @@ class TasksRestController(
 
             val newTask =
                     tasksRepository.setMarkInstructor(task)
-
+            println("1")
             return tasksRepository.get(newTask?.idTask)
         }
 
+        println("2")
         return Task()
     }
 
@@ -917,18 +721,26 @@ class TasksRestController(
     @PutMapping(value = ["put/set-mark-instructor-rest"])
     fun setMarkInstructorRest(
             @AuthenticationPrincipal authUser: UserDetails,
-            @RequestBody task: Task
+//            @RequestBody task: Task,
+            @RequestParam(value = "id_task") idTask: Int,
+            @RequestParam(value = "mark") markDoneInstructor: Boolean
     ): Task? {
 
-        if (task.section.user.studyInfo?.instructor?.contactInfo?.email == authUser.username) {
+        var task = tasksRepository.get(idTask)
+        println()
+        println(task.toString())
+        println()
+        return task
 
-            val newTask =
-                    tasksRepository.setMarkInstructor(task)
-
-            return tasksRepository.get(newTask?.idTask)
-        }
-
-        return Task()
+//        if (task?.section?.user?.studyInfo?.instructor?.contactInfo?.email == authUser.username) {
+//
+//            val newTask =
+//                    tasksRepository.setMarkInstructor(task)
+//
+//            return tasksRepository.get(newTask?.idTask)
+//        }
+//
+//        return Task()
     }
 
     @JsonView(View.TREE::class)
@@ -976,24 +788,6 @@ class TasksRestController(
                     value = "email",
                     required = false) email: String?,
             @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "orcid",
-                    required = false) orcid: String?,
-            @RequestParam(
-                    value = "researcherid",
-                    required = false) researcherid: String?,
-            @RequestParam(
-                    value = "google_scholar_id",
-                    required = false) googleScholarId: String?,
-            @RequestParam(
-                    value = "scopus_author_id",
-                    required = false) scopusAuthorId: String?,
-            @RequestParam(
                     value = "task_number",
                     required = false) number: Int?,
             @RequestParam(
@@ -1011,14 +805,6 @@ class TasksRestController(
                                         idContactInfo,
                                         phoneNumber,
                                         email
-                                ),
-                                studyInfoRepository.get(idStudyInfo),
-                                scientificLinksRepository.get(
-                                        idScientificLinks,
-                                        orcid,
-                                        researcherid,
-                                        googleScholarId,
-                                        scopusAuthorId
                                 )
                         ),
                         number,
@@ -1050,24 +836,6 @@ class TasksRestController(
                     value = "email",
                     required = false) email: String?,
             @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "orcid",
-                    required = false) orcid: String?,
-            @RequestParam(
-                    value = "researcherid",
-                    required = false) researcherid: String?,
-            @RequestParam(
-                    value = "google_scholar_id",
-                    required = false) googleScholarId: String?,
-            @RequestParam(
-                    value = "scopus_author_id",
-                    required = false) scopusAuthorId: String?,
-            @RequestParam(
                     value = "number",
                     required = false) number: Int?,
             @RequestParam(
@@ -1085,14 +853,6 @@ class TasksRestController(
                                         idContactInfo,
                                         phoneNumber,
                                         email
-                                ),
-                                studyInfoRepository.get(idStudyInfo),
-                                scientificLinksRepository.get(
-                                        idScientificLinks,
-                                        orcid,
-                                        researcherid,
-                                        googleScholarId,
-                                        scopusAuthorId
                                 )
                         ),
                         number,
@@ -1124,24 +884,6 @@ class TasksRestController(
                     value = "email",
                     required = false) email: String?,
             @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "orcid",
-                    required = false) orcid: String?,
-            @RequestParam(
-                    value = "researcherid",
-                    required = false) researcherid: String?,
-            @RequestParam(
-                    value = "google_scholar_id",
-                    required = false) googleScholarId: String?,
-            @RequestParam(
-                    value = "scopus_author_id",
-                    required = false) scopusAuthorId: String?,
-            @RequestParam(
                     value = "number",
                     required = false) number: Int?,
             @RequestParam(
@@ -1159,14 +901,6 @@ class TasksRestController(
                                         idContactInfo,
                                         phoneNumber,
                                         email
-                                ),
-                                studyInfoRepository.get(idStudyInfo),
-                                scientificLinksRepository.get(
-                                        idScientificLinks,
-                                        orcid,
-                                        researcherid,
-                                        googleScholarId,
-                                        scopusAuthorId
                                 )
                         ),
                         number,
@@ -1177,9 +911,10 @@ class TasksRestController(
 
 
     /**
-     * Queries to
-     * DELETE
-     * records
+     *
+     *      DELETE
+     *      requests
+     *
      */
 
 
@@ -1205,11 +940,9 @@ class TasksRestController(
     ) =
             tasksRepository.delete(
                     section = sectionsRepository.get(
-                            user = usersRepository.get(
-                                    contactInfo = contactInfoRepository.get(
-                                            email = authUser.username
-                                    )
-                            ),
+                            user = contactInfoRepository.get(
+                                    email = authUser.username
+                            )?.user,
                             number = sectionNumber,
                             title = sectionTitle
                     ),
@@ -1236,11 +969,9 @@ class TasksRestController(
     ) =
             tasksRepository.delete(
                     section = sectionsRepository.get(
-                            user = usersRepository.get(
-                                    contactInfo = contactInfoRepository.get(
-                                            email = authUser.username
-                                    )
-                            ),
+                            user = contactInfoRepository.get(
+                                    email = authUser.username
+                            )?.user,
                             number = sectionNumber,
                             title = sectionTitle
                     ),
@@ -1267,11 +998,9 @@ class TasksRestController(
     ) =
             tasksRepository.delete(
                     section = sectionsRepository.get(
-                            user = usersRepository.get(
-                                    contactInfo = contactInfoRepository.get(
-                                            email = authUser.username
-                                    )
-                            ),
+                            user = contactInfoRepository.get(
+                                    email = authUser.username
+                            )?.user,
                             number = sectionNumber,
                             title = sectionTitle
                     ),
@@ -1311,24 +1040,6 @@ class TasksRestController(
                     value = "email",
                     required = false) email: String?,
             @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "orcid",
-                    required = false) orcid: String?,
-            @RequestParam(
-                    value = "researcherid",
-                    required = false) researcherid: String?,
-            @RequestParam(
-                    value = "google_scholar_id",
-                    required = false) googleScholarId: String?,
-            @RequestParam(
-                    value = "scopus_author_id",
-                    required = false) scopusAuthorId: String?,
-            @RequestParam(
                     value = "section_number",
                     required = false) sectionNumber: Int?,
             @RequestParam(
@@ -1345,14 +1056,6 @@ class TasksRestController(
                                             idContactInfo,
                                             phoneNumber,
                                             email
-                                    ),
-                                    studyInfoRepository.get(idStudyInfo),
-                                    scientificLinksRepository.get(
-                                            idScientificLinks,
-                                            orcid,
-                                            researcherid,
-                                            googleScholarId,
-                                            scopusAuthorId
                                     )
                             ),
                             sectionNumber,
@@ -1390,24 +1093,6 @@ class TasksRestController(
                     value = "email",
                     required = false) email: String?,
             @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "orcid",
-                    required = false) orcid: String?,
-            @RequestParam(
-                    value = "researcherid",
-                    required = false) researcherid: String?,
-            @RequestParam(
-                    value = "google_scholar_id",
-                    required = false) googleScholarId: String?,
-            @RequestParam(
-                    value = "scopus_author_id",
-                    required = false) scopusAuthorId: String?,
-            @RequestParam(
                     value = "section_number",
                     required = false) sectionNumber: Int?,
             @RequestParam(
@@ -1424,14 +1109,6 @@ class TasksRestController(
                                             idContactInfo,
                                             phoneNumber,
                                             email
-                                    ),
-                                    studyInfoRepository.get(idStudyInfo),
-                                    scientificLinksRepository.get(
-                                            idScientificLinks,
-                                            orcid,
-                                            researcherid,
-                                            googleScholarId,
-                                            scopusAuthorId
                                     )
                             ),
                             sectionNumber,
@@ -1469,24 +1146,6 @@ class TasksRestController(
                     value = "email",
                     required = false) email: String?,
             @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "orcid",
-                    required = false) orcid: String?,
-            @RequestParam(
-                    value = "researcherid",
-                    required = false) researcherid: String?,
-            @RequestParam(
-                    value = "google_scholar_id",
-                    required = false) googleScholarId: String?,
-            @RequestParam(
-                    value = "scopus_author_id",
-                    required = false) scopusAuthorId: String?,
-            @RequestParam(
                     value = "section_number",
                     required = false) sectionNumber: Int?,
             @RequestParam(
@@ -1503,14 +1162,6 @@ class TasksRestController(
                                             idContactInfo,
                                             phoneNumber,
                                             email
-                                    ),
-                                    studyInfoRepository.get(idStudyInfo),
-                                    scientificLinksRepository.get(
-                                            idScientificLinks,
-                                            orcid,
-                                            researcherid,
-                                            googleScholarId,
-                                            scopusAuthorId
                                     )
                             ),
                             sectionNumber,

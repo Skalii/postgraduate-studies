@@ -20,8 +20,6 @@ import skaliy.web.server.postgraduatestudies.repositories.ContactInfoRepository
 import skaliy.web.server.postgraduatestudies.repositories.DepartmentsRepository
 import skaliy.web.server.postgraduatestudies.repositories.InstitutesRepository
 import skaliy.web.server.postgraduatestudies.repositories.FacultiesRepository
-import skaliy.web.server.postgraduatestudies.repositories.ScientificLinksRepository
-import skaliy.web.server.postgraduatestudies.repositories.StudyInfoRepository
 import skaliy.web.server.postgraduatestudies.repositories.UsersRepository
 import skaliy.web.server.postgraduatestudies.views.View
 
@@ -35,16 +33,15 @@ class InstitutesRestController(
         val departmentsRepository: DepartmentsRepository,
         val institutesRepository: InstitutesRepository,
         val facultiesRepository: FacultiesRepository,
-        val scientificLinksRepository: ScientificLinksRepository,
-        val studyInfoRepository: StudyInfoRepository,
         val usersRepository: UsersRepository
 ) {
 
 
     /**
-     * Queries to
-     * GET / SELECT
-     * records
+     *
+     *      GET / SELECT
+     *      requests
+     *
      */
 
 
@@ -55,33 +52,27 @@ class InstitutesRestController(
     @GetMapping(value = ["get/my-ui"])
     fun getOneUI(@AuthenticationPrincipal authUser: UserDetails) =
             institutesRepository.get(
-                    usersRepository.get(
-                            contactInfo = contactInfoRepository.get(
-                                    email = authUser.username
-                            )
-                    )
+                    contactInfoRepository.get(
+                            email = authUser.username
+                    )?.user
             )
 
     @JsonView(View.REST::class)
     @GetMapping(value = ["get/my-rest"])
     fun getOneRest(@AuthenticationPrincipal authUser: UserDetails) =
             institutesRepository.get(
-                    usersRepository.get(
-                            contactInfo = contactInfoRepository.get(
-                                    email = authUser.username
-                            )
-                    )
+                    contactInfoRepository.get(
+                            email = authUser.username
+                    )?.user
             )
 
     @JsonView(View.TREE::class)
     @GetMapping(value = ["get/my-tree"])
     fun getOneTree(@AuthenticationPrincipal authUser: UserDetails) =
             institutesRepository.get(
-                    usersRepository.get(
-                            contactInfo = contactInfoRepository.get(
-                                    email = authUser.username
-                            )
-                    )
+                    contactInfoRepository.get(
+                            email = authUser.username
+                    )?.user
             )
 
 
@@ -154,7 +145,8 @@ class InstitutesRestController(
                     facultiesRepository.get(
                             idFaculty,
                             name
-                    ))
+                    )
+            )
 
     @JsonView(View.REST::class)
     @GetMapping(value = ["get/one-by-faculty-rest"])
@@ -170,7 +162,8 @@ class InstitutesRestController(
                     facultiesRepository.get(
                             idFaculty,
                             name
-                    ))
+                    )
+            )
 
     @JsonView(View.TREE::class)
     @GetMapping(value = ["get/one-by-faculty-tree"])
@@ -186,7 +179,8 @@ class InstitutesRestController(
                     facultiesRepository.get(
                             idFaculty,
                             name
-                    ))
+                    )
+            )
 
 
     /** ============================== ONE
@@ -214,7 +208,8 @@ class InstitutesRestController(
                     departmentsRepository.get(
                             idDepartment,
                             name
-                    ))
+                    )
+            )
 
     @JsonView(View.REST::class)
     @GetMapping(value = ["get/one-by-department-rest"])
@@ -236,7 +231,8 @@ class InstitutesRestController(
                     departmentsRepository.get(
                             idDepartment,
                             name
-                    ))
+                    )
+            )
 
     @JsonView(View.TREE::class)
     @GetMapping(value = ["get/one-by-department-tree"])
@@ -258,11 +254,10 @@ class InstitutesRestController(
                     departmentsRepository.get(
                             idDepartment,
                             name
-                    ))
+                    )
+            )
 
-/*
 
-    */
     /** ============================== ONE
      *                                 BY
      *                                 USER ============================== */
@@ -282,25 +277,7 @@ class InstitutesRestController(
                     required = false) phoneNumber: String?,
             @RequestParam(
                     value = "email",
-                    required = false) email: String?,
-            @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "orcid",
-                    required = false) orcid: String?,
-            @RequestParam(
-                    value = "researcherid",
-                    required = false) researcherid: String?,
-            @RequestParam(
-                    value = "google_scholar_id",
-                    required = false) googleScholarId: String?,
-            @RequestParam(
-                    value = "scopus_author_id",
-                    required = false) scopusAuthorId: String?
+                    required = false) email: String?
     ) =
             institutesRepository.get(
                     usersRepository.get(
@@ -309,14 +286,6 @@ class InstitutesRestController(
                                     idContactInfo,
                                     phoneNumber,
                                     email
-                            ),
-                            studyInfoRepository.get(idStudyInfo),
-                            scientificLinksRepository.get(
-                                    idScientificLinks,
-                                    orcid,
-                                    researcherid,
-                                    googleScholarId,
-                                    scopusAuthorId
                             )
                     )
             )
@@ -335,25 +304,7 @@ class InstitutesRestController(
                     required = false) phoneNumber: String?,
             @RequestParam(
                     value = "email",
-                    required = false) email: String?,
-            @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "orcid",
-                    required = false) orcid: String?,
-            @RequestParam(
-                    value = "researcherid",
-                    required = false) researcherid: String?,
-            @RequestParam(
-                    value = "google_scholar_id",
-                    required = false) googleScholarId: String?,
-            @RequestParam(
-                    value = "scopus_author_id",
-                    required = false) scopusAuthorId: String?
+                    required = false) email: String?
     ) =
             institutesRepository.get(
                     usersRepository.get(
@@ -362,14 +313,6 @@ class InstitutesRestController(
                                     idContactInfo,
                                     phoneNumber,
                                     email
-                            ),
-                            studyInfoRepository.get(idStudyInfo),
-                            scientificLinksRepository.get(
-                                    idScientificLinks,
-                                    orcid,
-                                    researcherid,
-                                    googleScholarId,
-                                    scopusAuthorId
                             )
                     )
             )
@@ -388,25 +331,7 @@ class InstitutesRestController(
                     required = false) phoneNumber: String?,
             @RequestParam(
                     value = "email",
-                    required = false) email: String?,
-            @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "orcid",
-                    required = false) orcid: String?,
-            @RequestParam(
-                    value = "researcherid",
-                    required = false) researcherid: String?,
-            @RequestParam(
-                    value = "google_scholar_id",
-                    required = false) googleScholarId: String?,
-            @RequestParam(
-                    value = "scopus_author_id",
-                    required = false) scopusAuthorId: String?
+                    required = false) email: String?
     ) =
             institutesRepository.get(
                     usersRepository.get(
@@ -415,14 +340,6 @@ class InstitutesRestController(
                                     idContactInfo,
                                     phoneNumber,
                                     email
-                            ),
-                            studyInfoRepository.get(idStudyInfo),
-                            scientificLinksRepository.get(
-                                    idScientificLinks,
-                                    orcid,
-                                    researcherid,
-                                    googleScholarId,
-                                    scopusAuthorId
                             )
                     )
             )
@@ -445,9 +362,10 @@ class InstitutesRestController(
 
 
     /**
-     * Queries to
-     * ADD / INSERT INTO
-     * records
+     *
+     *      ADD / INSERT INTO
+     *      requests
+     *
      */
 
 
@@ -471,9 +389,10 @@ class InstitutesRestController(
 
 
     /**
-     * Queries to
-     * SET / UPDATE
-     * records
+     *
+     *      SET / UPDATE
+     *      requests
+     *
      */
 
 
@@ -542,9 +461,10 @@ class InstitutesRestController(
 
 
     /**
-     * Queries to
-     * DELETE
-     * records
+     *
+     *      DELETE
+     *      requests
+     *
      */
 
 

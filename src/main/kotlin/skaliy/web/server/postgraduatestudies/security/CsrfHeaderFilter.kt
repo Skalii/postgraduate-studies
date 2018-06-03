@@ -29,11 +29,11 @@ class CsrfHeaderFilter : OncePerRequestFilter() {
 
         val token = csrf.token
 
-//        if (cookie == null || token != null && token != cookie.value) {
+        if (cookie == null || token != null && token != cookie.value) {
             cookie = Cookie("XSRF-TOKEN", token)
             cookie.path = "/"
             response.addCookie(cookie)
-//        }
+        }
 
         filterChain.doFilter(request, response)
     }

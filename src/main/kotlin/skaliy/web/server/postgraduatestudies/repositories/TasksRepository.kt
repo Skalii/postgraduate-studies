@@ -101,8 +101,8 @@ interface TasksRepository : JpaRepository<Task, Int> {
 
     //language=PostgresPLSQL
     @Query(value = """select (task_update(
-                          new_mark_done_instructor => cast_bool(:#{#task.mark_done_instructor}),
-                          _id_task => cast_int(:#{#task.id_task})
+                          new_mark_done_instructor => cast_bool(:#{#task.markDoneInstructor}),
+                          _id_task => cast_int(:#{#task.idTask})
                       )).*""",
             nativeQuery = true)
     fun setMarkInstructor(@Param("task") task: Task?): Task?

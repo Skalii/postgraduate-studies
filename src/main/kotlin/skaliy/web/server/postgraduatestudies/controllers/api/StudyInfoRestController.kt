@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController
 
 import skaliy.web.server.postgraduatestudies.entities.StudyInfo
 import skaliy.web.server.postgraduatestudies.repositories.ContactInfoRepository
-import skaliy.web.server.postgraduatestudies.repositories.ScientificLinksRepository
 import skaliy.web.server.postgraduatestudies.repositories.StudyInfoRepository
 import skaliy.web.server.postgraduatestudies.repositories.UsersRepository
 import skaliy.web.server.postgraduatestudies.views.View
@@ -29,16 +28,16 @@ import skaliy.web.server.postgraduatestudies.views.View
 @RestController
 class StudyInfoRestController(
         val contactInfoRepository: ContactInfoRepository,
-        val scientificLinksRepository: ScientificLinksRepository,
         val studyInfoRepository: StudyInfoRepository,
         val usersRepository: UsersRepository
 ) {
 
 
     /**
-     * Queries to
-     * GET
-     * records
+     *
+     *      GET / SELECT
+     *      requests
+     *
      */
 
 
@@ -49,33 +48,27 @@ class StudyInfoRestController(
     @GetMapping(value = ["get/my-ui"])
     fun getMyUI(@AuthenticationPrincipal authUser: UserDetails) =
             studyInfoRepository.get(
-                    user = usersRepository.get(
-                            contactInfo = contactInfoRepository.get(
-                                    email = authUser.username
-                            )
-                    )
+                    user = contactInfoRepository.get(
+                            email = authUser.username
+                    )?.user
             )
 
     @JsonView(View.REST::class)
     @GetMapping(value = ["get/my-rest"])
     fun getMyRest(@AuthenticationPrincipal authUser: UserDetails) =
             studyInfoRepository.get(
-                    user = usersRepository.get(
-                            contactInfo = contactInfoRepository.get(
-                                    email = authUser.username
-                            )
-                    )
+                    user = contactInfoRepository.get(
+                            email = authUser.username
+                    )?.user
             )
 
     @JsonView(View.TREE::class)
     @GetMapping(value = ["get/my-tree"])
     fun getMyTree(@AuthenticationPrincipal authUser: UserDetails) =
             studyInfoRepository.get(
-                    user = usersRepository.get(
-                            contactInfo = contactInfoRepository.get(
-                                    email = authUser.username
-                            )
-                    )
+                    user = contactInfoRepository.get(
+                            email = authUser.username
+                    )?.user
             )
 
 
@@ -99,22 +92,7 @@ class StudyInfoRestController(
                     required = false) phoneNumber: String?,
             @RequestParam(
                     value = "email",
-                    required = false) email: String?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "orcid",
-                    required = false) orcid: String?,
-            @RequestParam(
-                    value = "researcherid",
-                    required = false) researcherid: String?,
-            @RequestParam(
-                    value = "google_scholar_id",
-                    required = false) googleScholarId: String?,
-            @RequestParam(
-                    value = "scopus_author_id",
-                    required = false) scopusAuthorId: String?
+                    required = false) email: String?
     ) =
             studyInfoRepository.get(
                     idStudyInfo,
@@ -124,13 +102,6 @@ class StudyInfoRestController(
                                     idContactInfo,
                                     phoneNumber,
                                     email
-                            ),
-                            scientificLinks = scientificLinksRepository.get(
-                                    idScientificLinks,
-                                    orcid,
-                                    researcherid,
-                                    googleScholarId,
-                                    scopusAuthorId
                             )
                     )
             )
@@ -152,22 +123,7 @@ class StudyInfoRestController(
                     required = false) phoneNumber: String?,
             @RequestParam(
                     value = "email",
-                    required = false) email: String?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "orcid",
-                    required = false) orcid: String?,
-            @RequestParam(
-                    value = "researcherid",
-                    required = false) researcherid: String?,
-            @RequestParam(
-                    value = "google_scholar_id",
-                    required = false) googleScholarId: String?,
-            @RequestParam(
-                    value = "scopus_author_id",
-                    required = false) scopusAuthorId: String?
+                    required = false) email: String?
     ) =
             studyInfoRepository.get(
                     idStudyInfo,
@@ -177,13 +133,6 @@ class StudyInfoRestController(
                                     idContactInfo,
                                     phoneNumber,
                                     email
-                            ),
-                            scientificLinks = scientificLinksRepository.get(
-                                    idScientificLinks,
-                                    orcid,
-                                    researcherid,
-                                    googleScholarId,
-                                    scopusAuthorId
                             )
                     )
             )
@@ -205,22 +154,7 @@ class StudyInfoRestController(
                     required = false) phoneNumber: String?,
             @RequestParam(
                     value = "email",
-                    required = false) email: String?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "orcid",
-                    required = false) orcid: String?,
-            @RequestParam(
-                    value = "researcherid",
-                    required = false) researcherid: String?,
-            @RequestParam(
-                    value = "google_scholar_id",
-                    required = false) googleScholarId: String?,
-            @RequestParam(
-                    value = "scopus_author_id",
-                    required = false) scopusAuthorId: String?
+                    required = false) email: String?
     ) =
             studyInfoRepository.get(
                     idStudyInfo,
@@ -230,13 +164,6 @@ class StudyInfoRestController(
                                     idContactInfo,
                                     phoneNumber,
                                     email
-                            ),
-                            scientificLinks = scientificLinksRepository.get(
-                                    idScientificLinks,
-                                    orcid,
-                                    researcherid,
-                                    googleScholarId,
-                                    scopusAuthorId
                             )
                     )
             )
@@ -259,9 +186,10 @@ class StudyInfoRestController(
 
 
     /**
-     * Queries to
-     * ADD / INSERT INTO
-     * records
+     *
+     *      ADD / INSERT INTO
+     *      requests
+     *
      */
 
 
@@ -285,9 +213,10 @@ class StudyInfoRestController(
 
 
     /**
-     * Queries to
-     * SET / UPDATE
-     * records
+     *
+     *      SET / UPDATE
+     *      requests
+     *
      */
 
 
@@ -303,11 +232,9 @@ class StudyInfoRestController(
         val studyInfo =
                 studyInfoRepository.set(
                         newStudyInfo,
-                        user = usersRepository.get(
-                                contactInfo = contactInfoRepository.get(
-                                        email = authUser.username
-                                )
-                        )
+                        user = contactInfoRepository.get(
+                                email = authUser.username
+                        )?.user
                 )
         return studyInfoRepository.get(studyInfo?.idStudyInfo)
     }
@@ -321,11 +248,9 @@ class StudyInfoRestController(
         val studyInfo =
                 studyInfoRepository.set(
                         newStudyInfo,
-                        user = usersRepository.get(
-                                contactInfo = contactInfoRepository.get(
-                                        email = authUser.username
-                                )
-                        )
+                        user = contactInfoRepository.get(
+                                email = authUser.username
+                        )?.user
                 )
         return studyInfoRepository.get(studyInfo?.idStudyInfo)
     }
@@ -339,11 +264,9 @@ class StudyInfoRestController(
         val studyInfo =
                 studyInfoRepository.set(
                         newStudyInfo,
-                        user = usersRepository.get(
-                                contactInfo = contactInfoRepository.get(
-                                        email = authUser.username
-                                )
-                        )
+                        user = contactInfoRepository.get(
+                                email = authUser.username
+                        )?.user
                 )
         return studyInfoRepository.get(studyInfo?.idStudyInfo)
     }
@@ -370,22 +293,7 @@ class StudyInfoRestController(
                     required = false) phoneNumber: String?,
             @RequestParam(
                     value = "email",
-                    required = false) email: String?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "orcid",
-                    required = false) orcid: String?,
-            @RequestParam(
-                    value = "researcherid",
-                    required = false) researcherid: String?,
-            @RequestParam(
-                    value = "google_scholar_id",
-                    required = false) googleScholarId: String?,
-            @RequestParam(
-                    value = "scopus_author_id",
-                    required = false) scopusAuthorId: String?
+                    required = false) email: String?
     ): StudyInfo? {
         val studyInfo =
                 studyInfoRepository.set(
@@ -397,13 +305,6 @@ class StudyInfoRestController(
                                         idContactInfo,
                                         phoneNumber,
                                         email
-                                ),
-                                scientificLinks = scientificLinksRepository.get(
-                                        idScientificLinks,
-                                        orcid,
-                                        researcherid,
-                                        googleScholarId,
-                                        scopusAuthorId
                                 )
                         )
                 )
@@ -428,22 +329,7 @@ class StudyInfoRestController(
                     required = false) phoneNumber: String?,
             @RequestParam(
                     value = "email",
-                    required = false) email: String?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "orcid",
-                    required = false) orcid: String?,
-            @RequestParam(
-                    value = "researcherid",
-                    required = false) researcherid: String?,
-            @RequestParam(
-                    value = "google_scholar_id",
-                    required = false) googleScholarId: String?,
-            @RequestParam(
-                    value = "scopus_author_id",
-                    required = false) scopusAuthorId: String?
+                    required = false) email: String?
     ): StudyInfo? {
         val studyInfo =
                 studyInfoRepository.set(
@@ -455,13 +341,6 @@ class StudyInfoRestController(
                                         idContactInfo,
                                         phoneNumber,
                                         email
-                                ),
-                                scientificLinks = scientificLinksRepository.get(
-                                        idScientificLinks,
-                                        orcid,
-                                        researcherid,
-                                        googleScholarId,
-                                        scopusAuthorId
                                 )
                         )
                 )
@@ -486,22 +365,7 @@ class StudyInfoRestController(
                     required = false) phoneNumber: String?,
             @RequestParam(
                     value = "email",
-                    required = false) email: String?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "orcid",
-                    required = false) orcid: String?,
-            @RequestParam(
-                    value = "researcherid",
-                    required = false) researcherid: String?,
-            @RequestParam(
-                    value = "google_scholar_id",
-                    required = false) googleScholarId: String?,
-            @RequestParam(
-                    value = "scopus_author_id",
-                    required = false) scopusAuthorId: String?
+                    required = false) email: String?
     ): StudyInfo? {
         val studyInfo =
                 studyInfoRepository.set(
@@ -513,13 +377,6 @@ class StudyInfoRestController(
                                         idContactInfo,
                                         phoneNumber,
                                         email
-                                ),
-                                scientificLinks = scientificLinksRepository.get(
-                                        idScientificLinks,
-                                        orcid,
-                                        researcherid,
-                                        googleScholarId,
-                                        scopusAuthorId
                                 )
                         )
                 )
@@ -528,9 +385,10 @@ class StudyInfoRestController(
 
 
     /**
-     * Queries to
-     * DELETE
-     * records
+     *
+     *      DELETE
+     *      requests
+     *
      */
 
 
@@ -554,22 +412,7 @@ class StudyInfoRestController(
                     required = false) phoneNumber: String?,
             @RequestParam(
                     value = "email",
-                    required = false) email: String?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "orcid",
-                    required = false) orcid: String?,
-            @RequestParam(
-                    value = "researcherid",
-                    required = false) researcherid: String?,
-            @RequestParam(
-                    value = "google_scholar_id",
-                    required = false) googleScholarId: String?,
-            @RequestParam(
-                    value = "scopus_author_id",
-                    required = false) scopusAuthorId: String?
+                    required = false) email: String?
     ) =
             studyInfoRepository.delete(
                     idStudyInfo,
@@ -579,13 +422,6 @@ class StudyInfoRestController(
                                     idContactInfo,
                                     phoneNumber,
                                     email
-                            ),
-                            scientificLinks = scientificLinksRepository.get(
-                                    idScientificLinks,
-                                    orcid,
-                                    researcherid,
-                                    googleScholarId,
-                                    scopusAuthorId
                             )
                     )
             )
@@ -607,22 +443,7 @@ class StudyInfoRestController(
                     required = false) phoneNumber: String?,
             @RequestParam(
                     value = "email",
-                    required = false) email: String?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "orcid",
-                    required = false) orcid: String?,
-            @RequestParam(
-                    value = "researcherid",
-                    required = false) researcherid: String?,
-            @RequestParam(
-                    value = "google_scholar_id",
-                    required = false) googleScholarId: String?,
-            @RequestParam(
-                    value = "scopus_author_id",
-                    required = false) scopusAuthorId: String?
+                    required = false) email: String?
     ) =
             studyInfoRepository.delete(
                     idStudyInfo,
@@ -632,13 +453,6 @@ class StudyInfoRestController(
                                     idContactInfo,
                                     phoneNumber,
                                     email
-                            ),
-                            scientificLinks = scientificLinksRepository.get(
-                                    idScientificLinks,
-                                    orcid,
-                                    researcherid,
-                                    googleScholarId,
-                                    scopusAuthorId
                             )
                     )
             )
@@ -660,22 +474,7 @@ class StudyInfoRestController(
                     required = false) phoneNumber: String?,
             @RequestParam(
                     value = "email",
-                    required = false) email: String?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?,
-            @RequestParam(
-                    value = "orcid",
-                    required = false) orcid: String?,
-            @RequestParam(
-                    value = "researcherid",
-                    required = false) researcherid: String?,
-            @RequestParam(
-                    value = "google_scholar_id",
-                    required = false) googleScholarId: String?,
-            @RequestParam(
-                    value = "scopus_author_id",
-                    required = false) scopusAuthorId: String?
+                    required = false) email: String?
     ) =
             studyInfoRepository.delete(
                     idStudyInfo,
@@ -685,13 +484,6 @@ class StudyInfoRestController(
                                     idContactInfo,
                                     phoneNumber,
                                     email
-                            ),
-                            scientificLinks = scientificLinksRepository.get(
-                                    idScientificLinks,
-                                    orcid,
-                                    researcherid,
-                                    googleScholarId,
-                                    scopusAuthorId
                             )
                     )
             )
