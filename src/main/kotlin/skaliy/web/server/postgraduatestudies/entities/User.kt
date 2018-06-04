@@ -34,6 +34,7 @@ import skaliy.web.server.postgraduatestudies.views.View
 
 
 @Entity(name = "User")
+@JsonIgnoreProperties(value = ["hash", "salt"])
 @SequenceGenerator(
         name = "users_seq",
         sequenceName = "users_id_user_seq",
@@ -77,7 +78,6 @@ data class User(
                 nullable = false)
         @Convert(converter = UserRole.Companion.EnumConverter::class)
         @JsonProperty(value = "role")
-        @JsonView(View.UI::class)
         @NotNull
         val role: UserRole = UserRole.UNKNOWN,
 
@@ -85,7 +85,6 @@ data class User(
                 length = 64,
                 nullable = false)
         @JsonProperty(value = "salt")
-        @JsonView(View.REST::class)
         @NotNull
         @Size(max = 64)
         val salt: String = "",

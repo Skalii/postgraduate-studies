@@ -2,18 +2,16 @@ package skaliy.web.server.postgraduatestudies.controllers.api
 
 
 import com.fasterxml.jackson.annotation.JsonView
+import com.fasterxml.jackson.databind.MapperFeature
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
 import org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 import skaliy.web.server.postgraduatestudies.entities.Branch
 import skaliy.web.server.postgraduatestudies.repositories.BranchesRepository
@@ -46,40 +44,35 @@ class BranchesRestController(
     /** ============================== MY ============================== */
 
 
-    @JsonView(View.UI::class)
-    @GetMapping(value = ["get/my-ui"])
-    fun getMyUI(@AuthenticationPrincipal authUser: UserDetails) =
-            branchesRepository.get(
-                    contactInfoRepository.get(
-                            email = authUser.username
-                    )?.user?.speciality?.branch?.idBranch
-            )
-
-    @JsonView(View.REST::class)
-    @GetMapping(value = ["get/my-rest"])
-    fun getMyRest(@AuthenticationPrincipal authUser: UserDetails) =
-            branchesRepository.get(
-                    contactInfoRepository.get(
-                            email = authUser.username
-                    )?.user?.speciality?.branch?.idBranch
-            )
-
-    @JsonView(View.TREE::class)
-    @GetMapping(value = ["get/my-tree"])
-    fun getMyTree(@AuthenticationPrincipal authUser: UserDetails) =
-            branchesRepository.get(
-                    contactInfoRepository.get(
-                            email = authUser.username
-                    )?.user?.speciality?.branch?.idBranch
-            )
+    @GetMapping(value = ["get/my-{view}"])
+    fun getMy(
+            @PathVariable("view") view: String,
+            @AuthenticationPrincipal authUser: UserDetails
+    ) =
+            ObjectMapper()
+                    //                .disable(MapperFeature.DEFAULT_VIEW_INCLUSION)
+                    .writerWithView(
+                            when (view) {
+                                "rest" -> View.REST::class.java
+                                "tree" -> View.TREE::class.java
+                                else -> View.UI::class.java
+                            }
+                    )
+                    .writeValueAsString(
+                            branchesRepository.get(
+                                    contactInfoRepository.get(
+                                            email = authUser.username
+                                    )?.user?.speciality?.branch?.idBranch
+                            )
+                    )!!
 
 
     /** ============================== ONE ============================== */
 
 
-    @JsonView(View.UI::class)
-    @GetMapping(value = ["get/one-ui"])
-    fun getOneUI(
+    @GetMapping(value = ["get/one-{view}"])
+    fun getOne(
+            @PathVariable("view") view: String,
             @RequestParam(
                     value = "id_branch",
                     required = false) idBranch: Int?,
@@ -90,49 +83,21 @@ class BranchesRestController(
                     value = "name",
                     required = false) name: String?
     ) =
-            branchesRepository.get(
-                    idBranch,
-                    number,
-                    name
-            )
-
-    @JsonView(View.REST::class)
-    @GetMapping(value = ["get/one-rest"])
-    fun getOneRest(
-            @RequestParam(
-                    value = "id_branch",
-                    required = false) idBranch: Int?,
-            @RequestParam(
-                    value = "number",
-                    required = false) number: String?,
-            @RequestParam(
-                    value = "name",
-                    required = false) name: String?
-    ) =
-            branchesRepository.get(
-                    idBranch,
-                    number,
-                    name
-            )
-
-    @JsonView(View.TREE::class)
-    @GetMapping(value = ["get/one-tree"])
-    fun getOneTree(
-            @RequestParam(
-                    value = "id_branch",
-                    required = false) idBranch: Int?,
-            @RequestParam(
-                    value = "number",
-                    required = false) number: String?,
-            @RequestParam(
-                    value = "name",
-                    required = false) name: String?
-    ) =
-            branchesRepository.get(
-                    idBranch,
-                    number,
-                    name
-            )
+            ObjectMapper()
+                    .writerWithView(
+                            when (view) {
+                                "rest" -> View.REST::class.java
+                                "tree" -> View.TREE::class.java
+                                else -> View.UI::class.java
+                            }
+                    )
+                    .writeValueAsString(
+                            branchesRepository.get(
+                                    idBranch,
+                                    number,
+                                    name
+                            )
+                    )!!
 
 
     /** ============================== ONE
@@ -141,8 +106,9 @@ class BranchesRestController(
 
 
     @JsonView(View.UI::class)
-    @GetMapping(value = ["get/one-by-speciality-ui"])
+    @GetMapping(value = ["get/one-by-speciality-{view}"])
     fun getOneBySpecialityUI(
+            @PathVariable("view") view: String,
             @RequestParam(
                     value = "id_speciality",
                     required = false) idSpeciality: Int?,
@@ -153,53 +119,24 @@ class BranchesRestController(
                     value = "name",
                     required = false) name: String?
     ) =
-            branchesRepository.getBySpeciality(
-                    specialitiesRepository.get(
-                            idSpeciality,
-                            number,
-                            name
-                    ))
+            ObjectMapper()
+                    .writerWithView(
+                            when (view) {
+                                "rest" -> View.REST::class.java
+                                "tree" -> View.TREE::class.java
+                                else -> View.UI::class.java
+                            }
+                    )
+                    .writeValueAsString(
+                            branchesRepository.getBySpeciality(
+                                    specialitiesRepository.get(
+                                            idSpeciality,
+                                            number,
+                                            name
+                                    )
+                            )
+                    )!!
 
-
-    @JsonView(View.REST::class)
-    @GetMapping(value = ["get/one-by-speciality-rest"])
-    fun getOneBySpecialityRest(
-            @RequestParam(
-                    value = "id_speciality",
-                    required = false) idSpeciality: Int?,
-            @RequestParam(
-                    value = "number",
-                    required = false) number: String?,
-            @RequestParam(
-                    value = "name",
-                    required = false) name: String?
-    ) =
-            branchesRepository.getBySpeciality(
-                    specialitiesRepository.get(
-                            idSpeciality,
-                            number,
-                            name
-                    ))
-
-    @JsonView(View.TREE::class)
-    @GetMapping(value = ["get/one-by-speciality-tree"])
-    fun getOneBySpecialityTree(
-            @RequestParam(
-                    value = "id_speciality",
-                    required = false) idSpeciality: Int?,
-            @RequestParam(
-                    value = "number",
-                    required = false) number: String?,
-            @RequestParam(
-                    value = "name",
-                    required = false) name: String?
-    ) =
-            branchesRepository.getBySpeciality(
-                    specialitiesRepository.get(
-                            idSpeciality,
-                            number,
-                            name
-                    ))
 
     /** ============================== ONE
      *                                 BY
@@ -207,8 +144,9 @@ class BranchesRestController(
 
 
     @JsonView(View.UI::class)
-    @GetMapping(value = ["get/one-by-user-ui"])
+    @GetMapping(value = ["get/one-by-user-{view}"])
     fun getOneByUserUI(
+            @PathVariable("view") view: String,
             @RequestParam(
                     value = "id_user",
                     required = false) idUser: Int?,
@@ -222,86 +160,44 @@ class BranchesRestController(
                     value = "email",
                     required = false) email: String?
     ) =
-            branchesRepository.getByUser(
-                    usersRepository.get(
-                            idUser,
-                            contactInfoRepository.get(
-                                    idContactInfo,
-                                    phoneNumber,
-                                    email
-                            )
+            ObjectMapper()
+                    .writerWithView(
+                            when (view) {
+                                "rest" -> View.REST::class.java
+                                "tree" -> View.TREE::class.java
+                                else -> View.UI::class.java
+                            }
                     )
-            )
-
-
-    @JsonView(View.REST::class)
-    @GetMapping(value = ["get/one-by-user-rest"])
-    fun getOneByUserRest(
-            @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
-                    value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
-            @RequestParam(
-                    value = "phone_number",
-                    required = false) phoneNumber: String?,
-            @RequestParam(
-                    value = "email",
-                    required = false) email: String?
-    ) =
-            branchesRepository.getByUser(
-                    usersRepository.get(
-                            idUser,
-                            contactInfoRepository.get(
-                                    idContactInfo,
-                                    phoneNumber,
-                                    email
+                    .writeValueAsString(
+                            branchesRepository.getByUser(
+                                    usersRepository.get(
+                                            idUser,
+                                            contactInfoRepository.get(
+                                                    idContactInfo,
+                                                    phoneNumber,
+                                                    email
+                                            )
+                                    )
                             )
-                    )
-            )
 
-    @JsonView(View.TREE::class)
-    @GetMapping(value = ["get/one-by-user-tree"])
-    fun getOneByUserTree(
-            @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
-                    value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
-            @RequestParam(
-                    value = "phone_number",
-                    required = false) phoneNumber: String?,
-            @RequestParam(
-                    value = "email",
-                    required = false) email: String?
-    ) =
-            branchesRepository.getByUser(
-                    usersRepository.get(
-                            idUser,
-                            contactInfoRepository.get(
-                                    idContactInfo,
-                                    phoneNumber,
-                                    email
-                            )
-                    )
-            )
+                    )!!
+
 
     /** ============================== ALL ============================== */
 
 
     @JsonView(View.UI::class)
-    @GetMapping(value = ["get/all-ui"])
-    fun getAllUI() = branchesRepository.getAll()
-
-    @JsonView(View.REST::class)
-    @GetMapping(value = ["get/all-rest"])
-    fun getAllRest() = branchesRepository.getAll()
-
-    @JsonView(View.TREE::class)
-    @GetMapping(value = ["get/all-tree"])
-    fun getAllTree() = branchesRepository.getAll()
+    @GetMapping(value = ["get/all-{view}"])
+    fun getAllUI(@PathVariable("view") view: String) =
+            ObjectMapper()
+                    .writerWithView(
+                            when (view) {
+                                "rest" -> View.REST::class.java
+                                "tree" -> View.TREE::class.java
+                                else -> View.UI::class.java
+                            }
+                    )
+                    .writeValueAsString(branchesRepository.getAll())!!
 
 
     /**

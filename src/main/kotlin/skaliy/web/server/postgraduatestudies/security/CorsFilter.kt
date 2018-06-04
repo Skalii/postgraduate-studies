@@ -1,3 +1,4 @@
+/*
 package skaliy.web.server.postgraduatestudies.security
 
 
@@ -43,4 +44,4 @@ internal class CorsFilter : Filter {
 
     override fun destroy() {}
 
-}
+}*/

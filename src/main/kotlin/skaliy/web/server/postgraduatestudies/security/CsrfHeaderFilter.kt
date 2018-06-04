@@ -1,3 +1,4 @@
+/*
 package skaliy.web.server.postgraduatestudies.security
 
 
@@ -38,4 +39,4 @@ class CsrfHeaderFilter : OncePerRequestFilter() {
         filterChain.doFilter(request, response)
     }
 
-}
+}*/

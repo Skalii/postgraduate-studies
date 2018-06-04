@@ -12,7 +12,9 @@ import skaliy.web.server.postgraduatestudies.entities.Degree
 import skaliy.web.server.postgraduatestudies.entities.Department
 import skaliy.web.server.postgraduatestudies.entities.Faculty
 import skaliy.web.server.postgraduatestudies.entities.Institute
+import skaliy.web.server.postgraduatestudies.entities.Section
 import skaliy.web.server.postgraduatestudies.entities.Speciality
+import skaliy.web.server.postgraduatestudies.entities.Task
 import skaliy.web.server.postgraduatestudies.entities.User
 
 
@@ -32,6 +34,17 @@ interface UsersRepository : JpaRepository<User, Int> {
     fun get(
             @Param("id_user") idUser: Int? = null,
             @Param("contact_info") contactInfo: ContactInfo? = ContactInfo()
+    ): User?
+
+    //language=PostgresPLSQL
+    @Query(value = """select (user_record(
+                          _id_section => cast_int(:#{#section.idSection}),
+                          _id_task => cast_int(:#{#task.idTask})
+                      )).*""",
+            nativeQuery = true)
+    fun get(
+            @Param("section") section: Section? = Section(),
+            @Param("task") task: Task? = Task()
     ): User?
 
     //language=PostgresPLSQL

@@ -11,9 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.security.web.csrf.CsrfFilter
-import org.springframework.security.web.csrf.CsrfTokenRepository
-import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository
+//import org.springframework.security.web.csrf.CsrfFilter
+//import org.springframework.security.web.csrf.CsrfTokenRepository
+//import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository
 
 import skaliy.web.server.postgraduatestudies.entities.enums.UserRole
 import skaliy.web.server.postgraduatestudies.repositories.UsersRepository
@@ -32,6 +32,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
 
     override fun configure(http: HttpSecurity?) {
         http!!
+                .csrf().disable()
                 .authorizeRequests()
                 .antMatchers(
                         "/api/branches/post/**",
@@ -71,12 +72,12 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                         "/api/study-info/get/all**",
                         "/api/study-info/post/**",
                         "/api/study-info/put/set-one**",
-                        "/api/study-info/delete/**",/*
+                        "/api/study-info/delete/**",
                         "/api/tasks/get/one**",
                         "/api/tasks/get/all**",
                         "/api/tasks/put/set-one**",
                         "/api/tasks/delete/one**",
-                        "/api/tasks/delete/all**",*/
+                        "/api/tasks/delete/all**",
                         "/api/users/get/one**",
                         "/api/users/get/all**",
                         "/api/users/post/**",
@@ -91,20 +92,19 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                         "/api/sections/put/set-my**",
                         "/api/sections/delete/my**",
                         "/api/study-info/get/my**",
-                        "/api/study-info/put/set-my**",/*
+                        "/api/study-info/put/set-my**",
                         "/api/tasks/get/my**",
                         "/api/tasks/post/add-my**",
                         "/api/tasks/put/set-my**",
-                        "/api/tasks/delete/my**",*/
+                        "/api/tasks/delete/my**",
                         "/api/users/get/my-instructor**"
                 ).hasAnyRole(
                         UserRole.GRADUATE_STUDENT.value,
                         UserRole.DOCTORAL_STUDENT.value
                 )
-
                 .antMatchers(
-                        "/api/users/get/my-students**"//,
-//                        "/api/tasks/put/set-mark-instructor**"
+                        "/api/users/get/my-students**",
+                        "/api/tasks/put/set-mark-instructor**"
                 ).hasRole(
                         UserRole.INSTRUCTOR.value
                 )
@@ -113,16 +113,16 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 .httpBasic()
                 .and()
                 .logout().permitAll()
-                .and()
-                .addFilterAfter(CsrfHeaderFilter(), CsrfFilter::class.java)
-                .csrf().csrfTokenRepository(csrfTokenRepository())
+//                .and()
+//                .addFilterAfter(CsrfHeaderFilter(), CsrfFilter::class.java)
+//                .csrf().csrfTokenRepository(csrfTokenRepository())
     }
 
-    private fun csrfTokenRepository(): CsrfTokenRepository {
-        val repository = HttpSessionCsrfTokenRepository()
-        repository.setHeaderName("X-XSRF-TOKEN")
-        return repository
-    }
+//    private fun csrfTokenRepository(): CsrfTokenRepository {
+//        val repository = HttpSessionCsrfTokenRepository()
+//        repository.setHeaderName("X-XSRF-TOKEN")
+//        return repository
+//    }
 
     @Bean
     fun passwordEncoder(): PasswordEncoder {

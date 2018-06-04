@@ -3,9 +3,9 @@ package skaliy.web.server.postgraduatestudies.controllers.api
 
 import com.fasterxml.jackson.annotation.JsonView
 
+import java.sql.Timestamp
+
 import org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE
-import org.springframework.security.access.annotation.Secured
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -508,8 +508,11 @@ class TasksRestController(
                             )?.user,
                             number = sectionNumber,
                             title = sectionTitle
-                    ),
-                    task
+                    )?.idSection!!,
+                    task.title,
+                    Timestamp.from(task.balkline.toInstant()).toString(),
+                    Timestamp.from(task.deadline.toInstant()).toString(),
+                    task.link
             )
 
     @JsonView(View.REST::class)
@@ -531,8 +534,11 @@ class TasksRestController(
                             )?.user,
                             number = sectionNumber,
                             title = sectionTitle
-                    ),
-                    task
+                    )?.idSection!!,
+                    task.title,
+                    Timestamp.from(task.balkline.toInstant()).toString(),
+                    Timestamp.from(task.deadline.toInstant()).toString(),
+                    task.link
             )
 
     @JsonView(View.TREE::class)
@@ -554,8 +560,11 @@ class TasksRestController(
                             )?.user,
                             number = sectionNumber,
                             title = sectionTitle
-                    ),
-                    task
+                    )?.idSection!!,
+                    task.title,
+                    Timestamp.from(task.balkline.toInstant()).toString(),
+                    Timestamp.from(task.deadline.toInstant()).toString(),
+                    task.link
             )
 
 
@@ -693,10 +702,10 @@ class TasksRestController(
         return tasksRepository.get(task?.idTask)
     }
 
-    //todo forbidden
 
     /** ============================== MARK
      *                                 INSTRUCTOR ============================== */
+
 
     @JsonView(View.UI::class)
     @PutMapping(value = ["put/set-mark-instructor-ui"])
@@ -705,15 +714,15 @@ class TasksRestController(
             @RequestBody task: Task
     ): Task? {
 
+        task.section.user = usersRepository.get(task.section)!!
+
         if (task.section.user.studyInfo?.instructor?.contactInfo?.email == authUser.username) {
 
             val newTask =
                     tasksRepository.setMarkInstructor(task)
-            println("1")
             return tasksRepository.get(newTask?.idTask)
         }
 
-        println("2")
         return Task()
     }
 
@@ -721,26 +730,19 @@ class TasksRestController(
     @PutMapping(value = ["put/set-mark-instructor-rest"])
     fun setMarkInstructorRest(
             @AuthenticationPrincipal authUser: UserDetails,
-//            @RequestBody task: Task,
-            @RequestParam(value = "id_task") idTask: Int,
-            @RequestParam(value = "mark") markDoneInstructor: Boolean
+            @RequestBody task: Task
     ): Task? {
 
-        var task = tasksRepository.get(idTask)
-        println()
-        println(task.toString())
-        println()
-        return task
+//        task.section.user = usersRepository.get(task.section)!!
 
-//        if (task?.section?.user?.studyInfo?.instructor?.contactInfo?.email == authUser.username) {
-//
-//            val newTask =
-//                    tasksRepository.setMarkInstructor(task)
-//
-//            return tasksRepository.get(newTask?.idTask)
-//        }
-//
-//        return Task()
+        if (task.section.user.studyInfo?.instructor?.contactInfo?.email == authUser.username) {
+
+            val newTask =
+                    tasksRepository.setMarkInstructor(task)
+            return tasksRepository.get(newTask?.idTask)
+        }
+
+        return Task()
     }
 
     @JsonView(View.TREE::class)
@@ -750,11 +752,12 @@ class TasksRestController(
             @RequestBody task: Task
     ): Task? {
 
+        task.section.user = usersRepository.get(task.section)!!
+
         if (task.section.user.studyInfo?.instructor?.contactInfo?.email == authUser.username) {
 
             val newTask =
                     tasksRepository.setMarkInstructor(task)
-
             return tasksRepository.get(newTask?.idTask)
         }
 

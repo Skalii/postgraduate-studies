@@ -55,17 +55,19 @@ interface TasksRepository : JpaRepository<Task, Int> {
 
     //language=PostgresPLSQL
     @Query(value = """select (task_insert(
-                          cast_int(:#{#section.idSection}),
-                          cast_int(:#{#task.number}),
-                          cast_text(:#{#task.title}),
-                          cast_ts(:#{#task.balkline} :: timestamp),
-                          cast_ts(:#{#task.deadline} :: timestamp),
-                          cast_text(:#{#task.link})
+                          cast_int(:id_section),
+                          cast_text(:title),
+                          cast_ts(:balkline),
+                          cast_ts(:deadline),
+                          cast_text(:link)
                       )).*""",
             nativeQuery = true)
     fun add(
-            @Param("section") section: Section?,
-            @Param("task") task: Task?
+            @Param("id_section") idSection: Int,
+            @Param("title") title: String?,
+            @Param("balkline") balkline: String?,
+            @Param("deadline") deadline: String?,
+            @Param("link") link: String?
     ): Task?
 
 
