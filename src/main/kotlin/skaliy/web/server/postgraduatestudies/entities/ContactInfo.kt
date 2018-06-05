@@ -58,7 +58,7 @@ data class ContactInfo(
         @Column(name = "phone_number",
                 length = 100)
         @JsonProperty(value = "phone_number")
-        @JsonView(View.UI::class)
+        @JsonView(View.REST::class)
         @NotNull
         @Size(max = 100)
         val phoneNumber: String,
@@ -67,7 +67,7 @@ data class ContactInfo(
                 nullable = false,
                 length = 150)
         @JsonProperty(value = "email")
-        @JsonView(View.UI::class)
+        @JsonView(View.REST::class)
         @NotNull
         @Size(max = 150)
         val email: String,
@@ -75,7 +75,7 @@ data class ContactInfo(
         @Column(name = "address",
                 length = 200)
         @JsonProperty(value = "address")
-        @JsonView(View.UI::class)
+        @JsonView(View.REST::class)
         @Size(max = 200)
         val address: String? = "Невідома адреса"
 

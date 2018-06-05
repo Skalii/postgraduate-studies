@@ -63,7 +63,7 @@ data class ScientificLinks(
 
         @Size(max = 100)
         @JsonProperty(value = "orcid")
-        @JsonView(View.UI::class)
+        @JsonView(View.REST::class)
         @Column(name = "orcid",
                 length = 100)
         val orcid: String? = "Інформація відсутня",
@@ -71,21 +71,21 @@ data class ScientificLinks(
         @Column(name = "researcherid",
                 length = 100)
         @JsonProperty(value = "researcherid")
-        @JsonView(View.UI::class)
+        @JsonView(View.REST::class)
         @Size(max = 100)
         val researcherid: String? = "Інформація відсутня",
 
         @Column(name = "google_scholar_id",
                 length = 100)
         @JsonProperty(value = "google_scholar_id")
-        @JsonView(View.UI::class)
+        @JsonView(View.REST::class)
         @Size(max = 100)
         val googleScholarId: String? = "Інформація відсутня",
 
         @Column(name = "scopus_author_id",
                 length = 100)
         @JsonProperty(value = "scopus_author_id")
-        @JsonView(View.UI::class)
+        @JsonView(View.REST::class)
         @Size(max = 100)
         val scopusAuthorId: String? = "Інформація відсутня"
 
@@ -97,7 +97,6 @@ data class ScientificLinks(
     @OneToOne(
             targetEntity = User::class,
             fetch = FetchType.LAZY,
-            optional = false,
             mappedBy = "scientificLinks")
     var user: User? = null
 

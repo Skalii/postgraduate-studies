@@ -18,7 +18,8 @@ import javax.persistence.Table
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
-import skaliy.web.server.postgraduatestudies.views.View
+import skaliy.web.server.postgraduatestudies.views.View.REST
+import skaliy.web.server.postgraduatestudies.views.View.TREE
 
 
 @Entity(name = "Branch")
@@ -50,16 +51,16 @@ data class Branch(
                 strategy = SEQUENCE,
                 generator = "branches_seq")
         @Id
-        @JsonProperty(value = "id_branch")
-        @JsonView(View.REST::class)
+        @get:JsonProperty(value = "id_branch")
+        @JsonView(REST::class)
         @NotNull
         val idBranch: Int,
 
         @Column(name = "number",
                 nullable = false,
                 length = 30)
-        @JsonProperty(value = "number")
-        @JsonView(View.UI::class)
+        @get:JsonProperty(value = "number")
+        @JsonView(REST::class)
         @NotNull
         @Size(max = 30)
         val number: String,
@@ -67,8 +68,8 @@ data class Branch(
         @Column(name = "name",
                 nullable = false,
                 length = 200)
-        @JsonProperty(value = "name")
-        @JsonView(View.UI::class)
+        @get:JsonProperty(value = "name")
+        @JsonView(REST::class)
         @NotNull
         @Size(max = 200)
         val name: String
@@ -76,18 +77,19 @@ data class Branch(
 ) {
 
     @JsonIgnoreProperties(value = ["branch", "users"])
-    @JsonProperty(value = "specialities")
-    @JsonView(View.TREE::class)
+    @get:JsonProperty(value = "specialities")
+    @JsonView(TREE::class)
     @OneToMany(
             targetEntity = Speciality::class,
             mappedBy = "branch")
     @OrderBy
-    lateinit var specialities: MutableList<Speciality>
+    lateinit var specialities: MutableList<Speciality?>
 
 
     constructor() : this(
             0,
-            "",
-            "")
+            "Невідомий шифр",
+            "Невідома галузь"
+    )
 
 }

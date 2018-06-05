@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonView
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
+import javax.persistence.GenerationType.SEQUENCE
 import javax.persistence.Id
 import javax.persistence.Index
 import javax.persistence.OneToMany
@@ -18,7 +18,8 @@ import javax.persistence.Table
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
-import skaliy.web.server.postgraduatestudies.views.View
+import skaliy.web.server.postgraduatestudies.views.View.REST
+import skaliy.web.server.postgraduatestudies.views.View.TREE
 
 
 @Entity(name = "Faculty")
@@ -44,19 +45,19 @@ data class Faculty(
         @Column(name = "id_faculty",
                 nullable = false)
         @GeneratedValue(
-                strategy = GenerationType.SEQUENCE,
+                strategy = SEQUENCE,
                 generator = "faculties_seq")
         @Id
-        @JsonProperty(value = "id_faculty")
-        @JsonView(View.REST::class)
+        @get:JsonProperty(value = "id_faculty")
+        @JsonView(REST::class)
         @NotNull
         val idFaculty: Int,
 
         @Column(name = "name",
                 nullable = false,
                 length = 200)
-        @JsonProperty(value = "name")
-        @JsonView(View.UI::class)
+        @get:JsonProperty(value = "name")
+        @JsonView(REST::class)
         @NotNull
         @Size(max = 200)
         val name: String
@@ -64,17 +65,18 @@ data class Faculty(
 ) {
 
     @JsonIgnoreProperties(value = ["faculty"])
-    @JsonProperty(value = "departments")
-    @JsonView(View.TREE::class)
+    @get:JsonProperty(value = "departments")
+    @JsonView(TREE::class)
     @OneToMany(
             targetEntity = Department::class,
             mappedBy = "faculty")
     @OrderBy
-    lateinit var departments: MutableList<Department>
+    lateinit var departments: MutableList<Department?>
 
 
     constructor() : this(
             0,
-            "")
+            "Невідомий факультет"
+    )
 
 }

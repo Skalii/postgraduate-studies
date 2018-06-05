@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonView
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
+import javax.persistence.GenerationType.SEQUENCE
 import javax.persistence.Id
 import javax.persistence.Index
 import javax.persistence.OneToMany
@@ -18,7 +18,8 @@ import javax.persistence.Table
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
-import skaliy.web.server.postgraduatestudies.views.View
+import skaliy.web.server.postgraduatestudies.views.View.REST
+import skaliy.web.server.postgraduatestudies.views.View.TREE
 
 
 @Entity(name = "Institute")
@@ -44,11 +45,11 @@ data class Institute(
         @Column(name = "id_institute",
                 nullable = false)
         @GeneratedValue(
-                strategy = GenerationType.SEQUENCE,
+                strategy = SEQUENCE,
                 generator = "institutes_seq")
         @Id
-        @JsonProperty(value = "id_institute")
-        @JsonView(View.REST::class)
+        @get:JsonProperty(value = "id_institute")
+        @JsonView(REST::class)
         @NotNull
         val idInstitute: Int,
 
@@ -57,29 +58,29 @@ data class Institute(
         @Column(name = "name",
                 nullable = false,
                 length = 200)
-        @JsonProperty(value = "name")
-        @JsonView(View.UI::class)
+        @get:JsonProperty(value = "name")
+        @JsonView(REST::class)
         val name: String,
 
         @Column(name = "named_after",
                 length = 100)
-        @JsonProperty(value = "named_after")
-        @JsonView(View.UI::class)
+        @get:JsonProperty(value = "named_after")
+        @JsonView(REST::class)
         @Size(max = 100)
         val namedAfter: String?,
 
         @Column(name = "abbreviation",
                 length = 25)
-        @JsonProperty(value = "abbreviation")
-        @JsonView(View.UI::class)
+        @get:JsonProperty(value = "abbreviation")
+        @JsonView(REST::class)
         @Size(max = 25)
         val abbreviation: String?
 
 ) {
 
     @JsonIgnoreProperties(value = ["institute"])
-    @JsonProperty(value = "departments")
-    @JsonView(View.TREE::class)
+    @get:JsonProperty(value = "departments")
+    @JsonView(TREE::class)
     @OneToMany(
             targetEntity = Department::class,
             mappedBy = "institute")
@@ -89,8 +90,9 @@ data class Institute(
 
     constructor() : this(
             0,
-            "",
-            "",
-            "")
+            "Невідомий інститут",
+            null,
+            null
+    )
 
 }

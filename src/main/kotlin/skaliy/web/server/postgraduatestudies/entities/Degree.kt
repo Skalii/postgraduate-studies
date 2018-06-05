@@ -9,7 +9,7 @@ import javax.persistence.Column
 import javax.persistence.Convert
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
+import javax.persistence.GenerationType.SEQUENCE
 import javax.persistence.Id
 import javax.persistence.Index
 import javax.persistence.OneToMany
@@ -20,7 +20,8 @@ import javax.validation.constraints.NotNull
 
 import skaliy.web.server.postgraduatestudies.entities.enums.AcademicDegree
 import skaliy.web.server.postgraduatestudies.entities.enums.BranchOfScience
-import skaliy.web.server.postgraduatestudies.views.View
+import skaliy.web.server.postgraduatestudies.views.View.REST
+import skaliy.web.server.postgraduatestudies.views.View.TREE
 
 
 @Entity(name = "Degree")
@@ -46,46 +47,45 @@ data class Degree(
         @Column(name = "id_degree",
                 nullable = false)
         @GeneratedValue(
-                strategy = GenerationType.SEQUENCE,
+                strategy = SEQUENCE,
                 generator = "degrees_seq")
         @Id
-        @JsonProperty(value = "id_degree")
-        @JsonView(View.REST::class)
+        @get:JsonProperty(value = "id_degree")
+        @JsonView(REST::class)
         @NotNull
         val idDegree: Int,
 
         @Column(name = "name",
                 nullable = false)
         @Convert(converter = AcademicDegree.Companion.EnumConverter::class)
-        @JsonProperty(value = "name")
-        @JsonView(View.UI::class)
+        @get:JsonProperty(value = "name")
         @NotNull
         val name: AcademicDegree,
 
         @Column(name = "branch",
                 nullable = false)
         @Convert(converter = BranchOfScience.Companion.EnumConverter::class)
-        @JsonProperty(value = "branch")
-        @JsonView(View.UI::class)
+        @get:JsonProperty(value = "branch")
         @NotNull
         val branch: BranchOfScience
 
 ) {
 
     @JsonIgnoreProperties(value = ["degree", "students", "sections"])
-    @JsonProperty(value = "users")
-    @JsonView(View.TREE::class)
+    @get:JsonProperty(value = "users")
+    @JsonView(TREE::class)
     @OneToMany(
             targetEntity = User::class,
             mappedBy = "degree")
     @OrderBy
-    lateinit var users: MutableList<User>
+    lateinit var users: MutableList<User?>
 
 
     constructor() : this(
             0,
             AcademicDegree.UNKNOWN,
-            BranchOfScience.UNKNOWN)
+            BranchOfScience.UNKNOWN
+    )
 
 
     override fun toString() =

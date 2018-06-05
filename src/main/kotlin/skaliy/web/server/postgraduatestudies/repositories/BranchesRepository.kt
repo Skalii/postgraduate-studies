@@ -34,17 +34,17 @@ interface BranchesRepository : JpaRepository<Branch, Int> {
     //language=PostgresPLSQL
     @Query(value = "select (branch_record(cast_int(:#{#speciality.branch.idBranch}))).*",
             nativeQuery = true)
-    fun getBySpeciality(@Param("speciality") speciality: Speciality? = Speciality()): Branch?
+    fun get(@Param("speciality") speciality: Speciality?): Branch?
 
     //language=PostgresPLSQL
     @Query(value = "select (branch_record(cast_int(:#{#user.speciality.branch.idBranch}))).*",
             nativeQuery = true)
-    fun getByUser(@Param("user") user: User? = User()): Branch?
+    fun get(@Param("user") user: User?): Branch?
 
     //language=PostgresPLSQL
     @Query(value = "select (branch_record(all_records => true)).*",
             nativeQuery = true)
-    fun getAll(): MutableList<Branch>?
+    fun getAll(): MutableList<Branch?>?
 
 
     /** ============================== ADD / INSERT INTO ============================== */
@@ -52,11 +52,14 @@ interface BranchesRepository : JpaRepository<Branch, Int> {
 
     //language=PostgresPLSQL
     @Query(value = """select (branch_insert(
-                          cast_text(:#{#branch.number}),
-                          cast_text(:#{#branch.name})
+                          cast_text(:number),
+                          cast_text(:name)
                       )).*""",
             nativeQuery = true)
-    fun add(@Param("branch") branch: Branch?): Branch?
+    fun add(
+            @Param("number") number: String,
+            @Param("name") name: String
+    ): Branch?
 
 
     /** ============================== SET / UPDATE ============================== */
@@ -66,16 +69,12 @@ interface BranchesRepository : JpaRepository<Branch, Int> {
     @Query(value = """select (branch_update(
                           cast_text(:#{#branch.number}),
                           cast_text(:#{#branch.name}),
-                          cast_int(:id_branch),
-                          cast_text(:number),
-                          cast_text(:name)
+                          cast_int(:id_branch)
                       )).*""",
             nativeQuery = true)
     fun set(
-            @Param("branch") newBranch: Branch?,
-            @Param("id_branch") idBranch: Int? = null,
-            @Param("number") number: String? = null,
-            @Param("name") name: String? = null
+            @Param("branch") newBranch: Branch,
+            @Param("id_branch") idBranch: Int
     ): Branch?
 
 
@@ -98,6 +97,6 @@ interface BranchesRepository : JpaRepository<Branch, Int> {
     //language=PostgresPLSQL
     @Query(value = "select (branch_delete(cast_int(:#{#speciality.branch.idBranch}))).*",
             nativeQuery = true)
-    fun deleteBySpeciality(@Param("speciality") speciality: Speciality? = Speciality()): Branch?
+    fun deleteBySpeciality(@Param("speciality") speciality: Speciality?): Branch?
 
 }

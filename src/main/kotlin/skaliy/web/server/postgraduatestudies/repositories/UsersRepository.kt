@@ -66,7 +66,7 @@ interface UsersRepository : JpaRepository<User, Int> {
             @Param("department") department: Department? = Department(),
             @Param("faculty") faculty: Faculty? = Faculty(),
             @Param("institute") institute: Institute? = Institute()
-    ): MutableList<User>?
+    ): MutableList<User?>?
 
 
     /** ============================== ADD / INSERT INTO ============================== */
@@ -74,23 +74,38 @@ interface UsersRepository : JpaRepository<User, Int> {
 
     //language=PostgresPLSQL
     @Query(value = """select (user_insert(
-                          cast_role(:#{#user.role.value}),
-                          cast_text(:#{#user.hash}),
-                          cast_text(:#{#user.fullNameUa}),
-                          cast_text(:#{#user.fullNameEn}),
-                          :#{#user.birthday},
-                          cast_family(:#{#user.familyStatus.value}),
-                          cast_int(:#{#user.children}),
-                          cast_rank(:#{#user.academicRank.value}),
-                          cast_int(:#{#user.degree.idDegree}),
-                          cast_int(:#{#user.speciality.idSpeciality}),
-                          cast_int(:#{#user.department.idDepartment}),
-                          cast_int(:#{#user.contactInfo.idContactInfo}),
-                          cast_int(:#{#user.studyInfo.idStudyInfo}),
-                          cast_int(:#{#user.scientificLinks.idScientificLinks})
+                          cast_role(:role),
+                          cast_text(:hash),
+                          cast_text(:full_name_ua),
+                          cast_text(:full_name_en),
+                          :birthday,
+                          cast_family(:family_status),
+                          cast_int(:children),
+                          cast_rank(:academic_rank),
+                          cast_int(:id_degree),
+                          cast_int(:id_speciality),
+                          cast_int(:id_department),
+                          cast_int(:id_contact_info),
+                          cast_int(:id_study_info),
+                          cast_int(:id_scientific_links)
                       )).*""",
             nativeQuery = true)
-    fun add(@Param("user") user: User?): User?
+    fun add(
+            @Param("role") role: String,
+            @Param("hash") hash: String,
+            @Param("full_name_ua") fullNameUa: String,
+            @Param("full_name_en") fullNameEn: String,
+            @Param("birthday") birthday: String,
+            @Param("family_status") familyStatus: String?,
+            @Param("children") children: Int?,
+            @Param("academic_rank") academicRank: String?,
+            @Param("id_degree") idDegree: Int?,
+            @Param("id_speciality") idSpeciality: Int,
+            @Param("id_department") idDepartment: Int,
+            @Param("id_contact_info") idContactInfo: Int,
+            @Param("id_study_info") idStudyInfo: Int?,
+            @Param("id_scientific_links") idScientificLinks: Int
+    ): User?
 
 
     /** ============================== SET / UPDATE ============================== */
@@ -109,14 +124,28 @@ interface UsersRepository : JpaRepository<User, Int> {
                           cast_int(:#{#user.degree.idDegree}),
                           cast_int(:#{#user.speciality.idSpeciality}),
                           cast_int(:#{#user.department.idDepartment}),
-                          cast_int(:id_user),
-                          cast_int(:#{#contact_info.idContactInfo})
+                          cast_int(:id_user)
                       )).*""",
             nativeQuery = true)
     fun set(
-            @Param("user") newUser: User?,
-            @Param("id_user") idUser: Int? = null,
-            @Param("contact_info") contactInfo: ContactInfo? = ContactInfo()
+            @Param("user") newUser: User,
+            @Param("id_user") idUser: Int
+    ): User?
+
+    //language=PostgresPLSQL
+    @Query(value = """select (user_update(
+                          cast_text(:#{#user.hash}),
+                          cast_text(:#{#user.fullNameUa}),
+                          cast_text(:#{#user.fullNameEn}),
+                          :#{#user.birthday},
+                          cast_family(:#{#user.familyStatus.value}),
+                          cast_int(:#{#user.children}),
+                          cast_int(:id_user)
+                      )).*""",
+            nativeQuery = true)
+    fun setMe(
+            @Param("user") newUser: User,
+            @Param("id_user") idUser: Int
     ): User?
 
 
@@ -135,12 +164,12 @@ interface UsersRepository : JpaRepository<User, Int> {
     ): User?
 
 
-    /** ============================== **CODE ============================== */
+    /** ============================== HASHING ============================== */
 
 
     //language=PostgresPLSQL
     @Query(value = "select generate_pass_decrypt(:id_user)",
             nativeQuery = true)
-    fun getPassword(@Param("id_user") idUser: Int?): String?
+    fun decrypt(@Param("id_user") idUser: Int): String?
 
 }

@@ -58,20 +58,20 @@ data class StudyInfo(
         @Column(name = "year",
                 nullable = false)
         @JsonProperty(value = "year")
-        @JsonView(View.UI::class)
+        @JsonView(View.REST::class)
         @NotNull
         val year: Int = 1,
 
         @Column(name = "form")
         @Convert(converter = StudyForm.Companion.EnumConverter::class)
         @JsonProperty(value = "form")
-        @JsonView(View.UI::class)
+        @JsonView(View.REST::class)
         val form: StudyForm? = StudyForm.FULL_TIME,
 
         @Column(name = "basis")
         @Convert(converter = StudyBasis.Companion.EnumConverter::class)
         @JsonProperty(value = "basis")
-        @JsonView(View.UI::class)
+        @JsonView(View.REST::class)
         val basis: StudyBasis? = StudyBasis.CONTRACT,
 
         @Column(name = "theme_title",
@@ -79,7 +79,7 @@ data class StudyInfo(
         @JsonProperty(value = "theme_title")
         @NotNull
         @Size(max = 200)
-        @JsonView(View.UI::class)
+        @JsonView(View.REST::class)
         val themeTitle: String = "Невідома тема роботи"
 
 ) {
@@ -87,9 +87,9 @@ data class StudyInfo(
     @JoinColumn(
             name = "id_instructor",
             foreignKey = ForeignKey(name = "study_info_instructors_fkey"))
-    @JsonIgnoreProperties(value = ["study_info", "scientific_links", "students", "sections"])
+    @JsonIgnoreProperties(value = ["study_info", "students", "sections"])
     @JsonProperty(value = "instructor")
-    @JsonView(View.UI::class)
+    @JsonView(View.STUDENT_TREE::class)
     @ManyToOne(
             targetEntity = User::class,
             fetch = FetchType.LAZY)
@@ -97,7 +97,7 @@ data class StudyInfo(
 
     @JsonIgnoreProperties(value = ["study_info", "students", "sections"])
     @JsonProperty(value = "user")
-    @JsonView(View.TREE::class)
+    @JsonView(View.TREE::class, View.INSTRUCTOR_TREE::class)
     @OneToOne(
             targetEntity = User::class,
             fetch = FetchType.LAZY,

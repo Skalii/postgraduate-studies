@@ -44,7 +44,7 @@ class StudyInfoRestController(
     /** ============================== MY ============================== */
 
 
-    @JsonView(View.UI::class)
+    @JsonView(View.REST::class)
     @GetMapping(value = ["get/my-ui"])
     fun getMyUI(@AuthenticationPrincipal authUser: UserDetails) =
             studyInfoRepository.get(
@@ -75,7 +75,7 @@ class StudyInfoRestController(
     /** ============================== ONE ============================== */
 
 
-    @JsonView(View.UI::class)
+    @JsonView(View.REST::class)
     @GetMapping(value = ["get/one-ui"])
     fun getOneUI(
             @RequestParam(
@@ -172,7 +172,7 @@ class StudyInfoRestController(
     /** ============================== ALL ============================== */
 
 
-    @JsonView(View.UI::class)
+    @JsonView(View.REST::class)
     @GetMapping(value = ["get/all-ui"])
     fun getAllUI() = studyInfoRepository.getAll()
 
@@ -196,7 +196,7 @@ class StudyInfoRestController(
     /** ============================== ONE ============================== */
 
 
-    @JsonView(View.UI::class)
+    @JsonView(View.REST::class)
     @PostMapping(value = ["post/add-ui"])
     fun addUI(@RequestBody studyInfo: StudyInfo?) =
             studyInfoRepository.add(studyInfo)
@@ -223,7 +223,7 @@ class StudyInfoRestController(
     /** ============================== MY ============================== */
 
 
-    @JsonView(View.UI::class)
+    @JsonView(View.REST::class)
     @PutMapping(value = ["put/set-my-ui"])
     fun setMyUI(
             @RequestBody newStudyInfo: StudyInfo?,
@@ -275,7 +275,7 @@ class StudyInfoRestController(
     /** ============================== ONE ============================== */
 
 
-    @JsonView(View.UI::class)
+    @JsonView(View.REST::class)
     @PutMapping(value = ["put/set-one-ui"])
     fun setUI(
             @RequestBody newStudyInfo: StudyInfo?,
@@ -395,7 +395,7 @@ class StudyInfoRestController(
     /** ============================== ONE ============================== */
 
 
-    @JsonView(View.UI::class)
+    @JsonView(View.REST::class)
     @DeleteMapping(value = ["delete/one-ui"])
     fun deleteUI(
             @RequestParam(

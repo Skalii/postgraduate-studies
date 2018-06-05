@@ -135,8 +135,8 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
         usersRepository.getAll(true)?.forEach { user ->
             auth
                     .inMemoryAuthentication()
-                    .withUser(user.contactInfo.email)
-                    .password(passwordEncoder().encode(usersRepository.getPassword(user.idUser)))
+                    .withUser(user!!.contactInfo.email)
+                    .password(passwordEncoder().encode(usersRepository.decrypt(user.idUser)))
                     .roles(user.role.value)
         }
     }

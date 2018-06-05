@@ -33,7 +33,7 @@ interface DepartmentsRepository : JpaRepository<Department, Int> {
     //language=PostgresPLSQL
     @Query(value = "select (department_record(cast_int(:#{#user.department.idDepartment}))).*",
             nativeQuery = true)
-    fun get(@Param("user") user: User? = User()): Department?
+    fun get(@Param("user") user: User?): Department?
 
     //language=PostgresPLSQL
     @Query(value = """select (department_record(
@@ -46,7 +46,7 @@ interface DepartmentsRepository : JpaRepository<Department, Int> {
             @Param("all_records") allRecords: Boolean? = false,
             @Param("institute") institute: Institute? = Institute(),
             @Param("faculty") faculty: Faculty? = Faculty()
-    ): MutableList<Department>?
+    ): MutableList<Department?>?
 
 
     /** ============================== ADD / INSERT INTO ============================== */
@@ -54,12 +54,16 @@ interface DepartmentsRepository : JpaRepository<Department, Int> {
 
     //language=PostgresPLSQL
     @Query(value = """select (department_insert(
-                          cast_text(:#{#department.name}),
-                          cast_int(:#{#department.institute.idInstitute}),
-                          cast_int(:#{#department.faculty.idFaculty})
+                          cast_text(:name),
+                          cast_int(:id_institute),
+                          cast_int(:id_faculty)
                       )).*""",
             nativeQuery = true)
-    fun add(@Param("department") department: Department?): Department?
+    fun add(
+            @Param("name") name: String,
+            @Param("id_institute") idInstitute: Int,
+            @Param("id_faculty") idFaculty: Int
+    ): Department?
 
 
     /** ============================== SET / UPDATE ============================== */
@@ -70,14 +74,12 @@ interface DepartmentsRepository : JpaRepository<Department, Int> {
                           cast_text(:#{#department.name}),
                           cast_int(:#{#department.institute.idInstitute}),
                           cast_int(:#{#department.faculty.idFaculty}),
-                          cast_int(:id_department),
-                          cast_text(:name)
+                          cast_int(:id_department)
                       )).*""",
             nativeQuery = true)
     fun set(
-            @Param("department") newDepartment: Department?,
-            @Param("id_department") idDepartment: Int? = null,
-            @Param("name") name: String? = null
+            @Param("department") newDepartment: Department,
+            @Param("id_department") idDepartment: Int
     ): Department?
 
 

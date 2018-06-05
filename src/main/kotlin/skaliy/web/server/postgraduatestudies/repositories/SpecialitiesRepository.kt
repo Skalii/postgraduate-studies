@@ -34,7 +34,7 @@ interface SpecialitiesRepository : JpaRepository<Speciality, Int> {
     //language=PostgresPLSQL
     @Query(value = "select (speciality_record(cast_int(:#{#user.speciality.idSpeciality}))).*",
             nativeQuery = true)
-    fun get(@Param("user") user: User? = User()): Speciality?
+    fun get(@Param("user") user: User?): Speciality?
 
     //language=PostgresPLSQL
     @Query(value = """select (speciality_record(
@@ -45,19 +45,23 @@ interface SpecialitiesRepository : JpaRepository<Speciality, Int> {
     fun getAll(
             @Param("all_records") allRecords: Boolean? = false,
             @Param("branch") branch: Branch? = Branch()
-    ): MutableList<Speciality>?
+    ): MutableList<Speciality?>?
 
     /** ============================== ADD / INSERT ============================== */
 
 
     //language=PostgresPLSQL
     @Query(value = """select (speciality_insert(
-                          cast_int(:#{#speciality.branch.idBranch}),
-                          cast_text(:#{#speciality.number}),
-                          cast_text(:#{#speciality.name})
+                          cast_int(:id_branch),
+                          cast_text(:number),
+                          cast_text(:name)
                       )).*""",
             nativeQuery = true)
-    fun add(@Param("speciality") speciality: Speciality?): Speciality?
+    fun add(
+            @Param("id_branch") idBranch: Int,
+            @Param("number") number: String,
+            @Param("name") name: String
+    ): Speciality?
 
 
     /** ============================== SET / UPDATE ============================== */
@@ -65,19 +69,15 @@ interface SpecialitiesRepository : JpaRepository<Speciality, Int> {
 
     //language=PostgresPLSQL
     @Query(value = """select (speciality_update(
-                          cast_int(:#{#specialitwy.branch.idBranch}),
+                          cast_int(:#{#speciality.branch.idBranch}),
                           cast_text(:#{#speciality.number}),
                           cast_text(:#{#speciality.name}),
-                          cast_int(:id_speciality),
-                          cast_text(:number),
-                          cast_text(:name)
+                          cast_int(:id_speciality)
                       )).*""",
             nativeQuery = true)
     fun set(
-            @Param("speciality") newSpeciality: Speciality?,
-            @Param("id_speciality") idSpeciality: Int? = null,
-            @Param("number") number: String? = null,
-            @Param("name") name: String? = null
+            @Param("speciality") newSpeciality: Speciality,
+            @Param("id_speciality") idSpeciality: Int
     ): Speciality?
 
 
@@ -100,6 +100,6 @@ interface SpecialitiesRepository : JpaRepository<Speciality, Int> {
     //language=PostgresPLSQL
     @Query(value = "select (speciality_delete(all_from_id_branch => cast_int(:#{#branch.idBranch}))).*",
             nativeQuery = true)
-    fun deleteAll(@Param("branch") branch: Branch? = Branch()): MutableList<Speciality>?
+    fun deleteAllBySpeciality(@Param("branch") branch: Branch?): MutableList<Speciality?>?
 
 }

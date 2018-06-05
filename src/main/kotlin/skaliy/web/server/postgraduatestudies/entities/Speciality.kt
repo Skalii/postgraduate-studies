@@ -7,10 +7,10 @@ import com.fasterxml.jackson.annotation.JsonView
 
 import javax.persistence.Column
 import javax.persistence.Entity
-import javax.persistence.FetchType
+import javax.persistence.FetchType.LAZY
 import javax.persistence.ForeignKey
 import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
+import javax.persistence.GenerationType.SEQUENCE
 import javax.persistence.Id
 import javax.persistence.Index
 import javax.persistence.JoinColumn
@@ -22,7 +22,8 @@ import javax.persistence.Table
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
-import skaliy.web.server.postgraduatestudies.views.View
+import skaliy.web.server.postgraduatestudies.views.View.REST
+import skaliy.web.server.postgraduatestudies.views.View.TREE
 
 
 @Entity(name = "Speciality")
@@ -51,19 +52,19 @@ data class Speciality(
         @Column(name = "id_speciality",
                 nullable = false)
         @GeneratedValue(
-                strategy = GenerationType.SEQUENCE,
+                strategy = SEQUENCE,
                 generator = "specialities_seq")
         @Id
-        @JsonProperty(value = "id_speciality")
-        @JsonView(View.REST::class)
+        @get:JsonProperty(value = "id_speciality")
+        @JsonView(REST::class)
         @NotNull
         val idSpeciality: Int,
 
         @Column(name = "number",
                 nullable = false,
                 length = 30)
-        @JsonProperty(value = "number")
-        @JsonView(View.UI::class)
+        @get:JsonProperty(value = "number")
+        @JsonView(REST::class)
         @NotNull
         @Size(max = 30)
         val number: String,
@@ -71,8 +72,8 @@ data class Speciality(
         @Column(name = "name",
                 nullable = false,
                 length = 200)
-        @JsonView(View.UI::class)
-        @JsonProperty(value = "name")
+        @JsonView(REST::class)
+        @get:JsonProperty(value = "name")
         @NotNull
         @Size(max = 200)
         val name: String
@@ -84,28 +85,29 @@ data class Speciality(
             name = "id_branch",
             nullable = false,
             foreignKey = ForeignKey(name = "specialities_branches_fkey"))
-    @JsonProperty(value = "branch")
-    @JsonView(View.UI::class)
+    @get:JsonProperty(value = "branch")
+    @JsonView(TREE::class)
     @ManyToOne(
             targetEntity = Branch::class,
-            fetch = FetchType.LAZY,
+            fetch = LAZY,
             optional = false)
     lateinit var branch: Branch
 
-    @JsonIgnoreProperties(value = ["speciality", "students", "sections"])
-    @JsonProperty(value = "users")
-    @JsonView(View.TREE::class)
+    @JsonIgnoreProperties(value = ["speciality", "sections", "students"])
+    @get:JsonProperty(value = "users")
+    @JsonView(TREE::class)
     @OneToMany(
             targetEntity = User::class,
             mappedBy = "speciality")
     @OrderBy
-    lateinit var users: MutableList<User>
+    lateinit var users: MutableList<User?>
 
 
     constructor() : this(
             0,
-            "",
-            "")
+            "Невiдомий код",
+            "Невідома спеціальність"
+    )
 
     constructor(
             idSpeciality: Int,

@@ -65,7 +65,7 @@ data class Task(
         @Column(name = "number",
                 nullable = false)
         @JsonProperty(value = "number")
-        @JsonView(View.UI::class)
+        @JsonView(View.REST::class)
         @NotNull
         val number: Int = 1,
 
@@ -73,7 +73,7 @@ data class Task(
                 nullable = false,
                 length = 500)
         @JsonProperty(value = "title")
-        @JsonView(View.UI::class)
+        @JsonView(View.REST::class)
         @NotNull
         @Size(max = 500)
         val title: String = "Нове завдання",
@@ -81,7 +81,7 @@ data class Task(
         @Column(name = "balkline",
                 nullable = false)
         @JsonProperty(value = "balkline")
-        @JsonView(View.UI::class)
+        @JsonView(View.REST::class)
         @NotNull
         @Temporal(TemporalType.TIMESTAMP)
         val balkline: Date = Timestamp
@@ -90,7 +90,7 @@ data class Task(
         @Column(name = "deadline",
                 nullable = false)
         @JsonProperty(value = "deadline")
-        @JsonView(View.UI::class)
+        @JsonView(View.REST::class)
         @NotNull
         @Temporal(TemporalType.TIMESTAMP)
         val deadline: Date = Timestamp
@@ -99,30 +99,30 @@ data class Task(
 
         @Column(name = "mark_done_user")
         @JsonProperty(value = "mark_done_user")
-        @JsonView(View.UI::class)
+        @JsonView(View.REST::class)
         val markDoneUser: Boolean? = false,
 
         @Column(name = "mark_done_instructor")
         @JsonProperty(value = "mark_done_instructor")
-        @JsonView(View.UI::class)
+        @JsonView(View.REST::class)
         val markDoneInstructor: Boolean? = false,
 
         @Column(name = "link",
                 length = 1000)
         @JsonProperty(value = "link")
-        @JsonView(View.UI::class)
+        @JsonView(View.REST::class)
         @Size(max = 1000)
         val link: String?,
 
         @Column(name = "timestamp_done_user")
         @JsonProperty(value = "timestamp_done_user")
-        @JsonView(View.UI::class)
+        @JsonView(View.REST::class)
         @Temporal(TemporalType.TIMESTAMP)
         val timestampDoneUser: Date?,
 
         @Column(name = "timestamp_done_instructor")
         @JsonProperty(value = "timestamp_done_instructor")
-        @JsonView(View.UI::class)
+        @JsonView(View.REST::class)
         @Temporal(TemporalType.TIMESTAMP)
         val timestampDoneInstructor: Date?
 
@@ -134,7 +134,7 @@ data class Task(
             foreignKey = ForeignKey(name = "tasks_sections_fkey"))
     @JsonIgnoreProperties(value = ["tasks"])
     @JsonProperty(value = "section")
-    @JsonView(View.UI::class)
+    @JsonView(View.REST::class)
     @ManyToOne(
             targetEntity = Section::class,
             fetch = FetchType.LAZY,

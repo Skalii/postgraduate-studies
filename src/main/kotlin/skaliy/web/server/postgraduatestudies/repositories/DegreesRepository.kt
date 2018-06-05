@@ -33,7 +33,7 @@ interface DegreesRepository : JpaRepository<Degree, Int> {
     //language=PostgresPLSQL
     @Query(value = "select (degree_record(:#{#user.degree.idDegree})).*",
             nativeQuery = true)
-    fun get(@Param("user") user: User? = User()): Degree?
+    fun get(@Param("user") user: User?): Degree?
 
     //language=PostgresPLSQL
     @Query(value = """select (degree_record(
@@ -46,7 +46,7 @@ interface DegreesRepository : JpaRepository<Degree, Int> {
             @Param("all_records") allRecords: Boolean? = false,
             @Param("name") name: String? = null,
             @Param("branch") branch: String? = null
-    ): MutableList<Degree>?
+    ): MutableList<Degree?>?
 
 
     /** ============================== ADD / INSERT INTO ============================== */
@@ -54,11 +54,14 @@ interface DegreesRepository : JpaRepository<Degree, Int> {
 
     //language=PostgresPLSQL
     @Query(value = """select (degree_insert(
-                          cast_degree(:#{#degree.name.value}),
-                          cast_branch(:#{#degree.branch.value})
+                          cast_degree(:name),
+                          cast_branch(:branch)
                       )).*""",
             nativeQuery = true)
-    fun add(@Param("degree") degree: Degree?): Degree?
+    fun add(
+            @Param("name") name: String,
+            @Param("branch") branch: String
+    ): Degree?
 
 
     /** ============================== SET / UPDATE ============================== */
@@ -68,16 +71,12 @@ interface DegreesRepository : JpaRepository<Degree, Int> {
     @Query(value = """select (degree_update(
                           cast_degree(:#{#degree.name.value}),
                           cast_branch(:#{#degree.branch.value}),
-                          cast_int(:id_degree),
-                          cast_degree(:name),
-                          cast_branch(:branch)
+                          cast_int(:id_degree)
                       )).*""",
             nativeQuery = true)
     fun set(
-            @Param("degree") newDegree: Degree?,
-            @Param("id_degree") idDegree: Int? = null,
-            @Param("name") name: String? = null,
-            @Param("branch") branch: String? = null
+            @Param("degree") newDegree: Degree,
+            @Param("id_degree") idDegree: Int
     ): Degree?
 
 

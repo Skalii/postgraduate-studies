@@ -2,20 +2,17 @@ package skaliy.web.server.postgraduatestudies.entities.enums
 
 
 import com.fasterxml.jackson.annotation.JsonValue
-import com.fasterxml.jackson.annotation.JsonView
 
 import javax.persistence.AttributeConverter
 import javax.persistence.Converter
 
-import skaliy.web.server.postgraduatestudies.views.View
 
-
-@JsonView(View.UI::class)
 enum class BranchOfScience(@get:JsonValue val value: String) {
 
     UNKNOWN("Невідома галузь науки"),
     ECONOMIC("економічних наук"),
     TECHNICAL("технічних наук"),
+    CHEMICAL("хімічних наук"),
     PHYSICAL_MATHEMATICAL("фізико-математичних наук");
 
     companion object {

@@ -59,7 +59,7 @@ data class Section(
         @Column(name = "number",
                 nullable = false)
         @JsonProperty(value = "number")
-        @JsonView(View.UI::class)
+        @JsonView(View.REST::class)
         @NotNull
         val number: Int = 1,
 
@@ -67,7 +67,7 @@ data class Section(
                 nullable = false,
                 length = 200)
         @JsonProperty(value = "title")
-        @JsonView(View.UI::class)
+        @JsonView(View.REST::class)
         @NotNull
         @Size(max = 200)
         val title: String = "Новий розділ"
@@ -76,7 +76,7 @@ data class Section(
 
     @JsonIgnoreProperties(value = ["section"])
     @JsonProperty(value = "tasks")
-    @JsonView(View.TREE::class)
+    @JsonView(View.STUDENT_TREE::class)
     @OneToMany(
             targetEntity = Task::class,
             mappedBy = "section")

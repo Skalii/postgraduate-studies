@@ -7,10 +7,10 @@ import com.fasterxml.jackson.annotation.JsonView
 
 import javax.persistence.Column
 import javax.persistence.Entity
-import javax.persistence.FetchType
+import javax.persistence.FetchType.LAZY
 import javax.persistence.ForeignKey
 import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
+import javax.persistence.GenerationType.SEQUENCE
 import javax.persistence.Id
 import javax.persistence.Index
 import javax.persistence.JoinColumn
@@ -22,7 +22,8 @@ import javax.persistence.Table
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
-import skaliy.web.server.postgraduatestudies.views.View
+import skaliy.web.server.postgraduatestudies.views.View.REST
+import skaliy.web.server.postgraduatestudies.views.View.TREE
 
 
 @Entity(name = "Department")
@@ -48,19 +49,19 @@ data class Department(
         @Column(name = "id_department",
                 nullable = false)
         @GeneratedValue(
-                strategy = GenerationType.SEQUENCE,
+                strategy = SEQUENCE,
                 generator = "departments_seq")
         @Id
-        @JsonProperty(value = "id_department")
-        @JsonView(View.REST::class)
+        @get:JsonProperty(value = "id_department")
+        @JsonView(REST::class)
         @NotNull
         val idDepartment: Int,
 
         @Column(name = "name",
                 nullable = false,
                 length = 200)
-        @JsonProperty(value = "name")
-        @JsonView(View.UI::class)
+        @get:JsonProperty(value = "name")
+        @JsonView(REST::class)
         @NotNull
         @Size(max = 200)
         val name: String
@@ -72,11 +73,11 @@ data class Department(
             nullable = false,
             foreignKey = ForeignKey(name = "departments_institutes_fkey"))
     @JsonIgnoreProperties(value = ["departments"])
-    @JsonProperty(value = "institute")
-    @JsonView(View.UI::class)
+    @get:JsonProperty(value = "institute")
+    @JsonView(REST::class)
     @ManyToOne(
             targetEntity = Institute::class,
-            fetch = FetchType.LAZY,
+            fetch = LAZY,
             optional = false)
     lateinit var institute: Institute
 
@@ -86,27 +87,28 @@ data class Department(
             nullable = false,
             foreignKey = ForeignKey(name = "departments_faculties_fkey"))
     @JsonIgnoreProperties(value = ["departments"])
-    @JsonProperty(value = "faculty")
-    @JsonView(View.UI::class)
+    @get:JsonProperty(value = "faculty")
+    @JsonView(REST::class)
     @ManyToOne(
             targetEntity = Faculty::class,
-            fetch = FetchType.LAZY,
+            fetch = LAZY,
             optional = false)
     lateinit var faculty: Faculty
 
     @JsonIgnoreProperties(value = ["department", "students", "sections"])
-    @JsonProperty(value = "users")
-    @JsonView(View.TREE::class)
+    @get:JsonProperty(value = "users")
+    @JsonView(TREE::class)
     @OneToMany(
             targetEntity = User::class,
             mappedBy = "department")
     @OrderBy
-    lateinit var users: MutableList<User>
+    lateinit var users: MutableList<User?>
 
 
     constructor() : this(
             0,
-            "")
+            "Невідома кафедра"
+    )
 
     constructor(
             idDepartment: Int,

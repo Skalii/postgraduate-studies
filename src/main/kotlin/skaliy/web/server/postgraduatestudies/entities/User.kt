@@ -1,8 +1,8 @@
 package skaliy.web.server.postgraduatestudies.entities
 
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonFormat
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonView
 
@@ -11,10 +11,10 @@ import java.util.Date
 import javax.persistence.Column
 import javax.persistence.Convert
 import javax.persistence.Entity
-import javax.persistence.FetchType
+import javax.persistence.FetchType.LAZY
 import javax.persistence.ForeignKey
 import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
+import javax.persistence.GenerationType.SEQUENCE
 import javax.persistence.Id
 import javax.persistence.Index
 import javax.persistence.JoinColumn
@@ -30,7 +30,7 @@ import javax.validation.constraints.Size
 import skaliy.web.server.postgraduatestudies.entities.enums.AcademicRank
 import skaliy.web.server.postgraduatestudies.entities.enums.FamilyStatus
 import skaliy.web.server.postgraduatestudies.entities.enums.UserRole
-import skaliy.web.server.postgraduatestudies.views.View
+import skaliy.web.server.postgraduatestudies.views.View.*
 
 
 @Entity(name = "User")
@@ -66,25 +66,26 @@ data class User(
         @Column(name = "id_user",
                 nullable = false)
         @GeneratedValue(
-                strategy = GenerationType.SEQUENCE,
+                strategy = SEQUENCE,
                 generator = "users_seq")
         @Id
-        @JsonProperty(value = "id_user")
-        @JsonView(View.REST::class)
+        @get:JsonProperty(value = "id_user")
+        @JsonView(REST::class)
         @NotNull
         val idUser: Int,
 
         @Column(name = "role",
                 nullable = false)
         @Convert(converter = UserRole.Companion.EnumConverter::class)
-        @JsonProperty(value = "role")
+        @get:JsonProperty(value = "role")
         @NotNull
         val role: UserRole = UserRole.UNKNOWN,
 
         @Column(name = "salt",
                 length = 64,
                 nullable = false)
-        @JsonProperty(value = "salt")
+        @get:JsonProperty(value = "salt")
+        @JsonView(REST::class)
         @NotNull
         @Size(max = 64)
         val salt: String = "",
@@ -92,8 +93,8 @@ data class User(
         @Column(name = "hash",
                 length = 64,
                 nullable = false)
-        @JsonProperty(value = "hash")
-        @JsonView(View.REST::class)
+        @get:JsonProperty(value = "hash")
+        @JsonView(REST::class)
         @NotNull
         @Size(max = 64)
         val hash: String = "",
@@ -101,8 +102,8 @@ data class User(
         @Column(name = "full_name_ua",
                 length = 100,
                 nullable = false)
-        @JsonProperty(value = "full_name_ua")
-        @JsonView(View.UI::class)
+        @get:JsonProperty(value = "full_name_ua")
+        @JsonView(REST::class)
         @NotNull
         @Size(max = 100)
         val fullNameUa: String,
@@ -110,8 +111,8 @@ data class User(
         @Column(name = "full_name_en",
                 length = 100,
                 nullable = false)
-        @JsonProperty(value = "full_name_en")
-        @JsonView(View.UI::class)
+        @get:JsonProperty(value = "full_name_en")
+        @JsonView(REST::class)
         @NotNull
         @Size(max = 100)
         val fullNameEn: String,
@@ -121,26 +122,24 @@ data class User(
         @JsonFormat(
                 pattern = "yyyy-MM-dd",
                 timezone = "Europe/Kiev")
-        @JsonProperty(value = "birthday")
-        @JsonView(View.UI::class)
+        @get:JsonProperty(value = "birthday")
+        @JsonView(REST::class)
         @NotNull
         val birthday: Date,
 
         @Column(name = "family_status")
         @Convert(converter = FamilyStatus.Companion.EnumConverter::class)
-        @JsonProperty(value = "family_status")
-        @JsonView(View.UI::class)
+        @get:JsonProperty(value = "family_status")
         val familyStatus: FamilyStatus? = FamilyStatus.UNKNOWN,
 
         @Column(name = "children")
-        @JsonProperty(value = "children")
-        @JsonView(View.UI::class)
+        @get:JsonProperty(value = "children")
+        @JsonView(REST::class)
         val children: Int?,
 
         @Column(name = "academic_rank")
         @Convert(converter = AcademicRank.Companion.EnumConverter::class)
-        @JsonProperty(value = "academic_rank")
-        @JsonView(View.UI::class)
+        @get:JsonProperty(value = "academic_rank")
         val academicRank: AcademicRank? = AcademicRank.UNKNOWN
 
 ) {
@@ -149,11 +148,11 @@ data class User(
             name = "id_degree",
             foreignKey = ForeignKey(name = "users_degrees_fkey"))
     @JsonIgnoreProperties(value = ["users"])
-    @JsonProperty(value = "degree")
-    @JsonView(View.UI::class)
+    @get:JsonProperty(value = "degree")
+    @JsonView(REST::class)
     @ManyToOne(
             targetEntity = Degree::class,
-            fetch = FetchType.LAZY)
+            fetch = LAZY)
     var degree: Degree? = null
 
     @JoinColumn(
@@ -161,11 +160,11 @@ data class User(
             nullable = false,
             foreignKey = ForeignKey(name = "users_specialities_fkey"))
     @JsonIgnoreProperties(value = ["users"])
-    @JsonProperty(value = "speciality")
-    @JsonView(View.UI::class)
+    @get:JsonProperty(value = "speciality")
+    @JsonView(REST::class)
     @ManyToOne(
             targetEntity = Speciality::class,
-            fetch = FetchType.LAZY,
+            fetch = LAZY,
             optional = false)
     lateinit var speciality: Speciality
 
@@ -174,11 +173,11 @@ data class User(
             nullable = false,
             foreignKey = ForeignKey(name = "users_departments_fkey"))
     @JsonIgnoreProperties(value = ["users"])
-    @JsonProperty(value = "department")
-    @JsonView(View.UI::class)
+    @get:JsonProperty(value = "department")
+    @JsonView(REST::class)
     @ManyToOne(
             targetEntity = Department::class,
-            fetch = FetchType.LAZY,
+            fetch = LAZY,
             optional = false)
     lateinit var department: Department
 
@@ -187,53 +186,55 @@ data class User(
             nullable = false,
             foreignKey = ForeignKey(name = "users_contact_info_fkey"))
     @JsonIgnoreProperties(value = ["user"])
-    @JsonProperty(value = "contact_info")
-    @JsonView(View.UI::class)
+    @get:JsonProperty(value = "contact_info")
+    @JsonView(REST::class)
     @OneToOne(
             targetEntity = ContactInfo::class,
-            fetch = FetchType.LAZY,
+            fetch = LAZY,
             optional = false)
     lateinit var contactInfo: ContactInfo
 
     @JoinColumn(
             name = "id_scientific_links",
+            nullable = false,
             foreignKey = ForeignKey(name = "users_scientific_links_fkey"))
     @JsonIgnoreProperties(value = ["user"])
-    @JsonProperty(value = "scientific_links")
-    @JsonView(View.UI::class)
+    @get:JsonProperty(value = "scientific_links")
+    @JsonView(REST::class)
     @OneToOne(
             targetEntity = ScientificLinks::class,
-            fetch = FetchType.LAZY)
-    var scientificLinks: ScientificLinks? = null
+            fetch = LAZY,
+            optional = false)
+    lateinit var scientificLinks: ScientificLinks
 
     @JoinColumn(
             name = "id_study_info",
             foreignKey = ForeignKey(name = "users_study_info_fkey"))
     @JsonIgnoreProperties(value = ["user"])
-    @JsonProperty(value = "study_info")
-    @JsonView(View.UI::class)
+    @get:JsonProperty(value = "study_info")
+    @JsonView(STUDENT::class)
     @OneToOne(
             targetEntity = StudyInfo::class,
-            fetch = FetchType.LAZY)
+            fetch = LAZY)
     var studyInfo: StudyInfo? = null
 
     @JsonIgnoreProperties(value = ["instructor"])
-    @JsonProperty(value = "students")
-    @JsonView(View.TREE::class)
+    @get:JsonProperty(value = "students")
+    @JsonView(INSTRUCTOR_TREE::class)
     @OneToMany(
             targetEntity = StudyInfo::class,
             mappedBy = "instructor")
     @OrderBy
-    lateinit var students: MutableList<StudyInfo>
+    lateinit var students: MutableList<StudyInfo?>
 
     @JsonIgnoreProperties(value = ["user"])
-    @JsonProperty(value = "sections")
-    @JsonView(View.TREE::class)
+    @get:JsonProperty(value = "sections")
+    @JsonView(STUDENT_TREE::class)
     @OneToMany(
             targetEntity = Section::class,
             mappedBy = "user")
     @OrderBy
-    lateinit var sections: MutableList<Section>
+    lateinit var sections: MutableList<Section?>
 
 
     constructor() : this(
@@ -241,12 +242,13 @@ data class User(
             UserRole.UNKNOWN,
             "",
             "",
-            "",
-            "",
+            "Невідомий користувач",
+            "Unknown User",
             Date(0),
             FamilyStatus.UNKNOWN,
             0,
-            AcademicRank.UNKNOWN)
+            AcademicRank.UNKNOWN
+    )
 
     constructor(
             idUser: Int,
@@ -264,7 +266,7 @@ data class User(
             department: Department,
             contactInfo: ContactInfo,
             studyInfo: StudyInfo?,
-            scientificLinks: ScientificLinks?
+            scientificLinks: ScientificLinks
     ) : this(
             idUser,
             role,

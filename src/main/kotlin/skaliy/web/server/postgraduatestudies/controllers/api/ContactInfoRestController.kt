@@ -42,7 +42,7 @@ class ContactInfoRestController(
     /** ============================== MY ============================== */
 
 
-    @JsonView(View.UI::class)
+    @JsonView(View.REST::class)
     @GetMapping(value = ["get/my-ui"])
     fun getMyUI(@AuthenticationPrincipal authUser: UserDetails) =
             contactInfoRepository.get(email = authUser.username)
@@ -61,7 +61,7 @@ class ContactInfoRestController(
     /** ============================== ONE ============================== */
 
 
-    @JsonView(View.UI::class)
+    @JsonView(View.REST::class)
     @GetMapping(value = ["get/one-ui"])
     fun getOneUI(
             @RequestParam(
@@ -134,7 +134,7 @@ class ContactInfoRestController(
     /** ============================== ALL ============================== */
 
 
-    @JsonView(View.UI::class)
+    @JsonView(View.REST::class)
     @GetMapping(value = ["get/all-ui"])
     fun getAllUI() = contactInfoRepository.getAll()
 
@@ -158,7 +158,7 @@ class ContactInfoRestController(
     /** ============================== ONE ============================== */
 
 
-    @JsonView(View.UI::class)
+    @JsonView(View.REST::class)
     @PostMapping(value = ["post/add-ui"])
     fun addUI(@RequestBody contactInfo: ContactInfo) =
             contactInfoRepository.add(contactInfo)
@@ -185,7 +185,7 @@ class ContactInfoRestController(
     /** ============================== MY ============================== */
 
 
-    @JsonView(View.UI::class)
+    @JsonView(View.REST::class)
     @PutMapping(value = ["put/set-my-ui"])
     fun setMyUI(
             @RequestBody newContactInfo: ContactInfo?,
@@ -231,7 +231,7 @@ class ContactInfoRestController(
     /** ============================== ONE ============================== */
 
 
-    @JsonView(View.UI::class)
+    @JsonView(View.REST::class)
     @PutMapping(value = ["put/set-one-ui"])
     fun setUI(
             @RequestBody newContactInfo: ContactInfo?,
@@ -327,7 +327,7 @@ class ContactInfoRestController(
     /** ============================== ONE ============================== */
 
 
-    @JsonView(View.UI::class)
+    @JsonView(View.REST::class)
     @DeleteMapping(value = ["delete/one-ui"])
     fun deleteUI(
             @RequestParam(

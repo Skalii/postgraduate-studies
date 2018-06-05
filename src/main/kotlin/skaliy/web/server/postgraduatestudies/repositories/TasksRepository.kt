@@ -78,8 +78,8 @@ interface TasksRepository : JpaRepository<Task, Int> {
     @Query(value = """select (task_update(
                           cast_int(:#{#task.number}),
                           cast_text(:#{#task.title}),
-                          cast_ts(:#{#task.balkline} :: timestamp),
-                          cast_ts(:#{#task.deadline} :: timestamp),
+                          cast_ts(:#{#task.balkline}),
+                          cast_ts(:#{#task.deadline}),
                           cast_bool(:#{#task.markDoneUser}),
                           cast_bool(:#{#task.markDoneInstructor}),
                           cast_text(:#{#task.link}),

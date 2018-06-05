@@ -33,12 +33,12 @@ interface FacultiesRepository : JpaRepository<Faculty, Int> {
     //language=PostgresPLSQL
     @Query(value = "select (faculty_record(cast_int(:#{#department.faculty.idFaculty}))).*",
             nativeQuery = true)
-    fun get(@Param("department") department: Department? = Department()): Faculty?
+    fun get(@Param("department") department: Department?): Faculty?
 
     //language=PostgresPLSQL
     @Query(value = "select (faculty_record(cast_int(:#{#user.department.faculty.idFaculty}))).*",
             nativeQuery = true)
-    fun get(@Param("user") user: User? = User()): Faculty?
+    fun get(@Param("user") user: User?): Faculty?
 
     //language=PostgresPLSQL
     @Query(value = """select (faculty_record(
@@ -49,18 +49,16 @@ interface FacultiesRepository : JpaRepository<Faculty, Int> {
     fun getAll(
             @Param("all_records") allRecords: Boolean? = false,
             @Param("institute") institute: Institute? = Institute()
-    ): MutableList<Faculty>?
+    ): MutableList<Faculty?>?
 
 
     /** ============================== ADD / INSERT INTO ============================== */
 
 
     //language=PostgresPLSQL
-    @Query(value = """select (faculty_insert(
-                          cast_text(:#{#faculty.name})
-                      )).*""",
+    @Query(value = "select (faculty_insert(cast_text(:name))).*",
             nativeQuery = true)
-    fun add(@Param("faculty") faculty: Faculty?): Faculty?
+    fun add(@Param("name") name: String): Faculty?
 
 
     /** ============================== SET / UPDATE ============================== */
@@ -69,14 +67,12 @@ interface FacultiesRepository : JpaRepository<Faculty, Int> {
     //language=PostgresPLSQL
     @Query(value = """select (faculty_update(
                           cast_text(:#{#faculty.name}),
-                          cast_int(:id_faculty),
-                          cast_text(:name)
+                          cast_int(:id_faculty)
                       )).*""",
             nativeQuery = true)
     fun set(
-            @Param("faculty") newFaculty: Faculty?,
-            @Param("id_faculty") idFaculty: Int? = null,
-            @Param("name") name: String? = null
+            @Param("faculty") newFaculty: Faculty,
+            @Param("id_faculty") idFaculty: Int
     ): Faculty?
 
 

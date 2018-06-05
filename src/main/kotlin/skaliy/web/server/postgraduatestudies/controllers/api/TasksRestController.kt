@@ -49,7 +49,7 @@ class TasksRestController(
      *                                 ONE ============================== */
 
 
-    @JsonView(View.UI::class)
+    @JsonView(View.REST::class)
     @GetMapping(value = ["get/my-one-ui"])
     fun getMyOneUI(
             @AuthenticationPrincipal authUser: UserDetails,
@@ -150,7 +150,7 @@ class TasksRestController(
      *                                 ALL ============================== */
 
 
-    @JsonView(View.UI::class)
+    @JsonView(View.REST::class)
     @GetMapping(value = ["get/my-all-ui"])
     fun getMyAllUI(@AuthenticationPrincipal authUser: UserDetails) =
             tasksRepository.getAll(
@@ -184,7 +184,7 @@ class TasksRestController(
      *                                 SECTION ============================== */
 
 
-    @JsonView(View.UI::class)
+    @JsonView(View.REST::class)
     @GetMapping(value = ["get/my-all-by-section-ui"])
     fun getMyAllBySectionUI(
             @AuthenticationPrincipal authUser: UserDetails,
@@ -251,7 +251,7 @@ class TasksRestController(
     /** ============================== ONE ============================== */
 
 
-    @JsonView(View.UI::class)
+    @JsonView(View.REST::class)
     @GetMapping(value = ["get/one-ui"])
     fun getOneUI(
             @RequestParam(
@@ -384,7 +384,7 @@ class TasksRestController(
     /** ============================== ALL ============================== */
 
 
-    @JsonView(View.UI::class)
+    @JsonView(View.REST::class)
     @GetMapping(value = ["get/all-ui"])
     fun getAllUI(
             @RequestParam(
@@ -489,7 +489,7 @@ class TasksRestController(
     /** ============================== MY ============================== */
 
 
-    @JsonView(View.UI::class)
+    @JsonView(View.REST::class)
     @PostMapping(value = ["post/add-my-ui"])
     fun addUI(
             @AuthenticationPrincipal authUser: UserDetails,
@@ -579,7 +579,7 @@ class TasksRestController(
     /** ============================== MY ============================== */
 
 
-    @JsonView(View.UI::class)
+    @JsonView(View.REST::class)
     @PutMapping(value = ["put/set-my-ui"])
     fun setMyUI(
             @AuthenticationPrincipal authUser: UserDetails,
@@ -707,7 +707,7 @@ class TasksRestController(
      *                                 INSTRUCTOR ============================== */
 
 
-    @JsonView(View.UI::class)
+    @JsonView(View.REST::class)
     @PutMapping(value = ["put/set-mark-instructor-ui"])
     fun setMarkInstructorUI(
             @AuthenticationPrincipal authUser: UserDetails,
@@ -768,7 +768,7 @@ class TasksRestController(
     /** ============================== ONE ============================== */
 
 
-    @JsonView(View.UI::class)
+    @JsonView(View.REST::class)
     @PutMapping(value = ["put/set-one-ui"])
     fun setUI(
             @RequestBody newTask: Task?,
@@ -924,7 +924,7 @@ class TasksRestController(
     /** ============================== MY ============================== */
 
 
-    @JsonView(View.UI::class)
+    @JsonView(View.REST::class)
     @DeleteMapping(value = ["delete/my-ui"])
     fun deleteMyUI(
             @AuthenticationPrincipal authUser: UserDetails,
@@ -1015,7 +1015,7 @@ class TasksRestController(
     /** ============================== ONE ============================== */
 
 
-    @JsonView(View.UI::class)
+    @JsonView(View.REST::class)
     @DeleteMapping(value = ["delete/one-ui"])
     fun deleteUI(
             @RequestParam(
@@ -1178,7 +1178,7 @@ class TasksRestController(
     /** ============================== ALL ============================== */
 
 
-    @JsonView(View.UI::class)
+    @JsonView(View.REST::class)
     @GetMapping(value = ["delete/all-ui"])
     fun deleteAllUI(
             @RequestParam(

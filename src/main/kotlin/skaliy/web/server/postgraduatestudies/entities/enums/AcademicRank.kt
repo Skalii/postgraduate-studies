@@ -2,15 +2,11 @@ package skaliy.web.server.postgraduatestudies.entities.enums
 
 
 import com.fasterxml.jackson.annotation.JsonValue
-import com.fasterxml.jackson.annotation.JsonView
 
 import javax.persistence.AttributeConverter
 import javax.persistence.Converter
 
-import skaliy.web.server.postgraduatestudies.views.View
 
-
-@JsonView(View.UI::class)
 enum class AcademicRank(@get:JsonValue val value: String) {
 
     UNKNOWN("Невідоме академічне звання"),
