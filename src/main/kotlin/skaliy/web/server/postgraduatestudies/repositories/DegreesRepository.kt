@@ -28,12 +28,12 @@ interface DegreesRepository : JpaRepository<Degree, Int> {
             @Param("id_degree") idDegree: Int? = null,
             @Param("name") name: String? = null,
             @Param("branch") branch: String? = null
-    ): Degree?
+    ): Degree
 
     //language=PostgresPLSQL
     @Query(value = "select (degree_record(:#{#user.degree.idDegree})).*",
             nativeQuery = true)
-    fun get(@Param("user") user: User?): Degree?
+    fun get(@Param("user") user: User?): Degree
 
     //language=PostgresPLSQL
     @Query(value = """select (degree_record(
@@ -46,7 +46,7 @@ interface DegreesRepository : JpaRepository<Degree, Int> {
             @Param("all_records") allRecords: Boolean? = false,
             @Param("name") name: String? = null,
             @Param("branch") branch: String? = null
-    ): MutableList<Degree?>?
+    ): MutableList<Degree>
 
 
     /** ============================== ADD / INSERT INTO ============================== */
@@ -61,7 +61,7 @@ interface DegreesRepository : JpaRepository<Degree, Int> {
     fun add(
             @Param("name") name: String,
             @Param("branch") branch: String
-    ): Degree?
+    ): Degree
 
 
     /** ============================== SET / UPDATE ============================== */
@@ -77,7 +77,7 @@ interface DegreesRepository : JpaRepository<Degree, Int> {
     fun set(
             @Param("degree") newDegree: Degree,
             @Param("id_degree") idDegree: Int
-    ): Degree?
+    ): Degree
 
 
     /** ============================== DELETE ============================== */
@@ -94,6 +94,6 @@ interface DegreesRepository : JpaRepository<Degree, Int> {
             @Param("id_degree") idDegree: Int? = null,
             @Param("name") name: String? = null,
             @Param("branch") branch: String? = null
-    ): Degree?
+    ): Degree
 
 }

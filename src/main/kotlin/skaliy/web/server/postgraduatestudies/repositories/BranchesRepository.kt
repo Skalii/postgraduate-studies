@@ -29,22 +29,22 @@ interface BranchesRepository : JpaRepository<Branch, Int> {
             @Param("id_branch") idBranch: Int? = null,
             @Param("number") number: String? = null,
             @Param("name") name: String? = null
-    ): Branch?
+    ): Branch
 
     //language=PostgresPLSQL
     @Query(value = "select (branch_record(cast_int(:#{#speciality.branch.idBranch}))).*",
             nativeQuery = true)
-    fun get(@Param("speciality") speciality: Speciality?): Branch?
+    fun get(@Param("speciality") speciality: Speciality?): Branch
 
     //language=PostgresPLSQL
     @Query(value = "select (branch_record(cast_int(:#{#user.speciality.branch.idBranch}))).*",
             nativeQuery = true)
-    fun get(@Param("user") user: User?): Branch?
+    fun get(@Param("user") user: User?): Branch
 
     //language=PostgresPLSQL
     @Query(value = "select (branch_record(all_records => true)).*",
             nativeQuery = true)
-    fun getAll(): MutableList<Branch?>?
+    fun getAll(): MutableList<Branch>
 
 
     /** ============================== ADD / INSERT INTO ============================== */
@@ -59,7 +59,7 @@ interface BranchesRepository : JpaRepository<Branch, Int> {
     fun add(
             @Param("number") number: String,
             @Param("name") name: String
-    ): Branch?
+    ): Branch
 
 
     /** ============================== SET / UPDATE ============================== */
@@ -75,7 +75,7 @@ interface BranchesRepository : JpaRepository<Branch, Int> {
     fun set(
             @Param("branch") newBranch: Branch,
             @Param("id_branch") idBranch: Int
-    ): Branch?
+    ): Branch
 
 
     /** ============================== DELETE ============================== */
@@ -92,11 +92,11 @@ interface BranchesRepository : JpaRepository<Branch, Int> {
             @Param("id_branch") idBranch: Int? = null,
             @Param("number") number: String? = null,
             @Param("name") name: String? = null
-    ): Branch?
+    ): Branch
 
     //language=PostgresPLSQL
     @Query(value = "select (branch_delete(cast_int(:#{#speciality.branch.idBranch}))).*",
             nativeQuery = true)
-    fun deleteBySpeciality(@Param("speciality") speciality: Speciality?): Branch?
+    fun delete(@Param("speciality") speciality: Speciality?): Branch
 
 }

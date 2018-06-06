@@ -14,10 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
-import skaliy.web.server.postgraduatestudies.entities.ContactInfo
-import skaliy.web.server.postgraduatestudies.entities.Department
 import skaliy.web.server.postgraduatestudies.entities.Faculty
-import skaliy.web.server.postgraduatestudies.entities.Institute
 import skaliy.web.server.postgraduatestudies.repositories.ContactInfoRepository
 import skaliy.web.server.postgraduatestudies.repositories.DepartmentsRepository
 import skaliy.web.server.postgraduatestudies.repositories.InstitutesRepository
@@ -59,8 +56,8 @@ class FacultiesRestController(
                     view,
                     facultiesRepository.get(
                             contactInfoRepository.get(
-                                    email = authUser.username
-                            )?.user
+                                    authUser.username
+                            ).user
                     )
             )
 
@@ -84,7 +81,6 @@ class FacultiesRestController(
                             idFaculty,
                             name
                     )
-                            ?: Faculty()
             )
 
 
@@ -110,11 +106,6 @@ class FacultiesRestController(
                                     idDepartment,
                                     departmentName
                             )
-                                    ?: Department()
-                                            .also {
-                                                it.institute = Institute()
-                                                it.faculty = Faculty()
-                                            }
                     )
             )
 
@@ -131,11 +122,11 @@ class FacultiesRestController(
                     value = "id_user",
                     required = false) idUser: Int?,
             @RequestParam(
-                    value = "phone_number",
-                    required = false) phoneNumber: String?,
-            @RequestParam(
                     value = "email",
-                    required = false) email: String?
+                    required = false) email: String?,
+            @RequestParam(
+                    value = "phone_number",
+                    required = false) phoneNumber: String?
     ) =
             Json.get(
                     view,
@@ -143,10 +134,9 @@ class FacultiesRestController(
                             usersRepository.get(
                                     idUser,
                                     contactInfoRepository.get(
-                                            phoneNumber = phoneNumber,
-                                            email = email
+                                            email,
+                                            phoneNumber
                                     )
-                                            ?: ContactInfo()
                             )
                     )
             )
@@ -176,7 +166,6 @@ class FacultiesRestController(
                                     idInstitute,
                                     instituteName
                             )
-                                    ?: Institute()
                     )
             )
 
@@ -220,22 +209,29 @@ class FacultiesRestController(
             @RequestBody newFaculty: Faculty,
             @RequestParam(
                     value = "id_faculty",
-                    required = false) idFaculty: Int?,
+                    required = false) _idFaculty: Int?,
             @RequestParam(
                     value = "name",
                     required = false) name: String?
     ) =
-            Json.get(view,
-                    Faculty(
-                            facultiesRepository.set(
-                                    newFaculty,
-                                    idFaculty ?: facultiesRepository.get(
-                                            name = name
-                                    )!!.idFaculty
-                            )!!.idFaculty,
-                            newFaculty.name
-                    )
-            )
+            facultiesRepository.get(
+                    _idFaculty,
+                    name
+            ).run {
+
+                facultiesRepository.set(
+                        newFaculty,
+                        idFaculty
+                )
+
+                return@run Json.get(view,
+                        Faculty(
+                                idFaculty,
+                                newFaculty.name
+                        )
+                )
+
+            }
 
 
     /**
@@ -265,7 +261,6 @@ class FacultiesRestController(
                             idFaculty,
                             name
                     )
-                            ?: Faculty()
             )
 
 }

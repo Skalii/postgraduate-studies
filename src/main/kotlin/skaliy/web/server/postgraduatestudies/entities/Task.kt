@@ -13,10 +13,10 @@ import java.util.Date
 
 import javax.persistence.Column
 import javax.persistence.Entity
-import javax.persistence.FetchType
+import javax.persistence.FetchType.LAZY
 import javax.persistence.ForeignKey
 import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
+import javax.persistence.GenerationType.SEQUENCE
 import javax.persistence.Id
 import javax.persistence.Index
 import javax.persistence.JoinColumn
@@ -28,7 +28,8 @@ import javax.persistence.TemporalType
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
-import skaliy.web.server.postgraduatestudies.views.View
+import skaliy.web.server.postgraduatestudies.views.View.REST
+import skaliy.web.server.postgraduatestudies.views.View.TREE
 
 
 @Entity(name = "Task")
@@ -54,34 +55,34 @@ data class Task(
         @Column(name = "id_task",
                 nullable = false)
         @GeneratedValue(
-                strategy = GenerationType.SEQUENCE,
+                strategy = SEQUENCE,
                 generator = "tasks_seq")
         @Id
-        @JsonProperty(value = "id_task")
-        @JsonView(View.REST::class)
+        @get:JsonProperty(value = "id_task")
+        @JsonView(REST::class)
         @NotNull
-        val idTask: Int,
+        val idTask: Int = 0,
 
         @Column(name = "number",
                 nullable = false)
-        @JsonProperty(value = "number")
-        @JsonView(View.REST::class)
+        @get:JsonProperty(value = "number")
+        @JsonView(REST::class)
         @NotNull
         val number: Int = 1,
 
         @Column(name = "title",
                 nullable = false,
                 length = 500)
-        @JsonProperty(value = "title")
-        @JsonView(View.REST::class)
+        @get:JsonProperty(value = "title")
+        @JsonView(REST::class)
         @NotNull
         @Size(max = 500)
         val title: String = "Нове завдання",
 
         @Column(name = "balkline",
                 nullable = false)
-        @JsonProperty(value = "balkline")
-        @JsonView(View.REST::class)
+        @get:JsonProperty(value = "balkline")
+        @JsonView(REST::class)
         @NotNull
         @Temporal(TemporalType.TIMESTAMP)
         val balkline: Date = Timestamp
@@ -89,8 +90,8 @@ data class Task(
 
         @Column(name = "deadline",
                 nullable = false)
-        @JsonProperty(value = "deadline")
-        @JsonView(View.REST::class)
+        @get:JsonProperty(value = "deadline")
+        @JsonView(REST::class)
         @NotNull
         @Temporal(TemporalType.TIMESTAMP)
         val deadline: Date = Timestamp
@@ -98,33 +99,33 @@ data class Task(
                         .plusSeconds(2419200)),
 
         @Column(name = "mark_done_user")
-        @JsonProperty(value = "mark_done_user")
-        @JsonView(View.REST::class)
+        @get:JsonProperty(value = "mark_done_user")
+        @JsonView(REST::class)
         val markDoneUser: Boolean? = false,
 
         @Column(name = "mark_done_instructor")
-        @JsonProperty(value = "mark_done_instructor")
-        @JsonView(View.REST::class)
+        @get:JsonProperty(value = "mark_done_instructor")
+        @JsonView(REST::class)
         val markDoneInstructor: Boolean? = false,
 
         @Column(name = "link",
                 length = 1000)
-        @JsonProperty(value = "link")
-        @JsonView(View.REST::class)
+        @get:JsonProperty(value = "link")
+        @JsonView(REST::class)
         @Size(max = 1000)
-        val link: String?,
+        val link: String? = "Невідоме посилання",
 
         @Column(name = "timestamp_done_user")
-        @JsonProperty(value = "timestamp_done_user")
-        @JsonView(View.REST::class)
+        @get:JsonProperty(value = "timestamp_done_user")
+        @JsonView(REST::class)
         @Temporal(TemporalType.TIMESTAMP)
         val timestampDoneUser: Date?,
 
         @Column(name = "timestamp_done_instructor")
-        @JsonProperty(value = "timestamp_done_instructor")
-        @JsonView(View.REST::class)
+        @get:JsonProperty(value = "timestamp_done_instructor")
+        @JsonView(REST::class)
         @Temporal(TemporalType.TIMESTAMP)
-        val timestampDoneInstructor: Date?
+        var timestampDoneInstructor: Date?
 
 ) {
 
@@ -133,11 +134,11 @@ data class Task(
             nullable = false,
             foreignKey = ForeignKey(name = "tasks_sections_fkey"))
     @JsonIgnoreProperties(value = ["tasks"])
-    @JsonProperty(value = "section")
-    @JsonView(View.REST::class)
+    @get:JsonProperty(value = "section")
+    @JsonView(TREE::class)
     @ManyToOne(
             targetEntity = Section::class,
-            fetch = FetchType.LAZY,
+            fetch = LAZY,
             optional = false)
     lateinit var section: Section
 
@@ -146,29 +147,27 @@ data class Task(
             0,
             1,
             "Нове завдання",
-            Timestamp
-                    .from(Instant.now(Clock.system(ZoneId.of("Europe/Kiev")))),
-            Timestamp
-                    .from(Instant.now(Clock.system(ZoneId.of("Europe/Kiev")))
-                            .plusSeconds(2419200)),
-
+            Timestamp.from(Instant.now(Clock.system(ZoneId.of("Europe/Kiev")))),
+            Timestamp.from(Instant.now(Clock.system(ZoneId.of("Europe/Kiev")))
+                    .plusSeconds(2419200)),
             false,
             false,
-            "",
+            "Невідоме посилання",
             null,
             null)
 
     constructor(
-            idTask: Int,
-            number: Int,
-            title: String,
-            balkline: Timestamp,
-            deadline: Timestamp,
-            markDoneUser: Boolean?,
-            markDoneInstructor: Boolean?,
-            link: String?,
-            timestampDoneUser: Timestamp?,
-            timestampDoneInstructor: Timestamp?,
+            idTask: Int = 0,
+            number: Int = 1,
+            title: String = "Нове завдання",
+            balkline: Date = Timestamp.from(Instant.now(Clock.system(ZoneId.of("Europe/Kiev")))),
+            deadline: Date = Timestamp.from(Instant.now(Clock.system(ZoneId.of("Europe/Kiev")))
+                    .plusSeconds(2419200)),
+            markDoneUser: Boolean? = false,
+            markDoneInstructor: Boolean? = false,
+            link: String? = "Невідоме посилання",
+            timestampDoneUser: Date? = null,
+            timestampDoneInstructor: Date? = null,
             section: Section
     ) : this(
             idTask,

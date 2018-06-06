@@ -8,10 +8,10 @@ import com.fasterxml.jackson.annotation.JsonView
 import javax.persistence.Column
 import javax.persistence.Convert
 import javax.persistence.Entity
-import javax.persistence.FetchType
+import javax.persistence.FetchType.LAZY
 import javax.persistence.ForeignKey
 import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
+import javax.persistence.GenerationType.SEQUENCE
 import javax.persistence.Id
 import javax.persistence.Index
 import javax.persistence.JoinColumn
@@ -47,36 +47,41 @@ data class StudyInfo(
         @Column(name = "id_study_info",
                 nullable = false)
         @GeneratedValue(
-                strategy = GenerationType.SEQUENCE,
+                strategy = SEQUENCE,
                 generator = "study_info_seq")
         @Id
-        @JsonProperty(value = "id_study_info")
+        @get:JsonProperty(value = "id_study_info")
         @JsonView(View.REST::class)
         @NotNull
-        val idStudyInfo: Int,
+        val idStudyInfo: Int = 0,
 
         @Column(name = "year",
                 nullable = false)
-        @JsonProperty(value = "year")
+        @get:JsonProperty(value = "year")
         @JsonView(View.REST::class)
         @NotNull
         val year: Int = 1,
 
-        @Column(name = "form")
+        @Column(name = "form",
+                nullable = false)
         @Convert(converter = StudyForm.Companion.EnumConverter::class)
-        @JsonProperty(value = "form")
+        @get:JsonProperty(value = "form")
         @JsonView(View.REST::class)
-        val form: StudyForm? = StudyForm.FULL_TIME,
+        @NotNull
+        val form: StudyForm = StudyForm.FULL_TIME,
 
-        @Column(name = "basis")
+        @Column(name = "basis",
+                nullable = false)
         @Convert(converter = StudyBasis.Companion.EnumConverter::class)
-        @JsonProperty(value = "basis")
+        @get:JsonProperty(value = "basis")
         @JsonView(View.REST::class)
-        val basis: StudyBasis? = StudyBasis.CONTRACT,
+        @NotNull
+        val basis: StudyBasis = StudyBasis.CONTRACT,
 
         @Column(name = "theme_title",
+                nullable = false,
                 length = 200)
-        @JsonProperty(value = "theme_title")
+        @get:JsonProperty(value = "theme_title")
         @NotNull
         @Size(max = 200)
         @JsonView(View.REST::class)
@@ -88,19 +93,20 @@ data class StudyInfo(
             name = "id_instructor",
             foreignKey = ForeignKey(name = "study_info_instructors_fkey"))
     @JsonIgnoreProperties(value = ["study_info", "students", "sections"])
-    @JsonProperty(value = "instructor")
+    @get:JsonProperty(value = "instructor")
     @JsonView(View.STUDENT_TREE::class)
     @ManyToOne(
             targetEntity = User::class,
-            fetch = FetchType.LAZY)
-    var instructor: User? = null
+            fetch = LAZY,
+            optional = false)
+    lateinit var instructor: User
 
     @JsonIgnoreProperties(value = ["study_info", "students", "sections"])
-    @JsonProperty(value = "user")
+    @get:JsonProperty(value = "user")
     @JsonView(View.TREE::class, View.INSTRUCTOR_TREE::class)
     @OneToOne(
             targetEntity = User::class,
-            fetch = FetchType.LAZY,
+            fetch = LAZY,
             optional = false,
             mappedBy = "studyInfo")
     var user: User? = null
@@ -111,16 +117,17 @@ data class StudyInfo(
             1,
             StudyForm.FULL_TIME,
             StudyBasis.CONTRACT,
-            "Невідома тема роботи")
+            "Невідома тема роботи"
+    )
 
     constructor(
-            idStudyInfo: Int,
-            year: Int,
-            form: StudyForm?,
-            basis: StudyBasis?,
-            themeTitle: String,
-            instructor: User?,
-            user: User?
+            idStudyInfo: Int= 0,
+            year: Int = 1,
+            form: StudyForm = StudyForm.FULL_TIME,
+            basis: StudyBasis = StudyBasis.CONTRACT,
+            themeTitle: String = "Невідома тема роботи",
+            instructor: User = User(),
+            user: User? = null
     ) : this(
             idStudyInfo,
             year,
@@ -137,8 +144,8 @@ data class StudyInfo(
             """StudyInfo(
                 idStudyInfo=$idStudyInfo,
                 year=$year,
-                form=${form?.value},
-                basis=${basis?.value},
+                form=${form.value},
+                basis=${basis.value},
                 themeTitle=$themeTitle,
                 instructor=$instructor
                 )""".trimMargin()

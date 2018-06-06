@@ -28,12 +28,12 @@ interface DepartmentsRepository : JpaRepository<Department, Int> {
     fun get(
             @Param("id_department") idDepartment: Int? = null,
             @Param("name") name: String? = null
-    ): Department?
+    ): Department
 
     //language=PostgresPLSQL
     @Query(value = "select (department_record(cast_int(:#{#user.department.idDepartment}))).*",
             nativeQuery = true)
-    fun get(@Param("user") user: User?): Department?
+    fun get(@Param("user") user: User?): Department
 
     //language=PostgresPLSQL
     @Query(value = """select (department_record(
@@ -46,7 +46,7 @@ interface DepartmentsRepository : JpaRepository<Department, Int> {
             @Param("all_records") allRecords: Boolean? = false,
             @Param("institute") institute: Institute? = Institute(),
             @Param("faculty") faculty: Faculty? = Faculty()
-    ): MutableList<Department?>?
+    ): MutableList<Department>
 
 
     /** ============================== ADD / INSERT INTO ============================== */
@@ -63,7 +63,7 @@ interface DepartmentsRepository : JpaRepository<Department, Int> {
             @Param("name") name: String,
             @Param("id_institute") idInstitute: Int,
             @Param("id_faculty") idFaculty: Int
-    ): Department?
+    ): Department
 
 
     /** ============================== SET / UPDATE ============================== */
@@ -80,7 +80,7 @@ interface DepartmentsRepository : JpaRepository<Department, Int> {
     fun set(
             @Param("department") newDepartment: Department,
             @Param("id_department") idDepartment: Int
-    ): Department?
+    ): Department
 
 
     /** ============================== DELETE ============================== */
@@ -95,6 +95,6 @@ interface DepartmentsRepository : JpaRepository<Department, Int> {
     fun delete(
             @Param("id_department") idDepartment: Int? = null,
             @Param("name") name: String? = null
-    ): Department?
+    ): Department
 
 }

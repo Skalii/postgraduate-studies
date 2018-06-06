@@ -7,10 +7,10 @@ import com.fasterxml.jackson.annotation.JsonView
 
 import javax.persistence.Column
 import javax.persistence.Entity
-import javax.persistence.FetchType
+import javax.persistence.FetchType.LAZY
 import javax.persistence.ForeignKey
 import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
+import javax.persistence.GenerationType.SEQUENCE
 import javax.persistence.Id
 import javax.persistence.Index
 import javax.persistence.JoinColumn
@@ -48,17 +48,17 @@ data class Section(
         @Column(name = "id_section",
                 nullable = false)
         @GeneratedValue(
-                strategy = GenerationType.SEQUENCE,
+                strategy = SEQUENCE,
                 generator = "sections_seq")
         @Id
-        @JsonProperty(value = "id_section")
+        @get:JsonProperty(value = "id_section")
         @JsonView(View.REST::class)
         @NotNull
-        val idSection: Int,
+        val idSection: Int = 0,
 
         @Column(name = "number",
                 nullable = false)
-        @JsonProperty(value = "number")
+        @get:JsonProperty(value = "number")
         @JsonView(View.REST::class)
         @NotNull
         val number: Int = 1,
@@ -66,7 +66,7 @@ data class Section(
         @Column(name = "title",
                 nullable = false,
                 length = 200)
-        @JsonProperty(value = "title")
+        @get:JsonProperty(value = "title")
         @JsonView(View.REST::class)
         @NotNull
         @Size(max = 200)
@@ -75,24 +75,24 @@ data class Section(
 ) {
 
     @JsonIgnoreProperties(value = ["section"])
-    @JsonProperty(value = "tasks")
+    @get:JsonProperty(value = "tasks")
     @JsonView(View.STUDENT_TREE::class)
     @OneToMany(
             targetEntity = Task::class,
             mappedBy = "section")
     @OrderBy
-    lateinit var tasks: MutableList<Task>
+    var tasks: MutableList<Task> = mutableListOf(Task())
 
     @JoinColumn(
             name = "id_user",
             nullable = false,
             foreignKey = ForeignKey(name = "sections_users_fkey"))
     @JsonIgnoreProperties(value = ["students", "sections"])
-    @JsonProperty(value = "user")
+    @get:JsonProperty(value = "user")
     @JsonView(View.TREE::class)
     @ManyToOne(
             targetEntity = User::class,
-            fetch = FetchType.LAZY,
+            fetch = LAZY,
             optional = false)
     lateinit var user: User
 
@@ -100,13 +100,14 @@ data class Section(
     constructor() : this(
             0,
             1,
-            "Новий розділ")
+            "Новий розділ"
+    )
 
     constructor(
-            idSection: Int,
-            number: Int,
-            title: String,
-            user: User
+            idSection: Int = 0,
+            number: Int = 1,
+            title: String = "Новий розділ",
+            user: User = User()
     ) : this(
             idSection,
             number,

@@ -29,17 +29,17 @@ interface ScientificLinksRepository : JpaRepository<ScientificLinks, Int> {
             nativeQuery = true)
     fun get(
             @Param("id_scientific_links") idScientificLinks: Int? = null,
-            @Param("orcid") orcid: String?  = null,
+            @Param("orcid") orcid: String? = null,
             @Param("researcherid") researcherid: String? = null,
             @Param("google_scholar_id") googleScholarId: String? = null,
             @Param("scopus_author_id") scopusAuthorId: String? = null,
             @Param("user") user: User? = User()
-    ): ScientificLinks?
+    ): ScientificLinks
 
     //language=PostgresPLSQL
     @Query(value = "select (scientific_links_record(all_records => true)).*",
             nativeQuery = true)
-    fun getAll(): MutableList<ScientificLinks>?
+    fun getAll(): MutableList<ScientificLinks>
 
 
     /** ============================== ADD / INSERT INTO ============================== */
@@ -47,13 +47,18 @@ interface ScientificLinksRepository : JpaRepository<ScientificLinks, Int> {
 
     //language=PostgresPLSQL
     @Query(value = """select (scientific_links_insert(
-                          cast_text(:#{#scientific_links.orcid}),
-                          cast_text(:#{#scientific_links.researcherid}),
-                          cast_text(:#{#scientific_links.googleScholarId}),
-                          cast_text(:#{#scientific_links.scopusAuthorId})
+                          cast_text(:orcid),
+                          cast_text(:researcherid),
+                          cast_text(:google_scholar_id),
+                          cast_text(:scopus_author_id)
                       )).*""",
             nativeQuery = true)
-    fun add(@Param("scientific_links") scientificLinks: ScientificLinks?): ScientificLinks?
+    fun add(
+            @Param("orcid") orcid: String?,
+            @Param("researcherid") researcherid: String?,
+            @Param("google_scholar_id") googleScholarId: String?,
+            @Param("scopus_author_id") scopusAuthorId: String?
+    ): ScientificLinks
 
 
     /** ============================== SET / UPDATE ============================== */
@@ -65,23 +70,13 @@ interface ScientificLinksRepository : JpaRepository<ScientificLinks, Int> {
                           cast_text(:#{#scientific_links.researcherid}),
                           cast_text(:#{#scientific_links.googleScholarId}),
                           cast_text(:#{#scientific_links.scopusAuthorId}),
-                          cast_int(:id_scientific_links),
-                          cast_int(:#{#user.idUser}),
-                          cast_text(:orcid),
-                          cast_text(:researcherid),
-                          cast_text(:google_scholar_id),
-                          cast_text(:scopus_author_id)
+                          cast_int(:id_scientific_links)
                       )).*""",
             nativeQuery = true)
     fun set(
-            @Param("scientific_links") newScientificLinks: ScientificLinks?,
-            @Param("id_scientific_links") idScientificLinks: Int? = null,
-            @Param("orcid") orcid: String? = null,
-            @Param("researcherid") researcherid: String? = null,
-            @Param("google_scholar_id") googleScholarId: String? = null,
-            @Param("scopus_author_id") scopusAuthorId: String? = null,
-            @Param("user") user: User? = User()
-    ): ScientificLinks?
+            @Param("scientific_links") newScientificLinks: ScientificLinks,
+            @Param("id_scientific_links") idScientificLinks: Int
+    ): ScientificLinks
 
 
     /** ============================== DELETE ============================== */
@@ -104,6 +99,6 @@ interface ScientificLinksRepository : JpaRepository<ScientificLinks, Int> {
             @Param("google_scholar_id") googleScholarId: String? = null,
             @Param("scopus_author_id") scopusAuthorId: String? = null,
             @Param("user") user: User? = User()
-    ): ScientificLinks?
+    ): ScientificLinks
 
 }

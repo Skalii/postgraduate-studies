@@ -51,7 +51,7 @@ data class Institute(
         @get:JsonProperty(value = "id_institute")
         @JsonView(REST::class)
         @NotNull
-        val idInstitute: Int,
+        val idInstitute: Int = 0,
 
         @NotNull
         @Size(max = 200)
@@ -60,21 +60,21 @@ data class Institute(
                 length = 200)
         @get:JsonProperty(value = "name")
         @JsonView(REST::class)
-        val name: String,
+        val name: String = "Невідомий інститут",
 
         @Column(name = "named_after",
                 length = 100)
         @get:JsonProperty(value = "named_after")
         @JsonView(REST::class)
         @Size(max = 100)
-        val namedAfter: String?,
+        val namedAfter: String? = null,
 
         @Column(name = "abbreviation",
                 length = 25)
         @get:JsonProperty(value = "abbreviation")
         @JsonView(REST::class)
         @Size(max = 25)
-        val abbreviation: String?
+        val abbreviation: String? = null
 
 ) {
 
@@ -85,7 +85,7 @@ data class Institute(
             targetEntity = Department::class,
             mappedBy = "institute")
     @OrderBy
-    lateinit var departments: MutableList<Department>
+    var departments: MutableList<Department> = mutableListOf(Department())
 
 
     constructor() : this(

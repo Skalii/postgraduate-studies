@@ -35,7 +35,7 @@ interface TasksRepository : JpaRepository<Task, Int> {
             @Param("user") user: User? = User(),
             @Param("task_number") number: Int? = null,
             @Param("task_title") title: String? = null
-    ): Task?
+    ): Task
 
     //language=PostgresPLSQL
     @Query(value = """select (task_record(
@@ -47,7 +47,7 @@ interface TasksRepository : JpaRepository<Task, Int> {
     fun getAll(
             @Param("section") section: Section? = Section(),
             @Param("user") user: User? = User()
-    ): MutableList<Task>?
+    ): MutableList<Task>
 
 
     /** ============================== ADD / INSERT INTO ============================== */
@@ -68,7 +68,7 @@ interface TasksRepository : JpaRepository<Task, Int> {
             @Param("balkline") balkline: String?,
             @Param("deadline") deadline: String?,
             @Param("link") link: String?
-    ): Task?
+    ): Task
 
 
     /** ============================== SET / UPDATE ============================== */
@@ -99,7 +99,7 @@ interface TasksRepository : JpaRepository<Task, Int> {
             @Param("user") user: User? = User(),
             @Param("task_number") number: Int? = null,
             @Param("task_title") title: String? = null
-    ): Task?
+    ): Task
 
     //language=PostgresPLSQL
     @Query(value = """select (task_update(
@@ -107,7 +107,7 @@ interface TasksRepository : JpaRepository<Task, Int> {
                           _id_task => cast_int(:#{#task.idTask})
                       )).*""",
             nativeQuery = true)
-    fun setMarkInstructor(@Param("task") task: Task?): Task?
+    fun setMarkInstructor(@Param("task") newTask: Task?): Task
 
 
     /** ============================== DELETE ============================== */
@@ -126,7 +126,7 @@ interface TasksRepository : JpaRepository<Task, Int> {
             @Param("section") section: Section? = Section(),
             @Param("number") number: Int? = null,
             @Param("title") title: String? = null
-    ): Task?
+    ): Task
 
     //language=PostgresPLSQL
     @Query(value = """select (task_delete(
@@ -134,6 +134,6 @@ interface TasksRepository : JpaRepository<Task, Int> {
                           all_from_section => true
                       )).*""",
             nativeQuery = true)
-    fun deleteAll(@Param("section") section: Section? = Section()): MutableList<Task>?
+    fun deleteAll(@Param("section") section: Section?): MutableList<Task>
 
 }

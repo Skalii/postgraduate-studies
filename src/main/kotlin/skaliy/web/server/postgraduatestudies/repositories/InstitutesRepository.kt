@@ -27,22 +27,22 @@ interface InstitutesRepository : JpaRepository<Institute, Int> {
     fun get(
             @Param("id_institute") idInstitute: Int? = null,
             @Param("name") name: String? = null
-    ): Institute?
+    ): Institute
 
     //language=PostgresPLSQL
     @Query(value = "select (institute_record(cast_int(:#{#department.institute.idInstitute}))).*",
             nativeQuery = true)
-    fun get(@Param("department") department: Department?): Institute?
+    fun get(@Param("department") department: Department?): Institute
 
     //language=PostgresPLSQL
     @Query(value = "select (institute_record(cast_int(:#{#user.department.institute.idInstitute}))).*",
             nativeQuery = true)
-    fun get(@Param("user") user: User?): Institute?
+    fun get(@Param("user") user: User?): Institute
 
     //language=PostgresPLSQL
     @Query(value = "select (institute_record(all_records => true)).*",
             nativeQuery = true)
-    fun getAll(): MutableList<Institute?>?
+    fun getAll(): MutableList<Institute>
 
 
     /** ============================== ADD / INSERT INTO ============================== */
@@ -59,7 +59,7 @@ interface InstitutesRepository : JpaRepository<Institute, Int> {
             @Param("name") name: String,
             @Param("named_after") namedAfter: String?,
             @Param("abbreviation") abbreviation: String?
-    ): Institute?
+    ): Institute
 
 
     /** ============================== SET / UPDATE ============================== */
@@ -76,7 +76,7 @@ interface InstitutesRepository : JpaRepository<Institute, Int> {
     fun set(
             @Param("institute") newInstitute: Institute,
             @Param("id_institute") idInstitute: Int
-    ): Institute?
+    ): Institute
 
 
     /** ============================== DELETE ============================== */
@@ -91,6 +91,6 @@ interface InstitutesRepository : JpaRepository<Institute, Int> {
     fun delete(
             @Param("id_institute") idInstitute: Int? = null,
             @Param("name") name: String? = null
-    ): Institute?
+    ): Institute
 
 }

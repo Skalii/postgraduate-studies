@@ -54,7 +54,7 @@ data class Branch(
         @get:JsonProperty(value = "id_branch")
         @JsonView(REST::class)
         @NotNull
-        val idBranch: Int,
+        val idBranch: Int = 0,
 
         @Column(name = "number",
                 nullable = false,
@@ -63,7 +63,7 @@ data class Branch(
         @JsonView(REST::class)
         @NotNull
         @Size(max = 30)
-        val number: String,
+        val number: String = "Невідомий шифр",
 
         @Column(name = "name",
                 nullable = false,
@@ -72,7 +72,7 @@ data class Branch(
         @JsonView(REST::class)
         @NotNull
         @Size(max = 200)
-        val name: String
+        val name: String = "Невідома галузь"
 
 ) {
 
@@ -83,7 +83,7 @@ data class Branch(
             targetEntity = Speciality::class,
             mappedBy = "branch")
     @OrderBy
-    lateinit var specialities: MutableList<Speciality?>
+    var specialities: MutableList<Speciality> = mutableListOf(Speciality())
 
 
     constructor() : this(

@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 import skaliy.web.server.postgraduatestudies.entities.Branch
-import skaliy.web.server.postgraduatestudies.entities.ContactInfo
-import skaliy.web.server.postgraduatestudies.entities.Speciality
 import skaliy.web.server.postgraduatestudies.repositories.BranchesRepository
 import skaliy.web.server.postgraduatestudies.repositories.ContactInfoRepository
 import skaliy.web.server.postgraduatestudies.repositories.SpecialitiesRepository
@@ -56,8 +54,8 @@ class BranchesRestController(
                     view,
                     branchesRepository.get(
                             contactInfoRepository.get(
-                                    email = authUser.username
-                            )?.user?.speciality?.branch?.idBranch
+                                    authUser.username
+                            ).user
                     )
             )
 
@@ -85,7 +83,6 @@ class BranchesRestController(
                             number,
                             name
                     )
-                            ?: Branch()
             )
 
 
@@ -101,24 +98,20 @@ class BranchesRestController(
                     value = "id_speciality",
                     required = false) idSpeciality: Int?,
             @RequestParam(
-                    value = "number",
-                    required = false) number: String?,
+                    value = "speciality_number",
+                    required = false) specialityNumber: String?,
             @RequestParam(
-                    value = "name",
-                    required = false) name: String?
+                    value = "speciality_name",
+                    required = false) specialityName: String?
     ) =
             Json.get(
                     view,
                     branchesRepository.get(
                             specialitiesRepository.get(
                                     idSpeciality,
-                                    number,
-                                    name
+                                    specialityNumber,
+                                    specialityName
                             )
-                                    ?: Speciality()
-                                            .also {
-                                                it.branch = Branch()
-                                            }
                     )
             )
 
@@ -135,11 +128,11 @@ class BranchesRestController(
                     value = "id_user",
                     required = false) idUser: Int?,
             @RequestParam(
-                    value = "phone_number",
-                    required = false) phoneNumber: String?,
-            @RequestParam(
                     value = "email",
-                    required = false) email: String?
+                    required = false) email: String?,
+            @RequestParam(
+                    value = "phone_number",
+                    required = false) phoneNumber: String?
     ) =
             Json.get(
                     view,
@@ -147,10 +140,9 @@ class BranchesRestController(
                             usersRepository.get(
                                     idUser,
                                     contactInfoRepository.get(
-                                            phoneNumber = phoneNumber,
-                                            email = email
+                                            email,
+                                            phoneNumber
                                     )
-                                            ?: ContactInfo()
                             )
                     )
 
@@ -210,7 +202,7 @@ class BranchesRestController(
             @RequestBody newBranch: Branch,
             @RequestParam(
                     value = "id_branch",
-                    required = false) idBranch: Int?,
+                    required = false) _idBranch: Int?,
             @RequestParam(
                     value = "number",
                     required = false) number: String?,
@@ -218,20 +210,27 @@ class BranchesRestController(
                     value = "name",
                     required = false) name: String?
     ) =
-            Json.get(
-                    view,
-                    Branch(
-                            branchesRepository.set(
-                                    newBranch,
-                                    idBranch ?: branchesRepository.get(
-                                            number = number,
-                                            name = name
-                                    )!!.idBranch
-                            )!!.idBranch,
-                            newBranch.number,
-                            newBranch.name
-                    )
-            )
+            branchesRepository.get(
+                    _idBranch,
+                    number,
+                    name
+            ).run {
+
+                branchesRepository.set(
+                        newBranch,
+                        idBranch
+                )
+
+                return@run Json.get(
+                        view,
+                        Branch(
+                                idBranch,
+                                newBranch.number,
+                                newBranch.name
+                        )
+                )
+
+            }
 
 
     /**
@@ -265,7 +264,6 @@ class BranchesRestController(
                             number,
                             name
                     )
-                            ?: Branch()
             )
 
 
@@ -281,22 +279,21 @@ class BranchesRestController(
                     value = "id_speciality",
                     required = false) idSpeciality: Int?,
             @RequestParam(
-                    value = "number",
-                    required = false) number: String?,
+                    value = "speciality_number",
+                    required = false) specialityNumber: String?,
             @RequestParam(
-                    value = "name",
-                    required = false) name: String?
+                    value = "speciality_name",
+                    required = false) specialityName: String?
     ) =
             Json.get(
                     view,
-                    branchesRepository.deleteBySpeciality(
+                    branchesRepository.delete(
                             specialitiesRepository.get(
                                     idSpeciality,
-                                    number,
-                                    name
+                                    specialityNumber,
+                                    specialityName
                             )
                     )
-                            ?: Branch()
             )
 
 }

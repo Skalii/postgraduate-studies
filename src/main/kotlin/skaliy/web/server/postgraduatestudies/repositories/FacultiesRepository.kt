@@ -28,17 +28,17 @@ interface FacultiesRepository : JpaRepository<Faculty, Int> {
     fun get(
             @Param("id_faculty") idFaculty: Int? = null,
             @Param("name") name: String? = null
-    ): Faculty?
+    ): Faculty
 
     //language=PostgresPLSQL
     @Query(value = "select (faculty_record(cast_int(:#{#department.faculty.idFaculty}))).*",
             nativeQuery = true)
-    fun get(@Param("department") department: Department?): Faculty?
+    fun get(@Param("department") department: Department?): Faculty
 
     //language=PostgresPLSQL
     @Query(value = "select (faculty_record(cast_int(:#{#user.department.faculty.idFaculty}))).*",
             nativeQuery = true)
-    fun get(@Param("user") user: User?): Faculty?
+    fun get(@Param("user") user: User?): Faculty
 
     //language=PostgresPLSQL
     @Query(value = """select (faculty_record(
@@ -49,7 +49,7 @@ interface FacultiesRepository : JpaRepository<Faculty, Int> {
     fun getAll(
             @Param("all_records") allRecords: Boolean? = false,
             @Param("institute") institute: Institute? = Institute()
-    ): MutableList<Faculty?>?
+    ): MutableList<Faculty>
 
 
     /** ============================== ADD / INSERT INTO ============================== */
@@ -58,7 +58,7 @@ interface FacultiesRepository : JpaRepository<Faculty, Int> {
     //language=PostgresPLSQL
     @Query(value = "select (faculty_insert(cast_text(:name))).*",
             nativeQuery = true)
-    fun add(@Param("name") name: String): Faculty?
+    fun add(@Param("name") name: String): Faculty
 
 
     /** ============================== SET / UPDATE ============================== */
@@ -73,7 +73,7 @@ interface FacultiesRepository : JpaRepository<Faculty, Int> {
     fun set(
             @Param("faculty") newFaculty: Faculty,
             @Param("id_faculty") idFaculty: Int
-    ): Faculty?
+    ): Faculty
 
 
     /** ============================== DELETE ============================== */
@@ -88,6 +88,6 @@ interface FacultiesRepository : JpaRepository<Faculty, Int> {
     fun delete(
             @Param("id_faculty") idFaculty: Int? = null,
             @Param("name") name: String? = null
-    ): Faculty?
+    ): Faculty
 
 }

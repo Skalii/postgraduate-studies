@@ -58,7 +58,7 @@ data class Speciality(
         @get:JsonProperty(value = "id_speciality")
         @JsonView(REST::class)
         @NotNull
-        val idSpeciality: Int,
+        val idSpeciality: Int = 0,
 
         @Column(name = "number",
                 nullable = false,
@@ -67,7 +67,7 @@ data class Speciality(
         @JsonView(REST::class)
         @NotNull
         @Size(max = 30)
-        val number: String,
+        val number: String = "Невідомий код",
 
         @Column(name = "name",
                 nullable = false,
@@ -76,7 +76,7 @@ data class Speciality(
         @get:JsonProperty(value = "name")
         @NotNull
         @Size(max = 200)
-        val name: String
+        val name: String = "Невідома спеціальність"
 
 ) {
 
@@ -100,20 +100,20 @@ data class Speciality(
             targetEntity = User::class,
             mappedBy = "speciality")
     @OrderBy
-    lateinit var users: MutableList<User?>
+    var users: MutableList<User> = mutableListOf(User())
 
 
     constructor() : this(
             0,
-            "Невiдомий код",
+            "Невідомий код",
             "Невідома спеціальність"
     )
 
     constructor(
-            idSpeciality: Int,
-            number: String,
-            name: String,
-            branch: Branch
+            idSpeciality: Int = 0,
+            number: String = "Невідомий код",
+            name: String = "Невідома спеціальність",
+            branch: Branch = Branch()
     ) : this(
             idSpeciality,
             number,

@@ -34,7 +34,7 @@ interface UsersRepository : JpaRepository<User, Int> {
     fun get(
             @Param("id_user") idUser: Int? = null,
             @Param("contact_info") contactInfo: ContactInfo? = ContactInfo()
-    ): User?
+    ): User = User()
 
     //language=PostgresPLSQL
     @Query(value = """select (user_record(
@@ -45,7 +45,7 @@ interface UsersRepository : JpaRepository<User, Int> {
     fun get(
             @Param("section") section: Section? = Section(),
             @Param("task") task: Task? = Task()
-    ): User?
+    ): User = User()
 
     //language=PostgresPLSQL
     @Query(value = """select (user_record(
@@ -66,7 +66,7 @@ interface UsersRepository : JpaRepository<User, Int> {
             @Param("department") department: Department? = Department(),
             @Param("faculty") faculty: Faculty? = Faculty(),
             @Param("institute") institute: Institute? = Institute()
-    ): MutableList<User?>?
+    ): MutableList<User> = mutableListOf(User())
 
 
     /** ============================== ADD / INSERT INTO ============================== */
@@ -105,7 +105,7 @@ interface UsersRepository : JpaRepository<User, Int> {
             @Param("id_contact_info") idContactInfo: Int,
             @Param("id_study_info") idStudyInfo: Int?,
             @Param("id_scientific_links") idScientificLinks: Int
-    ): User?
+    ): User = User()
 
 
     /** ============================== SET / UPDATE ============================== */
@@ -130,7 +130,7 @@ interface UsersRepository : JpaRepository<User, Int> {
     fun set(
             @Param("user") newUser: User,
             @Param("id_user") idUser: Int
-    ): User?
+    ): User = User()
 
     //language=PostgresPLSQL
     @Query(value = """select (user_update(
@@ -146,7 +146,7 @@ interface UsersRepository : JpaRepository<User, Int> {
     fun setMe(
             @Param("user") newUser: User,
             @Param("id_user") idUser: Int
-    ): User?
+    ): User = User()
 
 
     /** ============================== DELETE ============================== */
@@ -161,7 +161,7 @@ interface UsersRepository : JpaRepository<User, Int> {
     fun delete(
             @Param("id_user") idUser: Int? = null,
             @Param("contact_info") contactInfo: ContactInfo? = ContactInfo()
-    ): User?
+    ): User = User()
 
 
     /** ============================== HASHING ============================== */

@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
-import skaliy.web.server.postgraduatestudies.entities.ContactInfo
 import skaliy.web.server.postgraduatestudies.entities.Degree
 import skaliy.web.server.postgraduatestudies.repositories.ContactInfoRepository
 import skaliy.web.server.postgraduatestudies.repositories.DegreesRepository
@@ -53,8 +52,8 @@ class DegreesRestController(
                     view,
                     degreesRepository.get(
                             contactInfoRepository.get(
-                                    email = authUser.username
-                            )?.user
+                                    authUser.username
+                            ).user
                     )
             )
 
@@ -82,7 +81,6 @@ class DegreesRestController(
                             name,
                             branch
                     )
-                            ?: Degree()
             )
 
 
@@ -98,11 +96,11 @@ class DegreesRestController(
                     value = "id_user",
                     required = false) idUser: Int?,
             @RequestParam(
-                    value = "phone_number",
-                    required = false) phoneNumber: String?,
-            @RequestParam(
                     value = "email",
-                    required = false) email: String?
+                    required = false) email: String?,
+            @RequestParam(
+                    value = "phone_number",
+                    required = false) phoneNumber: String?
     ) =
             Json.get(
                     view,
@@ -110,10 +108,9 @@ class DegreesRestController(
                             usersRepository.get(
                                     idUser,
                                     contactInfoRepository.get(
-                                            phoneNumber = phoneNumber,
-                                            email = email
+                                            email,
+                                            phoneNumber
                                     )
-                                            ?: ContactInfo()
                             )
                     )
             )
@@ -186,7 +183,7 @@ class DegreesRestController(
             @RequestBody newDegree: Degree,
             @RequestParam(
                     value = "id_degree",
-                    required = false) idDegree: Int?,
+                    required = false) _idDegree: Int?,
             @RequestParam(
                     value = "name",
                     required = false) name: String?,
@@ -194,20 +191,27 @@ class DegreesRestController(
                     value = "branch",
                     required = false) branch: String?
     ) =
-            Json.get(
-                    view,
-                    Degree(
-                            degreesRepository.set(
-                                    newDegree,
-                                    idDegree ?: degreesRepository.get(
-                                            name = name,
-                                            branch = branch
-                                    )!!.idDegree
-                            )!!.idDegree,
-                            newDegree.name,
-                            newDegree.branch
-                    )
-            )
+            degreesRepository.get(
+                    _idDegree,
+                    name,
+                    branch
+            ).run {
+
+                degreesRepository.set(
+                        newDegree,
+                        idDegree
+                )
+
+                return@run Json.get(
+                        view,
+                        Degree(
+                                idDegree,
+                                newDegree.name,
+                                newDegree.branch
+                        )
+                )
+
+            }
 
 
     /**
@@ -241,7 +245,6 @@ class DegreesRestController(
                             name,
                             branch
                     )
-                            ?: Degree()
             )
 
 }

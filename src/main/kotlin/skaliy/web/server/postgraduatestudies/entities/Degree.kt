@@ -53,21 +53,21 @@ data class Degree(
         @get:JsonProperty(value = "id_degree")
         @JsonView(REST::class)
         @NotNull
-        val idDegree: Int,
+        val idDegree: Int = 0,
 
         @Column(name = "name",
                 nullable = false)
         @Convert(converter = AcademicDegree.Companion.EnumConverter::class)
         @get:JsonProperty(value = "name")
         @NotNull
-        val name: AcademicDegree,
+        val name: AcademicDegree = AcademicDegree.UNKNOWN,
 
         @Column(name = "branch",
                 nullable = false)
         @Convert(converter = BranchOfScience.Companion.EnumConverter::class)
         @get:JsonProperty(value = "branch")
         @NotNull
-        val branch: BranchOfScience
+        val branch: BranchOfScience = BranchOfScience.UNKNOWN
 
 ) {
 
@@ -78,7 +78,7 @@ data class Degree(
             targetEntity = User::class,
             mappedBy = "degree")
     @OrderBy
-    lateinit var users: MutableList<User?>
+    var users: MutableList<User> = mutableListOf(User())
 
 
     constructor() : this(

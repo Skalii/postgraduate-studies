@@ -7,9 +7,9 @@ import com.fasterxml.jackson.annotation.JsonView
 
 import javax.persistence.Column
 import javax.persistence.Entity
-import javax.persistence.FetchType
+import javax.persistence.FetchType.LAZY
 import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
+import javax.persistence.GenerationType.SEQUENCE
 import javax.persistence.Id
 import javax.persistence.Index
 import javax.persistence.OneToOne
@@ -18,7 +18,8 @@ import javax.persistence.Table
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
-import skaliy.web.server.postgraduatestudies.views.View
+import skaliy.web.server.postgraduatestudies.views.View.REST
+import skaliy.web.server.postgraduatestudies.views.View.TREE
 
 
 @Entity(name = "ScientificLinks")
@@ -53,68 +54,69 @@ data class ScientificLinks(
         @Column(name = "id_scientific_links",
                 nullable = false)
         @GeneratedValue(
-                strategy = GenerationType.SEQUENCE,
+                strategy = SEQUENCE,
                 generator = "scientific_links_seq")
         @Id
-        @JsonProperty(value = "id_scientific_links")
-        @JsonView(View.REST::class)
+        @get:JsonProperty(value = "id_scientific_links")
+        @JsonView(REST::class)
         @NotNull
-        val idScientificLinks: Int,
+        val idScientificLinks: Int = 0,
 
         @Size(max = 100)
-        @JsonProperty(value = "orcid")
-        @JsonView(View.REST::class)
+        @get:JsonProperty(value = "orcid")
+        @JsonView(REST::class)
         @Column(name = "orcid",
                 length = 100)
-        val orcid: String? = "Інформація відсутня",
+        val orcid: String? = "",
 
         @Column(name = "researcherid",
                 length = 100)
-        @JsonProperty(value = "researcherid")
-        @JsonView(View.REST::class)
+        @get:JsonProperty(value = "researcherid")
+        @JsonView(REST::class)
         @Size(max = 100)
-        val researcherid: String? = "Інформація відсутня",
+        val researcherid: String? = "",
 
         @Column(name = "google_scholar_id",
                 length = 100)
-        @JsonProperty(value = "google_scholar_id")
-        @JsonView(View.REST::class)
+        @get:JsonProperty(value = "google_scholar_id")
+        @JsonView(REST::class)
         @Size(max = 100)
-        val googleScholarId: String? = "Інформація відсутня",
+        val googleScholarId: String? = "",
 
         @Column(name = "scopus_author_id",
                 length = 100)
-        @JsonProperty(value = "scopus_author_id")
-        @JsonView(View.REST::class)
+        @get:JsonProperty(value = "scopus_author_id")
+        @JsonView(REST::class)
         @Size(max = 100)
-        val scopusAuthorId: String? = "Інформація відсутня"
+        val scopusAuthorId: String? = ""
 
 ) {
 
     @JsonIgnoreProperties(value = ["scientific_links", "students", "sections"])
-    @JsonProperty(value = "user")
-    @JsonView(View.TREE::class)
+    @get:JsonProperty(value = "user")
+    @JsonView(TREE::class)
     @OneToOne(
             targetEntity = User::class,
-            fetch = FetchType.LAZY,
+            fetch = LAZY,
             mappedBy = "scientificLinks")
-    var user: User? = null
+    lateinit var user: User
 
 
     constructor() : this(
             0,
-            "Інформація відсутня",
-            "Інформація відсутня",
-            "Інформація відсутня",
-            "Інформація відсутня")
+            "",
+            "",
+            "",
+            ""
+    )
 
     constructor(
-            idScientificLinks: Int,
-            orcid: String?,
-            researcherid: String?,
-            googleScholarId: String?,
-            scopusAuthorId: String?,
-            user: User?
+            idScientificLinks: Int = 0,
+            orcid: String? = "",
+            researcherid: String? = "",
+            googleScholarId: String? = "",
+            scopusAuthorId: String? = "",
+            user: User = User()
     ) : this(
             idScientificLinks,
             orcid,

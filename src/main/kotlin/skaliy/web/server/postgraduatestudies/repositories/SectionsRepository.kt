@@ -27,16 +27,16 @@ interface SectionsRepository : JpaRepository<Section, Int> {
                       )).*""",
             nativeQuery = true)
     fun get(
-            @Param("id_section") idSection: Int? = null,
             @Param("user") user: User? = User(),
             @Param("number") number: Int? = null,
-            @Param("title") title: String? = null
-    ): Section?
+            @Param("title") title: String? = null,
+            @Param("id_section") idSection: Int? = null
+    ): Section
 
     //language=PostgresPLSQL
     @Query(value = "select (section_record(cast_int(:#{#task.section.idSection}))).*",
             nativeQuery = true)
-    fun get(@Param("task") task: Task? = Task()): Section?
+    fun get(@Param("task") task: Task?): Section
 
     //language=PostgresPLSQL
     @Query(value = """select (section_record(
@@ -44,7 +44,7 @@ interface SectionsRepository : JpaRepository<Section, Int> {
                           all_records => true
                       )).*""",
             nativeQuery = true)
-    fun getAll(@Param("user") user: User? = User()): MutableList<Section>?
+    fun getAll(@Param("user") user: User?): MutableList<Section>
 
 
     /** ============================== ADD / INSERT INTO ============================== */
@@ -52,14 +52,16 @@ interface SectionsRepository : JpaRepository<Section, Int> {
 
     //language=PostgresPLSQL
     @Query(value = """select (section_insert(
-                          cast_int(:#{#user.idUser}),
-                          cast_int(:#{#section.number}),
-                          cast_text(:#{#section.title})
+                          cast_int(:id_user),
+                          cast_int(:number),
+                          cast_text(:title)
                       )).*""",
             nativeQuery = true)
-    fun add(@Param("user") user: User?,
-            @Param("section") section: Section?
-    ): Section?
+    fun add(
+            @Param("id_user") idUser: Int,
+            @Param("number") number: Int,
+            @Param("title") title: String
+    ): Section
 
 
     /** ============================== SET / UPDATE ============================== */
@@ -70,30 +72,18 @@ interface SectionsRepository : JpaRepository<Section, Int> {
                           cast_int(:#{#section.number}),
                           cast_text(:#{#section.title}),
                           cast_int(:id_section),
-                          cast_int(:#{#user.idUser}),
+                          cast_int(:id_user),
                           cast_int(:number),
                           cast_text(:title)
                       )).*""",
             nativeQuery = true)
     fun set(
-            @Param("section") newSection: Section?,
+            @Param("section") newSection: Section,
             @Param("id_section") idSection: Int? = null,
-            @Param("user") user: User? = User(),
+            @Param("id_user") idUser: Int? = null,
             @Param("number") number: Int? = null,
             @Param("title") title: String? = null
-    ): Section?
-
-    //language=PostgresPLSQL
-    @Query(value = """select (section_update(
-                          cast_int(:#{#section.number}),
-                          cast_text(:#{#section.title}),
-                          cast_int(:#{#task.section.idSection})
-                      )).*""",
-            nativeQuery = true)
-    fun set(
-            @Param("section") newSection: Section?,
-            @Param("task") task: Task? = Task()
-    ): Section?
+    ): Section
 
 
     /** ============================== DELETE ============================== */
@@ -112,18 +102,13 @@ interface SectionsRepository : JpaRepository<Section, Int> {
             @Param("user") user: User? = User(),
             @Param("number") number: Int? = null,
             @Param("title") title: String? = null
-    ): Section?
-
-    //language=PostgresPLSQL
-    @Query(value = "select (section_delete(cast_int(:#{#task.section.idSection}))).*",
-            nativeQuery = true)
-    fun delete(@Param("task") task: Task? = Task()): Section?
+    ): Section
 
     //language=PostgresPLSQL
     @Query(value = """select (section_delete(
                           _id_user => cast_int(:#{#user.idUser}),
                           all_from_user => true)).*""",
             nativeQuery = true)
-    fun deleteAll(@Param("user") user: User? = User()): MutableList<Section>?
+    fun deleteAll(@Param("user") user: User?): MutableList<Section>
 
 }

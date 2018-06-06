@@ -14,9 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
-
-import skaliy.web.server.postgraduatestudies.entities.Branch
-import skaliy.web.server.postgraduatestudies.entities.ContactInfo
 import skaliy.web.server.postgraduatestudies.entities.Speciality
 import skaliy.web.server.postgraduatestudies.repositories.BranchesRepository
 import skaliy.web.server.postgraduatestudies.repositories.ContactInfoRepository
@@ -58,7 +55,7 @@ class SpecialitiesRestController(
                     specialitiesRepository.get(
                             contactInfoRepository.get(
                                     email = authUser.username
-                            )?.user?.speciality?.idSpeciality
+                            ).user
                     )
             )
 
@@ -86,7 +83,6 @@ class SpecialitiesRestController(
                             number,
                             name
                     )
-                            ?: Speciality()
             )
 
 
@@ -102,11 +98,11 @@ class SpecialitiesRestController(
                     value = "id_user",
                     required = false) idUser: Int?,
             @RequestParam(
-                    value = "phone_number",
-                    required = false) phoneNumber: String?,
-            @RequestParam(
                     value = "email",
-                    required = false) email: String?
+                    required = false) email: String?,
+            @RequestParam(
+                    value = "phone_number",
+                    required = false) phoneNumber: String?
     ) =
             Json.get(
                     view,
@@ -114,10 +110,9 @@ class SpecialitiesRestController(
                             usersRepository.get(
                                     idUser,
                                     contactInfoRepository.get(
-                                            phoneNumber = phoneNumber,
-                                            email = email
+                                            email,
+                                            phoneNumber
                                     )
-                                            ?: ContactInfo()
                             )
                     )
             )
@@ -151,7 +146,6 @@ class SpecialitiesRestController(
                                     branchNumber,
                                     branchName
                             )
-                                    ?: Branch()
                     )
             )
 
@@ -188,7 +182,7 @@ class SpecialitiesRestController(
                                     idBranch,
                                     branchNumber,
                                     branchName
-                            )!!.idBranch,
+                            ).idBranch,
                             speciality.number,
                             speciality.name
                     )
@@ -228,8 +222,8 @@ class SpecialitiesRestController(
                                     idSpeciality ?: specialitiesRepository.get(
                                             number = number,
                                             name = name
-                                    )!!.idSpeciality
-                            )!!.idSpeciality,
+                                    ).idSpeciality
+                            ).idSpeciality,
                             newSpeciality.number,
                             newSpeciality.name,
                             newSpeciality.branch
@@ -268,7 +262,6 @@ class SpecialitiesRestController(
                             number,
                             name
                     )
-                            ?: Speciality()
             )
 
 
@@ -292,7 +285,7 @@ class SpecialitiesRestController(
     ) =
             Json.get(
                     view,
-                    specialitiesRepository.deleteAllBySpeciality(
+                    specialitiesRepository.deleteAll(
                             branchesRepository.get(
                                     idBranch,
                                     number,

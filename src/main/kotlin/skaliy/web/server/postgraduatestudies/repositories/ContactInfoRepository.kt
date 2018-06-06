@@ -26,16 +26,16 @@ interface ContactInfoRepository : JpaRepository<ContactInfo, Int> {
                       )).*""",
             nativeQuery = true)
     fun get(
-            @Param("id_contact_info") idContactInfo: Int? = null,
-            @Param("phone_number") phoneNumber: String? = null,
             @Param("email") email: String? = null,
-            @Param("user") user: User? = User()
-    ): ContactInfo?
+            @Param("phone_number") phoneNumber: String? = null,
+            @Param("user") user: User? = User(),
+            @Param("id_contact_info") idContactInfo: Int? = null
+    ): ContactInfo
 
     //language=PostgresPLSQL
     @Query(value = "select (contact_info_record(all_records => true)).*",
             nativeQuery = true)
-    fun getAll(): MutableList<ContactInfo>?
+    fun getAll(): MutableList<ContactInfo>
 
 
     /** ============================== ADD / INSERT INTO ============================== */
@@ -43,12 +43,16 @@ interface ContactInfoRepository : JpaRepository<ContactInfo, Int> {
 
     //language=PostgresPLSQL
     @Query(value = """select (contact_info_insert(
-                          cast_text(:#{#contact_info.phoneNumber}),
-                          cast_text(:#{#contact_info.email}),
-                          cast_text(:#{#contact_info.address})
+                          cast_text(:phone_number),
+                          cast_text(:email),
+                          cast_text(:address)
                       )).*""",
             nativeQuery = true)
-    fun add(@Param("contact_info") contactInfo: ContactInfo?): ContactInfo?
+    fun add(
+            @Param("phone_number") phoneNumber: String,
+            @Param("email") email: String,
+            @Param("address") address: String?
+    ): ContactInfo
 
 
     /** ============================== SET / UPDATE ============================== */
@@ -59,19 +63,13 @@ interface ContactInfoRepository : JpaRepository<ContactInfo, Int> {
                           cast_text(:#{#contact_info.phoneNumber}),
                           cast_text(:#{#contact_info.email}),
                           cast_text(:#{#contact_info.address}),
-                          cast_int(:id_contact_info),
-                          cast_int(:#{#user.idUser}),
-                          cast_text(:phone_number),
-                          cast_text(:email)
+                          cast_int(:id_contact_info)
                       )).*""",
             nativeQuery = true)
     fun set(
-            @Param("contact_info") newContactInfo: ContactInfo?,
-            @Param("id_contact_info") idContactInfo: Int? = null,
-            @Param("phone_number") phoneNumber: String? = null,
-            @Param("email") email: String? = null,
-            @Param("user") user: User? = User()
-    ): ContactInfo?
+            @Param("contact_info") newContactInfo: ContactInfo,
+            @Param("id_contact_info") idContactInfo: Int
+    ): ContactInfo
 
 
     /** ============================== DELETE ============================== */
@@ -88,6 +86,6 @@ interface ContactInfoRepository : JpaRepository<ContactInfo, Int> {
             @Param("id_contact_info") idContactInfo: Int? = null,
             @Param("phone_number") phoneNumber: String? = null,
             @Param("email") email: String? = null
-    ): ContactInfo?
+    ): ContactInfo
 
 }

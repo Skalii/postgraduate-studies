@@ -50,27 +50,28 @@ data class ContactInfo(
                 strategy = SEQUENCE,
                 generator = "contact_info_seq")
         @Id
-        @JsonProperty(value = "id_contact_info")
+        @get:JsonProperty(value = "id_contact_info")
         @JsonView(View.REST::class)
         @NotNull
-        val idContactInfo: Int,
+        val idContactInfo: Int = 0,
 
         @Column(name = "phone_number",
+                nullable = false,
                 length = 100)
-        @JsonProperty(value = "phone_number")
+        @get:JsonProperty(value = "phone_number")
         @JsonView(View.REST::class)
         @NotNull
         @Size(max = 100)
-        val phoneNumber: String,
+        val phoneNumber: String = "",
 
         @Column(name = "email",
                 nullable = false,
                 length = 150)
-        @JsonProperty(value = "email")
+        @get:JsonProperty(value = "email")
         @JsonView(View.REST::class)
         @NotNull
         @Size(max = 150)
-        val email: String,
+        val email: String = "",
 
         @Column(name = "address",
                 length = 200)
@@ -82,27 +83,28 @@ data class ContactInfo(
 ) {
 
     @JsonIgnoreProperties(value = ["contact_info", "students", "sections"])
-    @JsonProperty(value = "user")
+    @get:JsonProperty(value = "user")
     @JsonView(View.TREE::class)
     @OneToOne(
             targetEntity = User::class,
             fetch = LAZY,
             mappedBy = "contactInfo")
-    var user: User? = null
+    lateinit var user: User
 
 
     constructor() : this(
             0,
             "",
             "",
-            "Невідома адреса")
+            "Невідома адреса"
+    )
 
     constructor(
-            idContactInfo: Int,
-            phoneNumber: String,
-            email: String,
-            address: String?,
-            user: User?
+            idContactInfo: Int = 0,
+            phoneNumber: String = "",
+            email: String = "",
+            address: String? = "Невідома адреса",
+            user: User = User()
     ) : this(
             idContactInfo,
             phoneNumber,

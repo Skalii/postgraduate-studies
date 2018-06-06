@@ -1,13 +1,12 @@
 package skaliy.web.server.postgraduatestudies.controllers.api
 
 
-import com.fasterxml.jackson.annotation.JsonView
-
 import org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -18,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 import skaliy.web.server.postgraduatestudies.entities.ContactInfo
 import skaliy.web.server.postgraduatestudies.repositories.ContactInfoRepository
 import skaliy.web.server.postgraduatestudies.repositories.UsersRepository
-import skaliy.web.server.postgraduatestudies.views.View
+import skaliy.web.server.postgraduatestudies.views.Json
 
 
 @RequestMapping(
@@ -42,109 +41,56 @@ class ContactInfoRestController(
     /** ============================== MY ============================== */
 
 
-    @JsonView(View.REST::class)
-    @GetMapping(value = ["get/my-ui"])
-    fun getMyUI(@AuthenticationPrincipal authUser: UserDetails) =
-            contactInfoRepository.get(email = authUser.username)
-
-    @JsonView(View.REST::class)
-    @GetMapping(value = ["get/my-rest"])
-    fun getMyRest(@AuthenticationPrincipal authUser: UserDetails) =
-            contactInfoRepository.get(email = authUser.username)
-
-    @JsonView(View.TREE::class)
-    @GetMapping(value = ["get/my-tree"])
-    fun getMyTree(@AuthenticationPrincipal authUser: UserDetails) =
-            contactInfoRepository.get(email = authUser.username)
+    @GetMapping(value = ["get/my{-view}"])
+    fun getMy(
+            @PathVariable(value = "-view") view: String,
+            @AuthenticationPrincipal authUser: UserDetails
+    ) =
+            Json.get(
+                    view,
+                    contactInfoRepository.get(authUser.username)
+            )
 
 
     /** ============================== ONE ============================== */
 
 
-    @JsonView(View.REST::class)
-    @GetMapping(value = ["get/one-ui"])
-    fun getOneUI(
+    @GetMapping(value = ["get/one{-view}"])
+    fun getOne(
+            @PathVariable(value = "-view") view: String,
             @RequestParam(
                     value = "id_contact_info",
                     required = false) idContactInfo: Int?,
             @RequestParam(
-                    value = "phone_number",
-                    required = false) phoneNumber: String?,
-            @RequestParam(
                     value = "email",
                     required = false) email: String?,
-            @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?
-    ) =
-            contactInfoRepository.get(
-                    idContactInfo,
-                    phoneNumber,
-                    email,
-                    usersRepository.get(idUser)
-            )
-
-    @JsonView(View.REST::class)
-    @GetMapping(value = ["get/one-rest"])
-    fun getOneRest(
-            @RequestParam(
-                    value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
             @RequestParam(
                     value = "phone_number",
                     required = false) phoneNumber: String?,
             @RequestParam(
-                    value = "email",
-                    required = false) email: String?,
-            @RequestParam(
                     value = "id_user",
                     required = false) idUser: Int?
     ) =
-            contactInfoRepository.get(
-                    idContactInfo,
-                    phoneNumber,
-                    email,
-                    usersRepository.get(idUser)
-            )
-
-    @JsonView(View.TREE::class)
-    @GetMapping(value = ["get/one-tree"])
-    fun getOneTree(
-            @RequestParam(
-                    value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
-            @RequestParam(
-                    value = "phone_number",
-                    required = false) phoneNumber: String?,
-            @RequestParam(
-                    value = "email",
-                    required = false) email: String?,
-            @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?
-    ) =
-            contactInfoRepository.get(
-                    idContactInfo,
-                    phoneNumber,
-                    email,
-                    usersRepository.get(idUser)
+            Json.get(
+                    view,
+                    contactInfoRepository.get(
+                            email,
+                            phoneNumber,
+                            usersRepository.get(idUser),
+                            idContactInfo
+                    )
             )
 
 
     /** ============================== ALL ============================== */
 
 
-    @JsonView(View.REST::class)
-    @GetMapping(value = ["get/all-ui"])
-    fun getAllUI() = contactInfoRepository.getAll()
-
-    @JsonView(View.REST::class)
-    @GetMapping(value = ["get/all-rest"])
-    fun getAllRest() = contactInfoRepository.getAll()
-
-    @JsonView(View.TREE::class)
-    @GetMapping(value = ["get/all-tree"])
-    fun getAllTree() = contactInfoRepository.getAll()
+    @GetMapping(value = ["get/all{-view}"])
+    fun getAll(@PathVariable(value = "-view") view: String) =
+            Json.get(
+                    view,
+                    contactInfoRepository.getAll()
+            )
 
 
     /**
@@ -158,20 +104,19 @@ class ContactInfoRestController(
     /** ============================== ONE ============================== */
 
 
-    @JsonView(View.REST::class)
-    @PostMapping(value = ["post/add-ui"])
-    fun addUI(@RequestBody contactInfo: ContactInfo) =
-            contactInfoRepository.add(contactInfo)
-
-    @JsonView(View.REST::class)
-    @PostMapping(value = ["post/add-rest"])
-    fun addRest(@RequestBody contactInfo: ContactInfo) =
-            contactInfoRepository.add(contactInfo)
-
-    @JsonView(View.TREE::class)
-    @PostMapping(value = ["post/add-tree"])
-    fun addTree(@RequestBody contactInfo: ContactInfo) =
-            contactInfoRepository.add(contactInfo)
+    @PostMapping(value = ["post/add{-view}"])
+    fun add(
+            @PathVariable(value = "-view") view: String,
+            @RequestBody contactInfo: ContactInfo
+    ) =
+            Json.get(
+                    view,
+                    contactInfoRepository.add(
+                            contactInfo.phoneNumber,
+                            contactInfo.email,
+                            contactInfo.address
+                    )
+            )
 
 
     /**
@@ -185,136 +130,78 @@ class ContactInfoRestController(
     /** ============================== MY ============================== */
 
 
-    @JsonView(View.REST::class)
-    @PutMapping(value = ["put/set-my-ui"])
-    fun setMyUI(
-            @RequestBody newContactInfo: ContactInfo?,
+    @PutMapping(value = ["put/set-my{-view}"])
+    fun setMy(
+            @PathVariable(value = "-view") view: String,
+            @RequestBody newContactInfo: ContactInfo,
             @AuthenticationPrincipal authUser: UserDetails
-    ): ContactInfo? {
-        val contactInfo =
-                contactInfoRepository.set(
-                        newContactInfo,
-                        email = authUser.username
-                )
-        return contactInfoRepository.get(contactInfo?.idContactInfo)
-    }
+    ) =
+            contactInfoRepository.get(
+                    authUser.username
+            ).run {
 
-    @JsonView(View.REST::class)
-    @PutMapping(value = ["put/set-my-rest"])
-    fun setMyRest(
-            @RequestBody newContactInfo: ContactInfo?,
-            @AuthenticationPrincipal authUser: UserDetails
-    ): ContactInfo? {
-        val contactInfo =
                 contactInfoRepository.set(
                         newContactInfo,
-                        email = authUser.username
+                        idContactInfo
                 )
-        return contactInfoRepository.get(contactInfo?.idContactInfo)
-    }
 
-    @JsonView(View.TREE::class)
-    @PutMapping(value = ["put/set-my-tree"])
-    fun setMyTree(
-            @RequestBody newContactInfo: ContactInfo?,
-            @AuthenticationPrincipal authUser: UserDetails
-    ): ContactInfo? {
-        val contactInfo =
-                contactInfoRepository.set(
-                        newContactInfo,
-                        email = authUser.username
+                return@run Json.get(
+                        view,
+                        ContactInfo(
+                                idContactInfo,
+                                newContactInfo.phoneNumber,
+                                newContactInfo.email,
+                                newContactInfo.address,
+                                user
+                        )
                 )
-        return contactInfoRepository.get(contactInfo?.idContactInfo)
-    }
+            }
 
 
     /** ============================== ONE ============================== */
 
 
-    @JsonView(View.REST::class)
-    @PutMapping(value = ["put/set-one-ui"])
-    fun setUI(
-            @RequestBody newContactInfo: ContactInfo?,
+    @PutMapping(value = ["put/set{-view}"])
+    fun set(
+            @PathVariable(value = "-view") view: String,
+            @RequestBody newContactInfo: ContactInfo,
             @RequestParam(
                     value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
-            @RequestParam(
-                    value = "phone_number",
-                    required = false) phoneNumber: String?,
+                    required = false) _idContactInfo: Int?,
             @RequestParam(
                     value = "email",
                     required = false) email: String?,
             @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?
-    ): ContactInfo? {
-        val contactInfo =
-                contactInfoRepository.set(
-                        newContactInfo,
-                        idContactInfo,
-                        phoneNumber,
-                        email,
-                        usersRepository.get(idUser)
-                )
-        return contactInfoRepository.get(contactInfo?.idContactInfo)
-    }
-
-    @JsonView(View.REST::class)
-    @PutMapping(value = ["put/set-one-rest"])
-    fun setRest(
-            @RequestBody newContactInfo: ContactInfo?,
-            @RequestParam(
-                    value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
-            @RequestParam(
                     value = "phone_number",
                     required = false) phoneNumber: String?,
             @RequestParam(
-                    value = "email",
-                    required = false) email: String?,
-            @RequestParam(
                     value = "id_user",
                     required = false) idUser: Int?
-    ): ContactInfo? {
-        val contactInfo =
+    ) =
+            contactInfoRepository.get(
+                    email,
+                    phoneNumber,
+                    usersRepository.get(idUser),
+                    _idContactInfo
+            ).run {
+
                 contactInfoRepository.set(
                         newContactInfo,
-                        idContactInfo,
-                        phoneNumber,
-                        email,
-                        usersRepository.get(idUser)
+                        idContactInfo
                 )
-        return contactInfoRepository.get(contactInfo?.idContactInfo)
-    }
 
-    @JsonView(View.TREE::class)
-    @PutMapping(value = ["put/set-one-tree"])
-    fun setTree(
-            @RequestBody newContactInfo: ContactInfo?,
-            @RequestParam(
-                    value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
-            @RequestParam(
-                    value = "phone_number",
-                    required = false) phoneNumber: String?,
-            @RequestParam(
-                    value = "email",
-                    required = false) email: String?,
-            @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?
-    ): ContactInfo? {
-        val contactInfo =
-                contactInfoRepository.set(
-                        newContactInfo,
-                        idContactInfo,
-                        phoneNumber,
-                        email,
-                        usersRepository.get(idUser)
+                return@run Json.get(
+                        view,
+                        ContactInfo(
+                                idContactInfo,
+                                newContactInfo.phoneNumber,
+                                newContactInfo.email,
+                                newContactInfo.address,
+                                user
+                        )
                 )
-        return contactInfoRepository.get(contactInfo?.idContactInfo)
-    }
 
+            }
 
     /**
      *
@@ -327,61 +214,26 @@ class ContactInfoRestController(
     /** ============================== ONE ============================== */
 
 
-    @JsonView(View.REST::class)
-    @DeleteMapping(value = ["delete/one-ui"])
-    fun deleteUI(
+    @DeleteMapping(value = ["delete/one{-view}"])
+    fun delete(
+            @PathVariable(value = "-view") view: String,
             @RequestParam(
                     value = "id_contact_info",
                     required = false) idContactInfo: Int?,
             @RequestParam(
-                    value = "phone_number",
-                    required = false) phoneNumber: String?,
-            @RequestParam(
                     value = "email",
-                    required = false) email: String?
-    ) =
-            contactInfoRepository.delete(
-                    idContactInfo,
-                    phoneNumber,
-                    email
-            )
-
-    @JsonView(View.REST::class)
-    @DeleteMapping(value = ["delete/one-rest"])
-    fun deleteRest(
-            @RequestParam(
-                    value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
+                    required = false) email: String?,
             @RequestParam(
                     value = "phone_number",
-                    required = false) phoneNumber: String?,
-            @RequestParam(
-                    value = "email",
-                    required = false) email: String?
+                    required = false) phoneNumber: String?
     ) =
-            contactInfoRepository.delete(
-                    idContactInfo,
-                    phoneNumber,
-                    email
-            )
-
-    @JsonView(View.TREE::class)
-    @DeleteMapping(value = ["delete/one-tree"])
-    fun deleteTree(
-            @RequestParam(
-                    value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
-            @RequestParam(
-                    value = "phone_number",
-                    required = false) phoneNumber: String?,
-            @RequestParam(
-                    value = "email",
-                    required = false) email: String?
-    ) =
-            contactInfoRepository.delete(
-                    idContactInfo,
-                    phoneNumber,
-                    email
+            Json.get(
+                    view,
+                    contactInfoRepository.delete(
+                            idContactInfo,
+                            phoneNumber,
+                            email
+                    )
             )
 
 }

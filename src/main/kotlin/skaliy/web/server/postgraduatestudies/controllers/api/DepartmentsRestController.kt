@@ -14,10 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
-import skaliy.web.server.postgraduatestudies.entities.ContactInfo
 import skaliy.web.server.postgraduatestudies.entities.Department
-import skaliy.web.server.postgraduatestudies.entities.Faculty
-import skaliy.web.server.postgraduatestudies.entities.Institute
 import skaliy.web.server.postgraduatestudies.repositories.ContactInfoRepository
 import skaliy.web.server.postgraduatestudies.repositories.DepartmentsRepository
 import skaliy.web.server.postgraduatestudies.repositories.InstitutesRepository
@@ -59,8 +56,8 @@ class DepartmentsRestController(
                     view,
                     departmentsRepository.get(
                             contactInfoRepository.get(
-                                    email = authUser.username
-                            )?.user
+                                    authUser.username
+                            ).user
                     )
             )
 
@@ -84,11 +81,6 @@ class DepartmentsRestController(
                             idDepartment,
                             name
                     )
-                            ?: Department()
-                                    .also {
-                                        it.institute = Institute()
-                                        it.faculty = Faculty()
-                                    }
             )
 
 
@@ -104,11 +96,11 @@ class DepartmentsRestController(
                     value = "id_user",
                     required = false) idUser: Int?,
             @RequestParam(
-                    value = "phone_number",
-                    required = false) phoneNumber: String?,
-            @RequestParam(
                     value = "email",
-                    required = false) email: String?
+                    required = false) email: String?,
+            @RequestParam(
+                    value = "phone_number",
+                    required = false) phoneNumber: String?
     ) =
             Json.get(
                     view,
@@ -116,10 +108,9 @@ class DepartmentsRestController(
                             usersRepository.get(
                                     idUser,
                                     contactInfoRepository.get(
-                                            phoneNumber = phoneNumber,
-                                            email = email
+                                            email,
+                                            phoneNumber
                                     )
-                                            ?: ContactInfo()
                             )
                     )
             )
@@ -154,11 +145,11 @@ class DepartmentsRestController(
                             institutesRepository.get(
                                     idInstitute,
                                     instituteName
-                            ) ?: Institute(),
+                            ),
                             facultiesRepository.get(
                                     idFaculty,
                                     facultyName
-                            ) ?: Faculty()
+                            )
                     )
             )
 
@@ -198,11 +189,11 @@ class DepartmentsRestController(
                             institutesRepository.get(
                                     idInstitute,
                                     instituteName
-                            )!!.idInstitute,
+                            ).idInstitute,
                             facultiesRepository.get(
                                     idFaculty,
                                     facultyName
-                            )!!.idFaculty
+                            ).idFaculty
                     )
             )
 
@@ -224,25 +215,33 @@ class DepartmentsRestController(
             @RequestBody newDepartment: Department,
             @RequestParam(
                     value = "id_department",
-                    required = false) idDepartment: Int?,
+                    required = false) _idDepartment: Int?,
             @RequestParam(
                     value = "name",
                     required = false) name: String?
     ) =
-            Json.get(
-                    view,
-                    Department(
-                            departmentsRepository.set(
-                                    newDepartment,
-                                    idDepartment ?: departmentsRepository.get(
-                                            name = name
-                                    )!!.idDepartment
-                            )!!.idDepartment,
-                            newDepartment.name,
-                            newDepartment.institute,
-                            newDepartment.faculty
-                    )
-            )
+
+            departmentsRepository.get(
+                    _idDepartment,
+                    name
+            ).run {
+
+                departmentsRepository.set(
+                        newDepartment,
+                        idDepartment
+                )
+
+                return@run Json.get(
+                        view,
+                        Department(
+                                idDepartment,
+                                newDepartment.name,
+                                newDepartment.institute,
+                                newDepartment.faculty
+                        )
+                )
+
+            }
 
 
     /**
@@ -272,11 +271,6 @@ class DepartmentsRestController(
                             idDepartment,
                             name
                     )
-                            ?: Department()
-                                    .also {
-                                        it.institute = Institute()
-                                        it.faculty = Faculty()
-                                    }
             )
 
 }

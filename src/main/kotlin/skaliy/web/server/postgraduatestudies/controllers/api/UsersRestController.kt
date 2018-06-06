@@ -14,13 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
-import skaliy.web.server.postgraduatestudies.entities.Branch
-import skaliy.web.server.postgraduatestudies.entities.ContactInfo
-import skaliy.web.server.postgraduatestudies.entities.Degree
-import skaliy.web.server.postgraduatestudies.entities.Department
-import skaliy.web.server.postgraduatestudies.entities.Faculty
-import skaliy.web.server.postgraduatestudies.entities.Institute
-import skaliy.web.server.postgraduatestudies.entities.Speciality
 import skaliy.web.server.postgraduatestudies.entities.User
 import skaliy.web.server.postgraduatestudies.repositories.BranchesRepository
 import skaliy.web.server.postgraduatestudies.repositories.ContactInfoRepository
@@ -72,8 +65,8 @@ class UsersRestController(
             Json.getUser(
                     view,
                     contactInfoRepository.get(
-                            email = authUser.username
-                    )?.user
+                            authUser.username
+                    ).user
             )
 
 
@@ -88,8 +81,8 @@ class UsersRestController(
             Json.getUser(
                     view,
                     contactInfoRepository.get(
-                            email = authUser.username
-                    )?.user?.studyInfo?.instructor
+                            authUser.username
+                    ).user.studyInfo?.instructor
             )
 
 
@@ -105,8 +98,8 @@ class UsersRestController(
         val myStudents: MutableList<User> = mutableListOf()
 
         contactInfoRepository.get(
-                email = authUser.username
-        )?.user?.students?.forEach { myStudents.add(it!!.user!!) }
+                authUser.username
+        ).user.students.forEach { myStudents.add(it!!.user!!) }
 
         return Json.getUser(
                 view,
@@ -136,10 +129,9 @@ class UsersRestController(
                     usersRepository.get(
                             idUser,
                             contactInfoRepository.get(
-                                    phoneNumber = phoneNumber,
-                                    email = email
+                                    email,
+                                    phoneNumber
                             )
-                                    ?: ContactInfo()
                     )
             )
 
@@ -207,33 +199,29 @@ class UsersRestController(
                                     idDegree,
                                     degreeName,
                                     degreeBranch
-                            ) ?: Degree(),
+                            ),
                             branchesRepository.get(
                                     idBranch,
                                     branchNumber,
                                     branchName
-                            ) ?: Branch(),
+                            ),
                             specialitiesRepository.get(
                                     idSpeciality,
                                     specialityNumber,
                                     specialityName
-                            ) ?: Speciality(),
+                            ),
                             departmentsRepository.get(
                                     idDepartment,
                                     departmentName
-                            ) ?: Department()
-                                    .also {
-                                        it.institute = Institute()
-                                        it.faculty = Faculty()
-                                    },
+                            ),
                             facultiesRepository.get(
                                     idFaculty,
                                     facultyName
-                            ) ?: Faculty(),
+                            ),
                             institutesRepository.get(
                                     idInstitute,
                                     instituteName
-                            ) ?: Institute()
+                            )
                     )
             )
 
@@ -320,31 +308,31 @@ class UsersRestController(
                                     idDegree,
                                     degreeName,
                                     degreeBranch
-                            )?.idDegree,
+                            ).idDegree,
                             specialitiesRepository.get(
                                     idSpeciality,
                                     specialityNumber,
                                     specialityName
-                            )!!.idSpeciality,
+                            ).idSpeciality,
                             departmentsRepository.get(
                                     idDepartment,
                                     departmentName
-                            )!!.idDepartment,
+                            ).idDepartment,
                             contactInfoRepository.get(
-                                    idContactInfo,
+                                    email,
                                     phoneNumber,
-                                    email
-                            )!!.idContactInfo,
+                                    idContactInfo = idContactInfo
+                            ).idContactInfo,
                             studyInfoRepository.get(
                                     idStudyInfo
-                            )?.idStudyInfo,
+                            ).idStudyInfo,
                             scientificLinksRepository.get(
                                     idScientificLinks,
                                     orcid,
                                     researcherid,
                                     googleScholarId,
                                     scopusAuthorId
-                            )!!.idScientificLinks
+                            ).idScientificLinks
                     )
             )
 
@@ -359,18 +347,52 @@ class UsersRestController(
 
     /** ============================== ME ============================== */
 
+    // todo check for work
 
     @PutMapping(value = ["put/set-me{-view}"])
     fun setMe(
             @PathVariable("-view") view: String,
             @RequestBody newUser: User,
             @AuthenticationPrincipal authUser: UserDetails
-    ): String {
+    ) =
+            contactInfoRepository.get(
+                    authUser.username
+            ).user.run {
+
+                usersRepository.setMe(
+                        newUser,
+                        idUser
+                )
+
+                return@run Json.get(
+                        view,
+                        User(
+                                idUser,
+                                role,
+                                newUser.salt,
+                                newUser.hash,
+                                newUser.fullNameUa,
+                                newUser.fullNameEn,
+                                newUser.birthday,
+                                newUser.familyStatus,
+                                newUser.children,
+                                academicRank,
+                                degree,
+                                speciality,
+                                department,
+                                contactInfo,
+                                studyInfo,
+                                scientificLinks
+                        )
+                )
+            }
+
+    /*: String {
 
         val user =
                 contactInfoRepository.get(
-                        email = authUser.username
-                )!!.user!!
+                        authUser.username
+                ).user
 
         return Json.getUser(
                 view,
@@ -378,7 +400,7 @@ class UsersRestController(
                         usersRepository.setMe(
                                 newUser,
                                 user.idUser
-                        )!!.idUser,
+                        ).idUser,
                         user.role,
                         newUser.salt,
                         newUser.hash,
@@ -396,10 +418,11 @@ class UsersRestController(
                         user.scientificLinks
                 )
         )
-    }
+    }*/
 
     /** ============================== ONE ============================== */
 
+    // todo check for work
 
     @PutMapping(value = ["put/set{-view}"])
     fun set(
@@ -407,14 +430,51 @@ class UsersRestController(
             @RequestBody newUser: User,
             @RequestParam(
                     value = "id_user",
-                    required = false) idUser: Int?,
+                    required = false) _idUser: Int?,
             @RequestParam(
                     value = "phone_number",
                     required = false) phoneNumber: String?,
             @RequestParam(
                     value = "email",
                     required = false) email: String?
-    ): String {
+    ) =
+            usersRepository.get(
+                    _idUser,
+                    contactInfoRepository.get(
+                            email,
+                            phoneNumber
+                    )
+            ).run {
+
+                usersRepository.set(
+                        newUser,
+                        idUser
+                )
+
+                return@run Json.get(
+                        view,
+                        User(
+                                idUser,
+                                role,
+                                newUser.salt,
+                                newUser.hash,
+                                newUser.fullNameUa,
+                                newUser.fullNameEn,
+                                newUser.birthday,
+                                newUser.familyStatus,
+                                newUser.children,
+                                academicRank,
+                                degree,
+                                speciality,
+                                department,
+                                contactInfo,
+                                studyInfo,
+                                scientificLinks
+                        )
+                )
+            }
+
+    /*: String {
 
         val user =
                 usersRepository.get(
@@ -450,7 +510,7 @@ class UsersRestController(
                 )
         )
 
-    }
+    }*/
 
 
     /**
@@ -482,11 +542,10 @@ class UsersRestController(
                     usersRepository.delete(
                             idUser,
                             contactInfoRepository.get(
-                                    phoneNumber = phoneNumber,
-                                    email = email
+                                    email,
+                                    phoneNumber
                             )
                     )
-                            ?: User()
             )
 
 }

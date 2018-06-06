@@ -29,12 +29,12 @@ interface SpecialitiesRepository : JpaRepository<Speciality, Int> {
             @Param("id_speciality") idSpeciality: Int? = null,
             @Param("number") number: String? = null,
             @Param("name") name: String? = null
-    ): Speciality?
+    ): Speciality
 
     //language=PostgresPLSQL
     @Query(value = "select (speciality_record(cast_int(:#{#user.speciality.idSpeciality}))).*",
             nativeQuery = true)
-    fun get(@Param("user") user: User?): Speciality?
+    fun get(@Param("user") user: User?): Speciality
 
     //language=PostgresPLSQL
     @Query(value = """select (speciality_record(
@@ -45,7 +45,7 @@ interface SpecialitiesRepository : JpaRepository<Speciality, Int> {
     fun getAll(
             @Param("all_records") allRecords: Boolean? = false,
             @Param("branch") branch: Branch? = Branch()
-    ): MutableList<Speciality?>?
+    ): MutableList<Speciality>
 
     /** ============================== ADD / INSERT ============================== */
 
@@ -61,7 +61,7 @@ interface SpecialitiesRepository : JpaRepository<Speciality, Int> {
             @Param("id_branch") idBranch: Int,
             @Param("number") number: String,
             @Param("name") name: String
-    ): Speciality?
+    ): Speciality
 
 
     /** ============================== SET / UPDATE ============================== */
@@ -78,7 +78,7 @@ interface SpecialitiesRepository : JpaRepository<Speciality, Int> {
     fun set(
             @Param("speciality") newSpeciality: Speciality,
             @Param("id_speciality") idSpeciality: Int
-    ): Speciality?
+    ): Speciality
 
 
     /** ============================== DELETE ============================== */
@@ -95,11 +95,11 @@ interface SpecialitiesRepository : JpaRepository<Speciality, Int> {
             @Param("id_speciality") idSpeciality: Int? = null,
             @Param("number") number: String? = null,
             @Param("name") name: String? = null
-    ): Speciality?
+    ): Speciality
 
     //language=PostgresPLSQL
     @Query(value = "select (speciality_delete(all_from_id_branch => cast_int(:#{#branch.idBranch}))).*",
             nativeQuery = true)
-    fun deleteAllBySpeciality(@Param("branch") branch: Branch?): MutableList<Speciality?>?
+    fun deleteAll(@Param("branch") branch: Branch?): MutableList<Speciality>
 
 }

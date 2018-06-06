@@ -132,10 +132,10 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     @Autowired
     @Throws(Exception::class)
     fun configureGlobal(auth: AuthenticationManagerBuilder) {
-        usersRepository.getAll(true)?.forEach { user ->
+        usersRepository.getAll(true).forEach { user ->
             auth
                     .inMemoryAuthentication()
-                    .withUser(user!!.contactInfo.email)
+                    .withUser(user.contactInfo.email)
                     .password(passwordEncoder().encode(usersRepository.decrypt(user.idUser)))
                     .roles(user.role.value)
         }
