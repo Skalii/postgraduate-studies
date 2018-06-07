@@ -34,7 +34,7 @@ interface UsersRepository : JpaRepository<User, Int> {
     fun get(
             @Param("id_user") idUser: Int? = null,
             @Param("contact_info") contactInfo: ContactInfo? = ContactInfo()
-    ): User = User()
+    ): User
 
     //language=PostgresPLSQL
     @Query(value = """select (user_record(
@@ -45,7 +45,7 @@ interface UsersRepository : JpaRepository<User, Int> {
     fun get(
             @Param("section") section: Section? = Section(),
             @Param("task") task: Task? = Task()
-    ): User = User()
+    ): User
 
     //language=PostgresPLSQL
     @Query(value = """select (user_record(
@@ -66,7 +66,7 @@ interface UsersRepository : JpaRepository<User, Int> {
             @Param("department") department: Department? = Department(),
             @Param("faculty") faculty: Faculty? = Faculty(),
             @Param("institute") institute: Institute? = Institute()
-    ): MutableList<User> = mutableListOf(User())
+    ): MutableList<User>
 
 
     /** ============================== ADD / INSERT INTO ============================== */
@@ -105,7 +105,7 @@ interface UsersRepository : JpaRepository<User, Int> {
             @Param("id_contact_info") idContactInfo: Int,
             @Param("id_study_info") idStudyInfo: Int?,
             @Param("id_scientific_links") idScientificLinks: Int
-    ): User = User()
+    ): User
 
 
     /** ============================== SET / UPDATE ============================== */
@@ -130,24 +130,25 @@ interface UsersRepository : JpaRepository<User, Int> {
     fun set(
             @Param("user") newUser: User,
             @Param("id_user") idUser: Int
-    ): User = User()
+    ): User
 
     //language=PostgresPLSQL
     @Query(value = """select (user_update(
-                          cast_text(:#{#user.hash}),
-                          cast_text(:#{#user.fullNameUa}),
-                          cast_text(:#{#user.fullNameEn}),
-                          :#{#user.birthday},
-                          cast_family(:#{#user.familyStatus.value}),
-                          cast_int(:#{#user.children}),
-                          cast_int(:id_user)
+                          new_full_name_ua => cast_text(:#{#user.fullNameUa}),
+                          new_full_name_en => cast_text(:#{#user.fullNameEn}),
+                          new_birthday => cast(:#{#user.birthday.toString()} as date),
+                          new_family_status => cast_family(:#{#user.familyStatus.value}),
+                          new_children => cast_int(:#{#user.children}),
+                          _id_user => cast_int(:id_user)
                       )).*""",
             nativeQuery = true)
     fun setMe(
             @Param("user") newUser: User,
             @Param("id_user") idUser: Int
-    ): User = User()
+    ): User
 
+
+    //todo create setMePassword
 
     /** ============================== DELETE ============================== */
 
@@ -161,7 +162,7 @@ interface UsersRepository : JpaRepository<User, Int> {
     fun delete(
             @Param("id_user") idUser: Int? = null,
             @Param("contact_info") contactInfo: ContactInfo? = ContactInfo()
-    ): User = User()
+    ): User
 
 
     /** ============================== HASHING ============================== */

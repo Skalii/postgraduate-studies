@@ -226,7 +226,7 @@ class DegreesRestController(
 
 
     @DeleteMapping(value = ["delete/one{-view}"])
-    fun deleteTree(
+    fun delete(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
                     value = "id_degree",

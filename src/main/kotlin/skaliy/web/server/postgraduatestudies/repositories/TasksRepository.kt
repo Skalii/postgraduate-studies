@@ -78,8 +78,8 @@ interface TasksRepository : JpaRepository<Task, Int> {
     @Query(value = """select (task_update(
                           cast_int(:#{#task.number}),
                           cast_text(:#{#task.title}),
-                          cast_ts(:#{#task.balkline}),
-                          cast_ts(:#{#task.deadline}),
+                          cast_ts(:#{#task.balkline.toInstant().toString()}),
+                          cast_ts(:#{#task.deadline.toInstant().toString()}),
                           cast_bool(:#{#task.markDoneUser}),
                           cast_bool(:#{#task.markDoneInstructor}),
                           cast_text(:#{#task.link}),
@@ -103,11 +103,14 @@ interface TasksRepository : JpaRepository<Task, Int> {
 
     //language=PostgresPLSQL
     @Query(value = """select (task_update(
-                          new_mark_done_instructor => cast_bool(:#{#task.markDoneInstructor}),
-                          _id_task => cast_int(:#{#task.idTask})
+                          new_mark_done_instructor => cast_bool(:mark_done_instructor),
+                          _id_task => cast_int(:id_task)
                       )).*""",
             nativeQuery = true)
-    fun setMarkInstructor(@Param("task") newTask: Task?): Task
+    fun setMarkInstructor(
+            @Param("id_task") idTask: Int,
+            @Param("mark_done_instructor") markDoneInstructor: Boolean?
+    ): Task
 
 
     /** ============================== DELETE ============================== */

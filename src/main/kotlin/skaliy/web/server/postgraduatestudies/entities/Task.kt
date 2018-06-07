@@ -1,11 +1,11 @@
 package skaliy.web.server.postgraduatestudies.entities
 
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonView
 
-import java.sql.Timestamp
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
@@ -23,8 +23,6 @@ import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
 import javax.persistence.SequenceGenerator
 import javax.persistence.Table
-import javax.persistence.Temporal
-import javax.persistence.TemporalType
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
@@ -81,22 +79,28 @@ data class Task(
 
         @Column(name = "balkline",
                 nullable = false)
+        @get:JsonFormat(
+                pattern = "yyyy-MM-dd HH:mm:ss",
+                shape = JsonFormat.Shape.STRING,
+                timezone = "Europe/Kiev") //todo set time zone
         @get:JsonProperty(value = "balkline")
         @JsonView(REST::class)
         @NotNull
-        @Temporal(TemporalType.TIMESTAMP)
-        val balkline: Date = Timestamp
-                .from(Instant.now(Clock.system(ZoneId.of("Europe/Kiev")))),
+        val balkline: Date = Date.from(Instant.now()),
 
         @Column(name = "deadline",
                 nullable = false)
+        @get:JsonFormat(
+                pattern = "yyyy-MM-dd HH:mm:ss",
+                shape = JsonFormat.Shape.STRING,
+                timezone = "Europe/Kiev")
         @get:JsonProperty(value = "deadline")
         @JsonView(REST::class)
         @NotNull
-        @Temporal(TemporalType.TIMESTAMP)
-        val deadline: Date = Timestamp
-                .from(Instant.now(Clock.system(ZoneId.of("Europe/Kiev")))
-                        .plusSeconds(2419200)),
+        val deadline: Date = Date.from(Instant.now())
+                .also {
+                    it.month = it.month + 1
+                },
 
         @Column(name = "mark_done_user")
         @get:JsonProperty(value = "mark_done_user")
@@ -116,15 +120,21 @@ data class Task(
         val link: String? = "Невідоме посилання",
 
         @Column(name = "timestamp_done_user")
+        @get:JsonFormat(
+                pattern = "yyyy-MM-dd HH:mm:ss",
+                shape = JsonFormat.Shape.STRING,
+                timezone = "Europe/Kiev")
         @get:JsonProperty(value = "timestamp_done_user")
         @JsonView(REST::class)
-        @Temporal(TemporalType.TIMESTAMP)
         val timestampDoneUser: Date?,
 
         @Column(name = "timestamp_done_instructor")
+        @get:JsonFormat(
+                pattern = "yyyy-MM-dd HH:mm:ss",
+                shape = JsonFormat.Shape.STRING,
+                timezone = "Europe/Kiev")
         @get:JsonProperty(value = "timestamp_done_instructor")
         @JsonView(REST::class)
-        @Temporal(TemporalType.TIMESTAMP)
         var timestampDoneInstructor: Date?
 
 ) {
@@ -147,9 +157,11 @@ data class Task(
             0,
             1,
             "Нове завдання",
-            Timestamp.from(Instant.now(Clock.system(ZoneId.of("Europe/Kiev")))),
-            Timestamp.from(Instant.now(Clock.system(ZoneId.of("Europe/Kiev")))
-                    .plusSeconds(2419200)),
+            Date.from(Instant.now()),
+            Date.from(Instant.now())
+                    .also {
+                        it.month = it.month + 1
+                    },
             false,
             false,
             "Невідоме посилання",
@@ -160,15 +172,17 @@ data class Task(
             idTask: Int = 0,
             number: Int = 1,
             title: String = "Нове завдання",
-            balkline: Date = Timestamp.from(Instant.now(Clock.system(ZoneId.of("Europe/Kiev")))),
-            deadline: Date = Timestamp.from(Instant.now(Clock.system(ZoneId.of("Europe/Kiev")))
-                    .plusSeconds(2419200)),
+            balkline: Date = Date.from(Instant.now()),
+            deadline: Date = Date.from(Instant.now())
+                    .also {
+                        it.month = it.month + 1
+                    },
             markDoneUser: Boolean? = false,
             markDoneInstructor: Boolean? = false,
             link: String? = "Невідоме посилання",
             timestampDoneUser: Date? = null,
             timestampDoneInstructor: Date? = null,
-            section: Section
+            section: Section = Section()
     ) : this(
             idTask,
             number,

@@ -119,8 +119,9 @@ data class User(
 
         @Column(name = "birthday",
                 nullable = false)
-        @JsonFormat(
+        @get:JsonFormat(
                 pattern = "yyyy-MM-dd",
+                shape = JsonFormat.Shape.STRING,
                 timezone = "Europe/Kiev")
         @get:JsonProperty(value = "birthday")
         @JsonView(REST::class)

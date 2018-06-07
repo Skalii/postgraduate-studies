@@ -257,13 +257,16 @@ class StudyInfoRestController(
                     value = "phone_number",
                     required = false) phoneNumber: String?
     ) =
-            studyInfoRepository.delete(
-                    idStudyInfo,
-                    usersRepository.get(
-                            idUser,
-                            contactInfoRepository.get(
-                                    email,
-                                    phoneNumber
+            Json.get(
+                    view,
+                    studyInfoRepository.delete(
+                            idStudyInfo,
+                            usersRepository.get(
+                                    idUser,
+                                    contactInfoRepository.get(
+                                            email,
+                                            phoneNumber
+                                    )
                             )
                     )
             )

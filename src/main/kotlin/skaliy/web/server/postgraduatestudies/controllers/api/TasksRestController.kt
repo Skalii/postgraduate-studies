@@ -1,10 +1,10 @@
 package skaliy.web.server.postgraduatestudies.controllers.api
 
 
-import java.sql.Timestamp
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
+import java.util.Date
 
 import org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -123,13 +123,16 @@ class TasksRestController(
                     value = "section_title",
                     required = false) sectionTitle: String?
     ) =
-            tasksRepository.getAll(
-                    sectionsRepository.get(
-                            user = contactInfoRepository.get(
-                                    authUser.username
-                            ).user,
-                            number = sectionNumber,
-                            title = sectionTitle
+            Json.get(
+                    view,
+                    tasksRepository.getAll(
+                            sectionsRepository.get(
+                                    user = contactInfoRepository.get(
+                                            authUser.username
+                                    ).user,
+                                    number = sectionNumber,
+                                    title = sectionTitle
+                            )
                     )
             )
 
@@ -263,18 +266,21 @@ class TasksRestController(
                     required = false) sectionTitle: String?,
             @RequestBody task: Task
     ) =
-            tasksRepository.add(
-                    sectionsRepository.get(
-                            contactInfoRepository.get(
-                                    authUser.username
-                            ).user,
-                            sectionNumber,
-                            sectionTitle
-                    ).idSection,
-                    task.title,
-                    Timestamp.from(task.balkline.toInstant()).toString(),
-                    Timestamp.from(task.deadline.toInstant()).toString(),
-                    task.link
+            Json.get(
+                    view,
+                    tasksRepository.add(
+                            sectionsRepository.get(
+                                    contactInfoRepository.get(
+                                            authUser.username
+                                    ).user,
+                                    sectionNumber,
+                                    sectionTitle
+                            ).idSection,
+                            task.title,
+                            task.balkline.toString(),
+                            task.deadline.toString(),
+                            task.link
+                    )
             )
 
 
@@ -288,7 +294,6 @@ class TasksRestController(
 
     /** ============================== MY ============================== */
 
-    // todo check for work
 
     @PutMapping(value = ["put/set-my{-view}"])
     fun setMy(
@@ -342,89 +347,117 @@ class TasksRestController(
                                 newTask.link,
                                 if (newTask.markDoneUser == false
                                         || newTask.markDoneUser == null) null
-                                else Timestamp
-                                        .from(Instant.now(Clock.system(ZoneId.of("Europe/Kiev")))),
+                                else Date.from(Instant.now()),
                                 if (newTask.markDoneInstructor == false
                                         || newTask.markDoneInstructor == null) null
-                                else Timestamp
-                                        .from(Instant.now(Clock.system(ZoneId.of("Europe/Kiev")))),
+                                else Date.from(Instant.now()),
                                 sectionsRepository.get(task)
                         )
                 )
+
             }
-
-
-    /*: Task? {
-        val task =
-                tasksRepository.set(
-                        newTask,
-                        idTask,
-                        sectionsRepository.get(
-                                user = contactInfoRepository.get(
-                                        email = authUser.username
-                                ).user,
-                                number = sectionNumber,
-                                title = sectionTitle
-                        ),
-                        contactInfoRepository.get(
-                                email = authUser.username
-                        ).user,
-                        taskNumber,
-                        taskTitle
-                )
-        return tasksRepository.get(task?.idTask)
-    }*/
 
 
     /** ============================== MARK
      *                                 INSTRUCTOR ============================== */
 
-    // todo check for work
 
     @PutMapping(value = ["put/set-mark-instructor{-view}"])
     fun setMarkInstructor(
             @PathVariable(value = "-view") view: String,
             @RequestBody task: Task,
-            @AuthenticationPrincipal authUser: UserDetails
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestParam(
+                    value = "id_user",
+                    required = false) idUser: Int?,
+            @RequestParam(
+                    value = "email",
+                    required = false) email: String?,
+            @RequestParam(
+                    value = "phone_number",
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "id_section",
+                    required = false) idSection: Int?,
+            @RequestParam(
+                    value = "section_number",
+                    required = false) sectionNumber: Int?,
+            @RequestParam(
+                    value = "section_title",
+                    required = false) sectionTitle: String?
     ) =
             Json.get(
                     view,
                     task.run {
 
-                        section.user = usersRepository.get(section)
+                        var thisIdTask = 0
+
+                        if (idTask != 0) {
+                            thisIdTask = idTask
+                        } else {
+
+                            try {
+                                if (section.idSection == 0) {
+                                    throw UninitializedPropertyAccessException()
+                                }
+                            } catch (e: UninitializedPropertyAccessException) {
+                                section =
+                                        sectionsRepository.get(
+                                                usersRepository.get(
+                                                        idUser,
+                                                        contactInfoRepository.get(
+                                                                email,
+                                                                phoneNumber
+                                                        )
+                                                ),
+                                                sectionNumber,
+                                                sectionTitle,
+                                                idSection
+                                        )
+                            } finally {
+                                section.tasks.forEach {
+                                    if (it.number == number
+                                            || it.title == title) {
+                                        thisIdTask = it.idTask
+                                    }
+                                }
+                            }
+
+                            if (thisIdTask == 0) {
+                                return@run Task()
+                            }
+
+                        }
 
                         return@run if (section.user.studyInfo?.instructor?.contactInfo?.email == authUser.username) {
 
-                            tasksRepository.setMarkInstructor(this)
+                            tasksRepository.setMarkInstructor(
+                                    thisIdTask,
+                                    markDoneInstructor
+                            )
 
-                            this.also {
-                                timestampDoneInstructor =
-                                        if (markDoneInstructor == false
-                                                || markDoneInstructor == null) null
-                                        else Timestamp
-                                                .from(Instant.now(Clock.system(ZoneId.of("Europe/Kiev"))))
+                            val newTask = tasksRepository.get(thisIdTask)
 
-                            }
+                            Task(
+                                    thisIdTask,
+                                    newTask.number,
+                                    newTask.title,
+                                    newTask.balkline,
+                                    newTask.balkline,
+                                    newTask.markDoneUser,
+                                    markDoneInstructor,
+                                    newTask.link,
+                                    newTask.timestampDoneUser,
+                                    if (markDoneInstructor == false
+                                            || markDoneInstructor == null) null
+                                    else Date.from(Instant.now()),
+                                    section
+                            )
 
                         } else Task()
 
                     }
             )
-
-
-    /*: Task? {
-
-        task.section.user = usersRepository.get(task.section)!!
-
-        if (task.section.user.studyInfo?.instructor?.contactInfo?.email == authUser.username) {
-
-            val newTask =
-                    tasksRepository.setMarkInstructor(task)
-            return tasksRepository.get(newTask.idTask)
-        }
-
-        return Task()
-    }*/
 
 
     /** ============================== ONE ============================== */
@@ -497,15 +530,14 @@ class TasksRestController(
                                 newTask.link,
                                 if (newTask.markDoneUser == false
                                         || newTask.markDoneUser == null) null
-                                else Timestamp
-                                        .from(Instant.now(Clock.system(ZoneId.of("Europe/Kiev")))),
+                                else Date.from(Instant.now()),
                                 if (newTask.markDoneInstructor == false
                                         || newTask.markDoneInstructor == null) null
-                                else Timestamp
-                                        .from(Instant.now(Clock.system(ZoneId.of("Europe/Kiev")))),
+                                else Date.from(Instant.now()),
                                 sectionsRepository.get(task)
                         )
                 )
+
             }
 
 
