@@ -53,9 +53,9 @@ class SpecialitiesRestController(
             Json.get(
                     view,
                     specialitiesRepository.get(
-                            contactInfoRepository.get(
+                            usersRepository.get(
                                     email = authUser.username
-                            ).user
+                            )
                     )
             )
 
@@ -109,10 +109,8 @@ class SpecialitiesRestController(
                     specialitiesRepository.get(
                             usersRepository.get(
                                     idUser,
-                                    contactInfoRepository.get(
-                                            email,
-                                            phoneNumber
-                                    )
+                                    email,
+                                    phoneNumber
                             )
                     )
             )
@@ -206,7 +204,7 @@ class SpecialitiesRestController(
             @RequestBody newSpeciality: Speciality,
             @RequestParam(
                     value = "id_speciality",
-                    required = false) idSpeciality: Int?,
+                    required = false) _idSpeciality: Int?,
             @RequestParam(
                     value = "number",
                     required = false) number: String?,
@@ -214,21 +212,33 @@ class SpecialitiesRestController(
                     value = "name",
                     required = false) name: String?
     ) =
-            Json.get(
-                    view,
-                    Speciality(
-                            specialitiesRepository.set(
-                                    newSpeciality,
-                                    idSpeciality ?: specialitiesRepository.get(
-                                            number = number,
-                                            name = name
-                                    ).idSpeciality
-                            ).idSpeciality,
-                            newSpeciality.number,
-                            newSpeciality.name,
-                            newSpeciality.branch
-                    )
-            )
+            specialitiesRepository.get(
+                    _idSpeciality,
+                    number,
+                    name
+            ).run {
+
+                try {
+                    newSpeciality.branch
+                } catch (e: Exception) {
+                    newSpeciality.branch = branch
+                }
+
+                specialitiesRepository.set(
+                        newSpeciality,
+                        idSpeciality
+                )
+
+                return@run Json.get(
+                        view,
+                        Speciality(
+                                idSpeciality,
+                                newSpeciality.number,
+                                newSpeciality.name,
+                                newSpeciality.branch
+                        )
+                )
+            }
 
 
     /**

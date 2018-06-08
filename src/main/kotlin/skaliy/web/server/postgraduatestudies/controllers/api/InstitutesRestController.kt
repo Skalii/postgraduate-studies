@@ -53,9 +53,9 @@ class InstitutesRestController(
             Json.get(
                     view,
                     institutesRepository.get(
-                            contactInfoRepository.get(
-                                    authUser.username
-                            ).user
+                            usersRepository.get(
+                                    email = authUser.username
+                            )
                     )
             )
 
@@ -131,10 +131,8 @@ class InstitutesRestController(
                     institutesRepository.get(
                             usersRepository.get(
                                     idUser,
-                                    contactInfoRepository.get(
-                                            email,
-                                            phoneNumber
-                                    )
+                                    email,
+                                    phoneNumber
                             )
                     )
             )

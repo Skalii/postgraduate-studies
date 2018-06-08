@@ -28,11 +28,15 @@ interface UsersRepository : JpaRepository<User, Int> {
     //language=PostgresPLSQL
     @Query(value = """select (user_record(
                           cast_int(:id_user),
+                          cast_text(:email),
+                          cast_text(:phone_number),
                           cast_int(:#{#contact_info.idContactInfo})
                       )).*""",
             nativeQuery = true)
     fun get(
             @Param("id_user") idUser: Int? = null,
+            @Param("email") email: String? = null,
+            @Param("phone_number") phoneNumber: String? = null,
             @Param("contact_info") contactInfo: ContactInfo? = ContactInfo()
     ): User
 
@@ -117,19 +121,25 @@ interface UsersRepository : JpaRepository<User, Int> {
                           cast_text(:#{#user.hash}),
                           cast_text(:#{#user.fullNameUa}),
                           cast_text(:#{#user.fullNameEn}),
-                          :#{#user.birthday},
+                          cast(:#{#user.birthday.toString()} as date),
                           cast_family(:#{#user.familyStatus.value}),
                           cast_int(:#{#user.children}),
                           cast_rank(:#{#user.academicRank.value}),
                           cast_int(:#{#user.degree.idDegree}),
                           cast_int(:#{#user.speciality.idSpeciality}),
                           cast_int(:#{#user.department.idDepartment}),
-                          cast_int(:id_user)
+                          cast_int(:id_user),
+                          cast_text(:email),
+                          cast_text(:phone_number),
+                          cast_int(:#{#contact_info.idContactInfo})
                       )).*""",
             nativeQuery = true)
     fun set(
             @Param("user") newUser: User,
-            @Param("id_user") idUser: Int
+            @Param("id_user") idUser: Int? = null,
+            @Param("email") email: String? = null,
+            @Param("phone_number") phoneNumber: String? = null,
+            @Param("contact_info") contactInfo: ContactInfo? = ContactInfo()
     ): User
 
     //language=PostgresPLSQL
@@ -139,16 +149,13 @@ interface UsersRepository : JpaRepository<User, Int> {
                           new_birthday => cast(:#{#user.birthday.toString()} as date),
                           new_family_status => cast_family(:#{#user.familyStatus.value}),
                           new_children => cast_int(:#{#user.children}),
-                          _id_user => cast_int(:id_user)
+                          _email => cast_text(:email)
                       )).*""",
             nativeQuery = true)
     fun setMe(
             @Param("user") newUser: User,
-            @Param("id_user") idUser: Int
+            @Param("email") email: String
     ): User
-
-
-    //todo create setMePassword
 
     /** ============================== DELETE ============================== */
 
@@ -156,11 +163,15 @@ interface UsersRepository : JpaRepository<User, Int> {
     //language=PostgresPLSQL
     @Query(value = """select (user_delete(
                           cast_int(:id_user),
+                          cast_text(:email),
+                          cast_text(:phone_number),
                           cast_int(:#{#contact_info.idContactInfo})
                       )).*""",
             nativeQuery = true)
     fun delete(
             @Param("id_user") idUser: Int? = null,
+            @Param("email") email: String? = null,
+            @Param("phone_number") phoneNumber: String? = null,
             @Param("contact_info") contactInfo: ContactInfo? = ContactInfo()
     ): User
 
@@ -174,3 +185,10 @@ interface UsersRepository : JpaRepository<User, Int> {
     fun decrypt(@Param("id_user") idUser: Int): String?
 
 }
+
+
+//  todo fix setMe
+//  todo setMePassword
+//  todo set id_instructor to 0 for studies in study_info where instructor delete
+//  todo set id_instructor for studies in study_info
+//  todo create delete instructor

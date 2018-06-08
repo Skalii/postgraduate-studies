@@ -64,9 +64,9 @@ class UsersRestController(
     ) =
             Json.getUser(
                     view,
-                    contactInfoRepository.get(
-                            authUser.username
-                    ).user
+                    usersRepository.get(
+                            email = authUser.username
+                    )
             )
 
 
@@ -80,9 +80,9 @@ class UsersRestController(
     ) =
             Json.getUser(
                     view,
-                    contactInfoRepository.get(
-                            authUser.username
-                    ).user.studyInfo?.instructor
+                    usersRepository.get(
+                            email = authUser.username
+                    ).studyInfo?.instructor
             )
 
 
@@ -97,9 +97,9 @@ class UsersRestController(
 
         val myStudents: MutableList<User> = mutableListOf()
 
-        contactInfoRepository.get(
-                authUser.username
-        ).user.students.forEach { myStudents.add(it!!.user!!) }
+        usersRepository.get(
+                email = authUser.username
+        ).students.forEach { myStudents.add(it!!.user!!) }
 
         return Json.getUser(
                 view,
@@ -128,10 +128,8 @@ class UsersRestController(
                     view,
                     usersRepository.get(
                             idUser,
-                            contactInfoRepository.get(
-                                    email,
-                                    phoneNumber
-                            )
+                            email,
+                            phoneNumber
                     )
             )
 
@@ -347,7 +345,6 @@ class UsersRestController(
 
     /** ============================== ME ============================== */
 
-    // todo check for work
 
     @PutMapping(value = ["put/set-me{-view}"])
     fun setMe(
@@ -355,13 +352,13 @@ class UsersRestController(
             @RequestBody newUser: User,
             @AuthenticationPrincipal authUser: UserDetails
     ) =
-            contactInfoRepository.get(
-                    authUser.username
-            ).user.run {
+            usersRepository.get(
+                    email = authUser.username
+            ).run {
 
                 usersRepository.setMe(
                         newUser,
-                        idUser
+                        authUser.username
                 )
 
                 return@run Json.get(
@@ -369,8 +366,8 @@ class UsersRestController(
                         User(
                                 idUser,
                                 role,
-                                newUser.salt,
-                                newUser.hash,
+                                salt,
+                                hash,
                                 newUser.fullNameUa,
                                 newUser.fullNameEn,
                                 newUser.birthday,
@@ -387,42 +384,9 @@ class UsersRestController(
                 )
             }
 
-    /*: String {
-
-        val user =
-                contactInfoRepository.get(
-                        authUser.username
-                ).user
-
-        return Json.getUser(
-                view,
-                User(
-                        usersRepository.setMe(
-                                newUser,
-                                user.idUser
-                        ).idUser,
-                        user.role,
-                        newUser.salt,
-                        newUser.hash,
-                        newUser.fullNameUa,
-                        newUser.fullNameEn,
-                        newUser.birthday,
-                        newUser.familyStatus,
-                        newUser.children,
-                        user.academicRank,
-                        user.degree,
-                        user.speciality,
-                        user.department,
-                        user.contactInfo,
-                        user.studyInfo,
-                        user.scientificLinks
-                )
-        )
-    }*/
 
     /** ============================== ONE ============================== */
 
-    // todo check for work
 
     @PutMapping(value = ["put/set{-view}"])
     fun set(
@@ -440,10 +404,8 @@ class UsersRestController(
     ) =
             usersRepository.get(
                     _idUser,
-                    contactInfoRepository.get(
-                            email,
-                            phoneNumber
-                    )
+                    email,
+                    phoneNumber
             ).run {
 
                 usersRepository.set(
@@ -474,44 +436,6 @@ class UsersRestController(
                 )
             }
 
-    /*: String {
-
-        val user =
-                usersRepository.get(
-                        idUser,
-                        contactInfoRepository.get(
-                                phoneNumber = phoneNumber,
-                                email = email
-                        )
-                )!!
-
-        return Json.getUser(
-                view,
-                User(
-                        usersRepository.set(
-                                newUser,
-                                user.idUser
-                        )!!.idUser,
-                        newUser.role,
-                        newUser.salt,
-                        newUser.hash,
-                        newUser.fullNameUa,
-                        newUser.fullNameEn,
-                        newUser.birthday,
-                        newUser.familyStatus,
-                        newUser.children,
-                        newUser.academicRank,
-                        newUser.degree,
-                        newUser.speciality,
-                        newUser.department,
-                        user.contactInfo,
-                        user.studyInfo,
-                        user.scientificLinks
-                )
-        )
-
-    }*/
-
 
     /**
      *
@@ -539,12 +463,10 @@ class UsersRestController(
     ) =
             Json.getUser(
                     view,
-                    usersRepository.delete(
+                    usersRepository.get(
                             idUser,
-                            contactInfoRepository.get(
-                                    email,
-                                    phoneNumber
-                            )
+                            email,
+                            phoneNumber
                     )
             )
 

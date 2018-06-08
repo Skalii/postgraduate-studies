@@ -55,9 +55,9 @@ class DepartmentsRestController(
             Json.get(
                     view,
                     departmentsRepository.get(
-                            contactInfoRepository.get(
-                                    authUser.username
-                            ).user
+                            usersRepository.get(
+                                    email = authUser.username
+                            )
                     )
             )
 
@@ -107,10 +107,8 @@ class DepartmentsRestController(
                     departmentsRepository.get(
                             usersRepository.get(
                                     idUser,
-                                    contactInfoRepository.get(
-                                            email,
-                                            phoneNumber
-                                    )
+                                    email,
+                                    phoneNumber
                             )
                     )
             )
@@ -225,6 +223,18 @@ class DepartmentsRestController(
                     _idDepartment,
                     name
             ).run {
+
+                try {
+                    newDepartment.institute
+                } catch (e: Exception) {
+                    newDepartment.institute = institute
+                }
+
+                try {
+                    newDepartment.faculty
+                } catch (e: Exception) {
+                    newDepartment.faculty = faculty
+                }
 
                 departmentsRepository.set(
                         newDepartment,

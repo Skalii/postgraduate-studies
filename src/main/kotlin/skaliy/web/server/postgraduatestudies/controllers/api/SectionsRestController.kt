@@ -60,9 +60,9 @@ class SectionsRestController(
             Json.get(
                     view,
                     sectionsRepository.get(
-                            contactInfoRepository.get(
-                                    authUser.username
-                            ).user,
+                            usersRepository.get(
+                                    email = authUser.username
+                            ),
                             number,
                             title
                     )
@@ -81,9 +81,9 @@ class SectionsRestController(
             Json.get(
                     view,
                     sectionsRepository.getAll(
-                            contactInfoRepository.get(
-                                    authUser.username
-                            ).user
+                            usersRepository.get(
+                                    email = authUser.username
+                            )
                     )
             )
 
@@ -118,10 +118,8 @@ class SectionsRestController(
                     sectionsRepository.get(
                             usersRepository.get(
                                     idUser,
-                                    contactInfoRepository.get(
-                                            email,
-                                            phoneNumber
-                                    )
+                                    email,
+                                    phoneNumber
                             ),
                             number,
                             title,
@@ -169,10 +167,8 @@ class SectionsRestController(
                     sectionsRepository.getAll(
                             usersRepository.get(
                                     idUser,
-                                    contactInfoRepository.get(
-                                            email,
-                                            phoneNumber
-                                    )
+                                    email,
+                                    phoneNumber
                             )
                     )
             )
@@ -198,9 +194,9 @@ class SectionsRestController(
             Json.get(
                     view,
                     sectionsRepository.add(
-                            contactInfoRepository.get(
-                                    authUser.username
-                            ).user.idUser,
+                            usersRepository.get(
+                                    email = authUser.username
+                            ).idUser,
                             section.number,
                             section.title
                     )
@@ -227,11 +223,11 @@ class SectionsRestController(
             Json.get(
                     view,
                     sectionsRepository.add(
-                            contactInfoRepository.get(
+                            usersRepository.get(
+                                    idUser,
                                     email,
-                                    phoneNumber,
-                                    usersRepository.get(idUser)
-                            ).user.idUser,
+                                    phoneNumber
+                            ).idUser,
                             section.number,
                             section.title
                     )
@@ -262,9 +258,9 @@ class SectionsRestController(
                     required = false) title: String?
     ) =
             sectionsRepository.get(
-                    contactInfoRepository.get(
-                            authUser.username
-                    ).user,
+                    usersRepository.get(
+                            email = authUser.username
+                    ),
                     number,
                     title
             ).run {
@@ -278,7 +274,8 @@ class SectionsRestController(
                         view,
                         Section(
                                 idSection,
-                                newSection.number,
+                                if (newSection.number == 1) this.number
+                                else newSection.number,
                                 newSection.title,
                                 user
                         )
@@ -316,10 +313,8 @@ class SectionsRestController(
             sectionsRepository.get(
                     usersRepository.get(
                             idUser,
-                            contactInfoRepository.get(
-                                    email,
-                                    phoneNumber
-                            )
+                            email,
+                            phoneNumber
                     ),
                     number,
                     title,
@@ -338,7 +333,8 @@ class SectionsRestController(
                         view,
                         Section(
                                 idSection,
-                                newSection.number,
+                                if (newSection.number == 1) this.number
+                                else newSection.number,
                                 newSection.title,
                                 user
                         )
@@ -372,9 +368,9 @@ class SectionsRestController(
             Json.get(
                     view,
                     sectionsRepository.delete(
-                            user = contactInfoRepository.get(
-                                    authUser.username
-                            ).user,
+                            user = usersRepository.get(
+                                    email = authUser.username
+                            ),
                             number = number,
                             title = title
                     )
@@ -393,9 +389,9 @@ class SectionsRestController(
             Json.get(
                     view,
                     sectionsRepository.deleteAll(
-                            contactInfoRepository.get(
-                                    authUser.username
-                            ).user
+                            usersRepository.get(
+                                    email = authUser.username
+                            )
                     )
             )
 
@@ -428,11 +424,11 @@ class SectionsRestController(
                     view,
                     sectionsRepository.delete(
                             idSection,
-                            contactInfoRepository.get(
+                            usersRepository.get(
+                                    idUser,
                                     email,
-                                    phoneNumber,
-                                    usersRepository.get(idUser)
-                            ).user,
+                                    phoneNumber
+                            ),
                             number,
                             title
                     )
@@ -460,11 +456,11 @@ class SectionsRestController(
             Json.get(
                     view,
                     sectionsRepository.deleteAll(
-                            contactInfoRepository.get(
+                            usersRepository.get(
+                                    idUser,
                                     email,
-                                    phoneNumber,
-                                    usersRepository.get(idUser)
-                            ).user
+                                    phoneNumber
+                            )
                     )
             )
 

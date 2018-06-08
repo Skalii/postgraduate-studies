@@ -93,7 +93,7 @@ data class Task(
         @get:JsonFormat(
                 pattern = "yyyy-MM-dd HH:mm:ss",
                 shape = JsonFormat.Shape.STRING,
-                timezone = "Europe/Kiev")
+                timezone = "Europe/Kiev") //todo UTC
         @get:JsonProperty(value = "deadline")
         @JsonView(REST::class)
         @NotNull

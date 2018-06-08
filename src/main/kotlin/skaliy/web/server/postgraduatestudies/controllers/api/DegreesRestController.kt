@@ -51,9 +51,9 @@ class DegreesRestController(
             Json.get(
                     view,
                     degreesRepository.get(
-                            contactInfoRepository.get(
-                                    authUser.username
-                            ).user
+                            usersRepository.get(
+                                    email = authUser.username
+                            )
                     )
             )
 
@@ -107,10 +107,8 @@ class DegreesRestController(
                     degreesRepository.get(
                             usersRepository.get(
                                     idUser,
-                                    contactInfoRepository.get(
-                                            email,
-                                            phoneNumber
-                                    )
+                                    email,
+                                    phoneNumber
                             )
                     )
             )

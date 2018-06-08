@@ -1,9 +1,7 @@
 package skaliy.web.server.postgraduatestudies.controllers.api
 
 
-import java.time.Clock
 import java.time.Instant
-import java.time.ZoneId
 import java.util.Date
 
 import org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE
@@ -68,9 +66,9 @@ class TasksRestController(
                     value = "task_title",
                     required = false) taskTitle: String?
     ) =
-            contactInfoRepository.get(
-                    authUser.username
-            ).user.run {
+            usersRepository.get(
+                    email = authUser.username
+            ).run {
                 return@run Json.get(
                         view,
                         tasksRepository.get(
@@ -99,9 +97,9 @@ class TasksRestController(
             Json.get(
                     view,
                     tasksRepository.getAll(
-                            user = contactInfoRepository.get(
-                                    authUser.username
-                            ).user
+                            user = usersRepository.get(
+                                    email = authUser.username
+                            )
                     )
             )
 
@@ -127,9 +125,9 @@ class TasksRestController(
                     view,
                     tasksRepository.getAll(
                             sectionsRepository.get(
-                                    user = contactInfoRepository.get(
-                                            authUser.username
-                                    ).user,
+                                    user = usersRepository.get(
+                                            email = authUser.username
+                                    ),
                                     number = sectionNumber,
                                     title = sectionTitle
                             )
@@ -171,11 +169,11 @@ class TasksRestController(
                     value = "task_title",
                     required = false) title: String?
     ) =
-            contactInfoRepository.get(
+            usersRepository.get(
+                    idUser,
                     email,
-                    phoneNumber,
-                    usersRepository.get(idUser)
-            ).user.run {
+                    phoneNumber
+            ).run {
 
                 return@run Json.get(
                         view,
@@ -221,11 +219,11 @@ class TasksRestController(
                     value = "phone_number",
                     required = false) phoneNumber: String?
     ) =
-            contactInfoRepository.get(
+            usersRepository.get(
+                    idUser,
                     email,
-                    phoneNumber,
-                    usersRepository.get(idUser)
-            ).user.run {
+                    phoneNumber
+            ).run {
 
                 return@run Json.get(
                         view,
@@ -270,9 +268,9 @@ class TasksRestController(
                     view,
                     tasksRepository.add(
                             sectionsRepository.get(
-                                    contactInfoRepository.get(
-                                            authUser.username
-                                    ).user,
+                                    usersRepository.get(
+                                            email = authUser.username
+                                    ),
                                     sectionNumber,
                                     sectionTitle
                             ).idSection,
@@ -316,9 +314,9 @@ class TasksRestController(
                     value = "task_title",
                     required = false) taskTitle: String?
     ) =
-            contactInfoRepository.get(
-                    authUser.username
-            ).user.run {
+            usersRepository.get(
+                    email = authUser.username
+            ).run {
 
                 val task =
                         tasksRepository.set(
@@ -338,19 +336,24 @@ class TasksRestController(
                         view,
                         Task(
                                 task.idTask,
-                                newTask.number,
-                                newTask.title,
-                                newTask.balkline,
-                                newTask.deadline,
-                                newTask.markDoneUser,
-                                newTask.markDoneInstructor,
-                                newTask.link,
-                                if (newTask.markDoneUser == false
-                                        || newTask.markDoneUser == null) null
-                                else Date.from(Instant.now()),
-                                if (newTask.markDoneInstructor == false
-                                        || newTask.markDoneInstructor == null) null
-                                else Date.from(Instant.now()),
+                                if (newTask.number == 1) task.number
+                                else newTask.number,
+                                if (newTask.title == "Нове завдання") task.title
+                                else newTask.title,
+                                if (newTask.balkline == Date.from(Instant.now())) task.balkline
+                                else newTask.balkline,
+                                if (newTask.deadline == Date.from(Instant.now()).also { it.month = it.month + 1 }) task.deadline
+                                else newTask.deadline,
+                                if (newTask.markDoneUser == false) task.markDoneUser
+                                else newTask.markDoneUser,
+                                if (newTask.markDoneInstructor == false) task.markDoneInstructor
+                                else newTask.markDoneInstructor,
+                                if (newTask.link == "Невідоме посилання") task.link
+                                else newTask.link,
+                                if (newTask.timestampDoneUser == null) task.timestampDoneUser
+                                else newTask.timestampDoneUser,
+                                if (newTask.timestampDoneInstructor == null) task.timestampDoneInstructor
+                                else newTask.timestampDoneInstructor,
                                 sectionsRepository.get(task)
                         )
                 )
@@ -405,10 +408,8 @@ class TasksRestController(
                                         sectionsRepository.get(
                                                 usersRepository.get(
                                                         idUser,
-                                                        contactInfoRepository.get(
-                                                                email,
-                                                                phoneNumber
-                                                        )
+                                                        email,
+                                                        phoneNumber
                                                 ),
                                                 sectionNumber,
                                                 sectionTitle,
@@ -497,10 +498,8 @@ class TasksRestController(
     ) =
             usersRepository.get(
                     idUser,
-                    contactInfoRepository.get(
-                            email,
-                            phoneNumber
-                    )
+                    email,
+                    phoneNumber
             ).run {
 
                 val task =
@@ -573,9 +572,9 @@ class TasksRestController(
                     view,
                     tasksRepository.delete(
                             section = sectionsRepository.get(
-                                    contactInfoRepository.get(
-                                            authUser.username
-                                    ).user,
+                                    usersRepository.get(
+                                            email = authUser.username
+                                    ),
                                     sectionNumber,
                                     sectionTitle
                             ),
@@ -604,9 +603,9 @@ class TasksRestController(
                     view,
                     tasksRepository.deleteAll(
                             sectionsRepository.get(
-                                    contactInfoRepository.get(
-                                            authUser.username
-                                    ).user,
+                                    usersRepository.get(
+                                            email = authUser.username
+                                    ),
                                     sectionNumber,
                                     sectionTitle
                             )
@@ -655,10 +654,8 @@ class TasksRestController(
                             sectionsRepository.get(
                                     usersRepository.get(
                                             idUser,
-                                            contactInfoRepository.get(
-                                                    email,
-                                                    phoneNumber
-                                            )
+                                            email,
+                                            phoneNumber
                                     ),
                                     sectionNumber,
                                     sectionTitle,
@@ -699,11 +696,11 @@ class TasksRestController(
                     view,
                     tasksRepository.deleteAll(
                             sectionsRepository.get(
-                                    contactInfoRepository.get(
+                                    usersRepository.get(
+                                            idUser,
                                             email,
-                                            phoneNumber,
-                                            usersRepository.get(idUser)
-                                    ).user,
+                                            phoneNumber
+                                    ),
                                     sectionNumber,
                                     sectionTitle,
                                     idSection

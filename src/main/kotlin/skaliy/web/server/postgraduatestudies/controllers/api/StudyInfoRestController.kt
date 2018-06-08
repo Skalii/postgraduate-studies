@@ -51,9 +51,9 @@ class StudyInfoRestController(
             Json.get(
                     view,
                     studyInfoRepository.get(
-                            user = contactInfoRepository.get(
-                                    authUser.username
-                            ).user
+                            user = usersRepository.get(
+                                    email = authUser.username
+                            )
                     )
             )
 
@@ -83,10 +83,8 @@ class StudyInfoRestController(
                             idStudyInfo,
                             usersRepository.get(
                                     idUser,
-                                    contactInfoRepository.get(
-                                            email,
-                                            phoneNumber
-                                    )
+                                    email,
+                                    phoneNumber
                             )
                     )
             )
@@ -117,7 +115,16 @@ class StudyInfoRestController(
     @PostMapping(value = ["post/add{-view}"])
     fun add(
             @PathVariable(value = "-view") view: String,
-            @RequestBody studyInfo: StudyInfo
+            @RequestBody studyInfo: StudyInfo,
+            @RequestParam(
+                    value = "id_instructor",
+                    required = false) idUser: Int?,
+            @RequestParam(
+                    value = "email",
+                    required = false) email: String?,
+            @RequestParam(
+                    value = "phone_number",
+                    required = false) phoneNumber: String?
 
     ) =
             Json.get(
@@ -127,7 +134,15 @@ class StudyInfoRestController(
                             studyInfo.form.value,
                             studyInfo.basis.value,
                             studyInfo.themeTitle,
-                            studyInfo.instructor.idUser
+                            try {
+                                studyInfo.instructor.idUser
+                            } catch (e: Exception) {
+                                usersRepository.get(
+                                        idUser,
+                                        email,
+                                        phoneNumber
+                                ).idUser
+                            }
                     )
             )
 
@@ -151,10 +166,16 @@ class StudyInfoRestController(
     ) =
 
             studyInfoRepository.get(
-                    user = contactInfoRepository.get(
-                            authUser.username
-                    ).user
+                    user = usersRepository.get(
+                            email = authUser.username
+                    )
             ).run {
+
+                try {
+                    newStudyInfo.instructor
+                } catch (e: Exception) {
+                    newStudyInfo.instructor = instructor
+                }
 
                 studyInfoRepository.set(
                         newStudyInfo,
@@ -202,12 +223,16 @@ class StudyInfoRestController(
                     _idStudyInfo,
                     usersRepository.get(
                             idUser,
-                            contactInfoRepository.get(
-                                    email,
-                                    phoneNumber
-                            )
+                            email,
+                            phoneNumber
                     )
             ).run {
+
+                try {
+                    newStudyInfo.instructor
+                } catch (e: Exception) {
+                    newStudyInfo.instructor = instructor
+                }
 
                 studyInfoRepository.set(
                         newStudyInfo,
@@ -263,10 +288,8 @@ class StudyInfoRestController(
                             idStudyInfo,
                             usersRepository.get(
                                     idUser,
-                                    contactInfoRepository.get(
-                                            email,
-                                            phoneNumber
-                                    )
+                                    email,
+                                    phoneNumber
                             )
                     )
             )

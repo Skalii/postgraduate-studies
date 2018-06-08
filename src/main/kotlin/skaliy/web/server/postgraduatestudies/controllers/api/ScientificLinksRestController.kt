@@ -45,15 +45,15 @@ class ScientificLinksRestController(
 
     @GetMapping(value = ["get/my{-view}"])
     fun getMy(
-            @PathVariable(value = "view") view: String,
+            @PathVariable(value = "-view") view: String,
             @AuthenticationPrincipal authUser: UserDetails
     ) =
             Json.get(
                     view,
                     scientificLinksRepository.get(
-                            user = contactInfoRepository.get(
-                                    authUser.username
-                            ).user
+                            user = usersRepository.get(
+                                    email = authUser.username
+                            )
                     )
             )
 
@@ -63,7 +63,7 @@ class ScientificLinksRestController(
 
     @GetMapping(value = ["get/one{-view}"])
     fun getOne(
-            @PathVariable(value = "view") view: String,
+            @PathVariable(value = "-view") view: String,
             @RequestParam(
                     value = "id_scientific_links",
                     required = false) idScientificLinks: Int?,
@@ -84,7 +84,7 @@ class ScientificLinksRestController(
                     required = false) idUser: Int?,
             @RequestParam(
                     value = "email",
-                    required = false) email: String,
+                    required = false) email: String?,
             @RequestParam(
                     value = "phone_number",
                     required = false) phoneNumber: String?
@@ -99,10 +99,8 @@ class ScientificLinksRestController(
                             scopusAuthorId,
                             usersRepository.get(
                                     idUser,
-                                    contactInfoRepository.get(
-                                            email,
-                                            phoneNumber
-                                    )
+                                    email,
+                                    phoneNumber
                             )
                     )
             )
@@ -112,7 +110,7 @@ class ScientificLinksRestController(
 
 
     @GetMapping(value = ["get/all{-view}"])
-    fun getAll(@PathVariable(value = "view") view: String) =
+    fun getAll(@PathVariable(value = "-view") view: String) =
             Json.get(
                     view,
                     scientificLinksRepository.getAll()
@@ -132,7 +130,7 @@ class ScientificLinksRestController(
 
     @PostMapping(value = ["post/add{-view}"])
     fun add(
-            @PathVariable(value = "view") view: String,
+            @PathVariable(value = "-view") view: String,
             @RequestBody scientificLinks: ScientificLinks
     ) =
             Json.get(
@@ -159,14 +157,14 @@ class ScientificLinksRestController(
 
     @PutMapping(value = ["put/set-my{-view}"])
     fun setMy(
-            @PathVariable(value = "view") view: String,
+            @PathVariable(value = "-view") view: String,
             @RequestBody newScientificLinks: ScientificLinks,
             @AuthenticationPrincipal authUser: UserDetails
     ) =
             scientificLinksRepository.get(
-                    user = contactInfoRepository.get(
-                                    authUser.username
-                            ).user
+                    user = usersRepository.get(
+                            email = authUser.username
+                    )
             ).run {
 
                 scientificLinksRepository.set(
@@ -178,10 +176,14 @@ class ScientificLinksRestController(
                         view,
                         ScientificLinks(
                                 idScientificLinks,
-                                newScientificLinks.orcid,
-                                newScientificLinks.researcherid,
-                                newScientificLinks.googleScholarId,
-                                newScientificLinks.scopusAuthorId,
+                                if (newScientificLinks.orcid == "") this.orcid
+                                else newScientificLinks.orcid,
+                                if (newScientificLinks.researcherid == "") this.researcherid
+                                else newScientificLinks.researcherid,
+                                if (newScientificLinks.googleScholarId == "") this.googleScholarId
+                                else newScientificLinks.googleScholarId,
+                                if (newScientificLinks.scopusAuthorId == "") this.scopusAuthorId
+                                else newScientificLinks.scopusAuthorId,
                                 user
                         )
                 )
@@ -194,7 +196,7 @@ class ScientificLinksRestController(
 
     @PutMapping(value = ["put/set{-view}"])
     fun set(
-            @PathVariable(value = "view") view: String,
+            @PathVariable(value = "-view") view: String,
             @RequestBody newScientificLinks: ScientificLinks,
             @RequestParam(
                     value = "id_scientific_links",
@@ -229,10 +231,8 @@ class ScientificLinksRestController(
                     scopusAuthorId,
                     usersRepository.get(
                             idUser,
-                            contactInfoRepository.get(
-                                    email,
-                                    phoneNumber
-                            )
+                            email,
+                            phoneNumber
                     )
             ).run {
 
@@ -245,10 +245,14 @@ class ScientificLinksRestController(
                         view,
                         ScientificLinks(
                                 idScientificLinks,
-                                newScientificLinks.orcid,
-                                newScientificLinks.researcherid,
-                                newScientificLinks.googleScholarId,
-                                newScientificLinks.scopusAuthorId,
+                                if (newScientificLinks.orcid == "") this.orcid
+                                else newScientificLinks.orcid,
+                                if (newScientificLinks.researcherid == "") this.researcherid
+                                else newScientificLinks.researcherid,
+                                if (newScientificLinks.googleScholarId == "") this.googleScholarId
+                                else newScientificLinks.googleScholarId,
+                                if (newScientificLinks.scopusAuthorId == "") this.scopusAuthorId
+                                else newScientificLinks.scopusAuthorId,
                                 user
                         )
                 )
@@ -269,7 +273,7 @@ class ScientificLinksRestController(
 
     @DeleteMapping(value = ["delete/one{-view}"])
     fun delete(
-            @PathVariable(value = "view") view: String,
+            @PathVariable(value = "-view") view: String,
             @RequestParam(
                     value = "id_scientific_links",
                     required = false) idScientificLinks: Int?,
@@ -305,10 +309,8 @@ class ScientificLinksRestController(
                             scopusAuthorId,
                             usersRepository.get(
                                     idUser,
-                                    contactInfoRepository.get(
-                                            email,
-                                            phoneNumber
-                                    )
+                                    email,
+                                    phoneNumber
                             )
                     )
             )

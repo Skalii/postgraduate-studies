@@ -53,9 +53,9 @@ class BranchesRestController(
             Json.get(
                     view,
                     branchesRepository.get(
-                            contactInfoRepository.get(
-                                    authUser.username
-                            ).user
+                            usersRepository.get(
+                                    email = authUser.username
+                            )
                     )
             )
 
@@ -139,13 +139,10 @@ class BranchesRestController(
                     branchesRepository.get(
                             usersRepository.get(
                                     idUser,
-                                    contactInfoRepository.get(
-                                            email,
-                                            phoneNumber
-                                    )
+                                    email,
+                                    phoneNumber
                             )
                     )
-
             )
 
 

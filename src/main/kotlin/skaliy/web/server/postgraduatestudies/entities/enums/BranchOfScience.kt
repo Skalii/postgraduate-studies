@@ -33,3 +33,6 @@ enum class BranchOfScience(@get:JsonValue val value: String) {
     }
 
 }
+
+
+//  todo fill in the data
