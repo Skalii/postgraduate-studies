@@ -463,7 +463,7 @@ class UsersRestController(
     ) =
             Json.getUser(
                     view,
-                    usersRepository.get(
+                    usersRepository.delete(
                             idUser,
                             email,
                             phoneNumber
