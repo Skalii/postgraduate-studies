@@ -21,13 +21,13 @@ interface SectionsRepository : JpaRepository<Section, Int> {
     //language=PostgresPLSQL
     @Query(value = """select (section_record(
                           cast_int(:id_section),
-                          cast_int(:#{#user.idUser}),
+                          cast_int(:id_user),
                           cast_int(:number),
                           cast_text(:title)
                       )).*""",
             nativeQuery = true)
     fun get(
-            @Param("user") user: User? = User(),
+            @Param("id_user") idUser: Int? = null,
             @Param("number") number: Int? = null,
             @Param("title") title: String? = null,
             @Param("id_section") idSection: Int? = null
@@ -79,10 +79,10 @@ interface SectionsRepository : JpaRepository<Section, Int> {
             nativeQuery = true)
     fun set(
             @Param("section") newSection: Section,
-            @Param("id_section") idSection: Int? = null,
             @Param("id_user") idUser: Int? = null,
             @Param("number") number: Int? = null,
-            @Param("title") title: String? = null
+            @Param("title") title: String? = null,
+            @Param("id_section") idSection: Int? = null
     ): Section
 
 
@@ -98,10 +98,10 @@ interface SectionsRepository : JpaRepository<Section, Int> {
                       )).*""",
             nativeQuery = true)
     fun delete(
-            @Param("id_section") idSection: Int? = null,
-            @Param("user") user: User? = User(),
+            @Param("id_user") idUser: Int? = null,
             @Param("number") number: Int? = null,
-            @Param("title") title: String? = null
+            @Param("title") title: String? = null,
+            @Param("id_section") idSection: Int? = null
     ): Section
 
     //language=PostgresPLSQL

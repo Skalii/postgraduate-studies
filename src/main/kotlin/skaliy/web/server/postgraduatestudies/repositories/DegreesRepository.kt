@@ -25,9 +25,9 @@ interface DegreesRepository : JpaRepository<Degree, Int> {
                       )).*""",
             nativeQuery = true)
     fun get(
-            @Param("id_degree") idDegree: Int? = null,
             @Param("name") name: String? = null,
-            @Param("branch") branch: String? = null
+            @Param("branch") branch: String? = null,
+            @Param("id_degree") idDegree: Int? = null
     ): Degree
 
     //language=PostgresPLSQL
@@ -91,9 +91,9 @@ interface DegreesRepository : JpaRepository<Degree, Int> {
                       )).*""",
             nativeQuery = true)
     fun delete(
-            @Param("id_degree") idDegree: Int? = null,
             @Param("name") name: String? = null,
-            @Param("branch") branch: String? = null
+            @Param("branch") branch: String? = null,
+            @Param("id_degree") idDegree: Int? = null
     ): Degree
 
 }

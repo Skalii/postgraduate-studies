@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository
 
 import skaliy.web.server.postgraduatestudies.entities.Section
 import skaliy.web.server.postgraduatestudies.entities.Task
-import skaliy.web.server.postgraduatestudies.entities.User
 
 
 @Repository
@@ -22,7 +21,7 @@ interface TasksRepository : JpaRepository<Task, Int> {
     @Query(value = """select (task_record(
                           cast_int(:id_task),
                           cast_int(:#{#section.idSection}),
-                          cast_int(:#{#user.idUser}),
+                          cast_int(:id_user),
                           cast_int(:task_number),
                           cast_text(:task_title),
                           cast_int(:#{#section.number}),
@@ -30,23 +29,23 @@ interface TasksRepository : JpaRepository<Task, Int> {
                       )).*""",
             nativeQuery = true)
     fun get(
-            @Param("id_task") idTask: Int? = null,
             @Param("section") section: Section? = Section(),
-            @Param("user") user: User? = User(),
+            @Param("id_user") idUser: Int? = null,
             @Param("task_number") number: Int? = null,
-            @Param("task_title") title: String? = null
+            @Param("task_title") title: String? = null,
+            @Param("id_task") idTask: Int? = null
     ): Task
 
     //language=PostgresPLSQL
     @Query(value = """select (task_record(
-                          _id_section => cast_int(:#{#section.idSection}),
-                          _id_user => cast_int(:#{#user.idUser}),
+                          _id_section => cast_int(:id_section),
+                          _id_user => cast_int(:id_user),
                           all_records => true
                       )).*""",
             nativeQuery = true)
     fun getAll(
-            @Param("section") section: Section? = Section(),
-            @Param("user") user: User? = User()
+            @Param("id_section") idSection: Int? = null,
+            @Param("id_user") idUser: Int? = null
     ): MutableList<Task>
 
 
@@ -85,7 +84,7 @@ interface TasksRepository : JpaRepository<Task, Int> {
                           cast_text(:#{#task.link}),
                           cast_int(:id_task),
                           cast_int(:#{#section.idSection}),
-                          cast_int(:#{#user.idUser}),
+                          cast_int(:id_user),
                           cast_int(:task_number),
                           cast_text(:task_title),
                           cast_int(:#{#section.number}),
@@ -94,11 +93,11 @@ interface TasksRepository : JpaRepository<Task, Int> {
             nativeQuery = true)
     fun set(
             @Param("task") newTask: Task?,
-            @Param("id_task") idTask: Int? = null,
             @Param("section") section: Section? = Section(),
-            @Param("user") user: User? = User(),
+            @Param("id_user") idUser: Int? = null,
             @Param("task_number") number: Int? = null,
-            @Param("task_title") title: String? = null
+            @Param("task_title") title: String? = null,
+            @Param("id_task") idTask: Int? = null
     ): Task
 
     //language=PostgresPLSQL
@@ -108,8 +107,8 @@ interface TasksRepository : JpaRepository<Task, Int> {
                       )).*""",
             nativeQuery = true)
     fun setMarkInstructor(
-            @Param("id_task") idTask: Int,
-            @Param("mark_done_instructor") markDoneInstructor: Boolean?
+            @Param("mark_done_instructor") markDoneInstructor: Boolean?,
+            @Param("id_task") idTask: Int
     ): Task
 
 
@@ -119,16 +118,16 @@ interface TasksRepository : JpaRepository<Task, Int> {
     //language=PostgresPLSQL
     @Query(value = """select (task_delete(
                           cast_int(:id_task),
-                          cast_int(:#{#section.idSection}),
+                          cast_int(:id_section),
                           cast_int(:number),
                           cast_text(:title)
                       )).*""",
             nativeQuery = true)
     fun delete(
-            @Param("id_task") idTask: Int? = null,
-            @Param("section") section: Section? = Section(),
+            @Param("id_section") idSection: Int? = null,
             @Param("number") number: Int? = null,
-            @Param("title") title: String? = null
+            @Param("title") title: String? = null,
+            @Param("id_task") idTask: Int? = null
     ): Task
 
     //language=PostgresPLSQL

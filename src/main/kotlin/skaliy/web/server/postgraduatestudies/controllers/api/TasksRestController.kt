@@ -66,22 +66,22 @@ class TasksRestController(
                     value = "task_title",
                     required = false) taskTitle: String?
     ) =
-            usersRepository.get(
-                    email = authUser.username
-            ).run {
+            usersRepository.get(authUser.username).run {
+
                 return@run Json.get(
                         view,
                         tasksRepository.get(
-                                section = sectionsRepository.get(
-                                        user = this,
-                                        number = sectionNumber,
-                                        title = sectionTitle
+                                sectionsRepository.get(
+                                        idUser,
+                                        sectionNumber,
+                                        sectionTitle
                                 ),
-                                user = this,
-                                number = taskNumber,
-                                title = taskTitle
+                                idUser,
+                                taskNumber,
+                                taskTitle
                         )
                 )
+
             }
 
 
@@ -97,9 +97,9 @@ class TasksRestController(
             Json.get(
                     view,
                     tasksRepository.getAll(
-                            user = usersRepository.get(
-                                    email = authUser.username
-                            )
+                            idUser = usersRepository.get(
+                                    authUser.username
+                            ).idUser
                     )
             )
 
@@ -125,12 +125,12 @@ class TasksRestController(
                     view,
                     tasksRepository.getAll(
                             sectionsRepository.get(
-                                    user = usersRepository.get(
-                                            email = authUser.username
-                                    ),
-                                    number = sectionNumber,
-                                    title = sectionTitle
-                            )
+                                    usersRepository.get(
+                                            authUser.username
+                                    ).idUser,
+                                    sectionNumber,
+                                    sectionTitle
+                            ).idSection
                     )
             )
 
@@ -142,20 +142,14 @@ class TasksRestController(
     fun getOne(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
-                    value = "id_task",
-                    required = false) idTask: Int?,
-            @RequestParam(
-                    value = "id_section",
-                    required = false) idSection: Int?,
-            @RequestParam(
                     value = "section_number",
                     required = false) sectionNumber: Int?,
             @RequestParam(
                     value = "section_title",
                     required = false) sectionTitle: String?,
             @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
+                    value = "id_section",
+                    required = false) idSection: Int?,
             @RequestParam(
                     value = "email",
                     required = false) email: String?,
@@ -163,31 +157,37 @@ class TasksRestController(
                     value = "phone_number",
                     required = false) phoneNumber: String?,
             @RequestParam(
+                    value = "id_user",
+                    required = false) _idUser: Int?,
+            @RequestParam(
                     value = "task_number",
                     required = false) number: Int?,
             @RequestParam(
                     value = "task_title",
-                    required = false) title: String?
+                    required = false) title: String?,
+            @RequestParam(
+                    value = "id_task",
+                    required = false) idTask: Int?
     ) =
             usersRepository.get(
-                    idUser,
                     email,
-                    phoneNumber
+                    phoneNumber,
+                    _idUser
             ).run {
 
                 return@run Json.get(
                         view,
                         tasksRepository.get(
-                                idTask,
                                 sectionsRepository.get(
-                                        this,
+                                        idUser,
                                         sectionNumber,
                                         sectionTitle,
                                         idSection
                                 ),
-                                this,
+                                idUser,
                                 number,
-                                title
+                                title,
+                                idTask
                         )
                 )
 
@@ -201,40 +201,40 @@ class TasksRestController(
     fun getAll(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
-                    value = "id_section",
-                    required = false) idSection: Int?,
-            @RequestParam(
                     value = "section_number",
                     required = false) sectionNumber: Int?,
             @RequestParam(
                     value = "section_title",
                     required = false) sectionTitle: String?,
             @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
+                    value = "id_section",
+                    required = false) idSection: Int?,
             @RequestParam(
                     value = "email",
                     required = false) email: String?,
             @RequestParam(
                     value = "phone_number",
-                    required = false) phoneNumber: String?
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "id_user",
+                    required = false) _idUser: Int?
     ) =
             usersRepository.get(
-                    idUser,
                     email,
-                    phoneNumber
+                    phoneNumber,
+                    _idUser
             ).run {
 
                 return@run Json.get(
                         view,
                         tasksRepository.getAll(
                                 sectionsRepository.get(
-                                        this,
+                                        idUser,
                                         sectionNumber,
                                         sectionTitle,
                                         idSection
-                                ),
-                                this
+                                ).idSection,
+                                idUser
                         )
                 )
 
@@ -269,8 +269,8 @@ class TasksRestController(
                     tasksRepository.add(
                             sectionsRepository.get(
                                     usersRepository.get(
-                                            email = authUser.username
-                                    ),
+                                            authUser.username
+                                    ).idUser,
                                     sectionNumber,
                                     sectionTitle
                             ).idSection,
@@ -299,9 +299,6 @@ class TasksRestController(
             @RequestBody newTask: Task,
             @AuthenticationPrincipal authUser: UserDetails,
             @RequestParam(
-                    value = "id_task",
-                    required = false) idTask: Int?,
-            @RequestParam(
                     value = "section_number",
                     required = false) sectionNumber: Int?,
             @RequestParam(
@@ -312,24 +309,25 @@ class TasksRestController(
                     required = false) taskNumber: Int?,
             @RequestParam(
                     value = "task_title",
-                    required = false) taskTitle: String?
+                    required = false) taskTitle: String?,
+            @RequestParam(
+                    value = "id_task",
+                    required = false) idTask: Int?
     ) =
-            usersRepository.get(
-                    email = authUser.username
-            ).run {
+            usersRepository.get(authUser.username).run {
 
                 val task =
                         tasksRepository.set(
                                 newTask,
-                                idTask,
                                 sectionsRepository.get(
-                                        this,
+                                        idUser,
                                         sectionNumber,
                                         sectionTitle
                                 ),
-                                this,
+                                idUser,
                                 taskNumber,
-                                taskTitle
+                                taskTitle,
+                                idTask
                         )
 
                 return@run Json.get(
@@ -371,23 +369,23 @@ class TasksRestController(
             @RequestBody task: Task,
             @AuthenticationPrincipal authUser: UserDetails,
             @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
                     value = "email",
                     required = false) email: String?,
             @RequestParam(
                     value = "phone_number",
                     required = false) phoneNumber: String?,
             @RequestParam(
-                    value = "id_section",
-                    required = false) idSection: Int?,
+                    value = "id_user",
+                    required = false) idUser: Int?,
             @RequestParam(
                     value = "section_number",
                     required = false) sectionNumber: Int?,
             @RequestParam(
                     value = "section_title",
-                    required = false) sectionTitle: String?
+                    required = false) sectionTitle: String?,
+            @RequestParam(
+                    value = "id_section",
+                    required = false) idSection: Int?
     ) =
             Json.get(
                     view,
@@ -406,19 +404,17 @@ class TasksRestController(
                             } catch (e: UninitializedPropertyAccessException) {
                                 section =
                                         sectionsRepository.get(
-                                                usersRepository.get(
-                                                        idUser,
+                                                idUser ?: usersRepository.get(
                                                         email,
                                                         phoneNumber
-                                                ),
+                                                ).idUser,
                                                 sectionNumber,
                                                 sectionTitle,
                                                 idSection
                                         )
                             } finally {
                                 section.tasks.forEach {
-                                    if (it.number == number
-                                            || it.title == title) {
+                                    if (it.number == number || it.title == title) {
                                         thisIdTask = it.idTask
                                     }
                                 }
@@ -433,11 +429,11 @@ class TasksRestController(
                         return@run if (section.user.studyInfo?.instructor?.contactInfo?.email == authUser.username) {
 
                             tasksRepository.setMarkInstructor(
-                                    thisIdTask,
-                                    markDoneInstructor
+                                    markDoneInstructor,
+                                    thisIdTask
                             )
 
-                            val newTask = tasksRepository.get(thisIdTask)
+                            val newTask = tasksRepository.get(idTask = thisIdTask)
 
                             Task(
                                     thisIdTask,
@@ -469,20 +465,14 @@ class TasksRestController(
             @PathVariable(value = "-view") view: String,
             @RequestBody newTask: Task,
             @RequestParam(
-                    value = "id_task",
-                    required = false) idTask: Int?,
-            @RequestParam(
-                    value = "id_section",
-                    required = false) idSection: Int?,
-            @RequestParam(
                     value = "section_number",
                     required = false) sectionNumber: Int?,
             @RequestParam(
                     value = "section_title",
                     required = false) sectionTitle: String?,
             @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
+                    value = "id_section",
+                    required = false) idSection: Int?,
             @RequestParam(
                     value = "email",
                     required = false) email: String?,
@@ -490,30 +480,36 @@ class TasksRestController(
                     value = "phone_number",
                     required = false) phoneNumber: String?,
             @RequestParam(
+                    value = "id_user",
+                    required = false) _idUser: Int?,
+            @RequestParam(
                     value = "task_number",
                     required = false) taskNumber: Int?,
             @RequestParam(
                     value = "task_title",
-                    required = false) taskTitle: String?
+                    required = false) taskTitle: String?,
+            @RequestParam(
+                    value = "id_task",
+                    required = false) idTask: Int?
     ) =
             usersRepository.get(
-                    idUser,
                     email,
-                    phoneNumber
+                    phoneNumber,
+                    _idUser
             ).run {
 
                 val task =
                         tasksRepository.set(
                                 newTask,
-                                idTask,
                                 sectionsRepository.get(
-                                        this,
+                                        idUser,
                                         sectionNumber,
                                         sectionTitle
                                 ),
-                                this,
+                                idUser,
                                 taskNumber,
-                                taskTitle
+                                taskTitle,
+                                idTask
                         )
 
                 return@run Json.get(
@@ -571,15 +567,15 @@ class TasksRestController(
             Json.get(
                     view,
                     tasksRepository.delete(
-                            section = sectionsRepository.get(
+                            sectionsRepository.get(
                                     usersRepository.get(
-                                            email = authUser.username
-                                    ),
+                                            authUser.username
+                                    ).idUser,
                                     sectionNumber,
                                     sectionTitle
-                            ),
-                            number = taskNumber,
-                            title = taskTitle
+                            ).idSection,
+                            taskNumber,
+                            taskTitle
                     )
             )
 
@@ -604,8 +600,8 @@ class TasksRestController(
                     tasksRepository.deleteAll(
                             sectionsRepository.get(
                                     usersRepository.get(
-                                            email = authUser.username
-                                    ),
+                                            authUser.username
+                                    ).idUser,
                                     sectionNumber,
                                     sectionTitle
                             )
@@ -620,20 +616,14 @@ class TasksRestController(
     fun delete(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
-                    value = "id_task",
-                    required = false) idTask: Int?,
-            @RequestParam(
-                    value = "id_section",
-                    required = false) idSection: Int?,
-            @RequestParam(
                     value = "section_number",
                     required = false) sectionNumber: Int?,
             @RequestParam(
                     value = "section_title",
                     required = false) sectionTitle: String?,
             @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
+                    value = "id_section",
+                    required = false) idSection: Int?,
             @RequestParam(
                     value = "email",
                     required = false) email: String?,
@@ -641,28 +631,33 @@ class TasksRestController(
                     value = "phone_number",
                     required = false) phoneNumber: String?,
             @RequestParam(
+                    value = "id_user",
+                    required = false) idUser: Int?,
+            @RequestParam(
                     value = "task_number",
                     required = false) taskNumber: Int?,
             @RequestParam(
                     value = "task_title",
-                    required = false) taskTitle: String?
+                    required = false) taskTitle: String?,
+            @RequestParam(
+                    value = "id_task",
+                    required = false) idTask: Int?
     ) =
             Json.get(
                     view,
                     tasksRepository.delete(
-                            idTask,
                             sectionsRepository.get(
-                                    usersRepository.get(
-                                            idUser,
+                                    idUser ?: usersRepository.get(
                                             email,
                                             phoneNumber
-                                    ),
+                                    ).idUser,
                                     sectionNumber,
                                     sectionTitle,
                                     idSection
-                            ),
+                            ).idSection,
                             taskNumber,
-                            taskTitle
+                            taskTitle,
+                            idTask
                     )
             )
 
@@ -674,33 +669,32 @@ class TasksRestController(
     fun deleteAll(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
-                    value = "id_section",
-                    required = false) idSection: Int?,
-            @RequestParam(
                     value = "section_number",
                     required = false) sectionNumber: Int?,
             @RequestParam(
                     value = "section_title",
                     required = false) sectionTitle: String?,
             @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
+                    value = "id_section",
+                    required = false) idSection: Int?,
             @RequestParam(
                     value = "email",
                     required = false) email: String?,
             @RequestParam(
                     value = "phone_number",
-                    required = false) phoneNumber: String?
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "id_user",
+                    required = false) idUser: Int?
     ) =
             Json.get(
                     view,
                     tasksRepository.deleteAll(
                             sectionsRepository.get(
-                                    usersRepository.get(
-                                            idUser,
+                                    idUser ?: usersRepository.get(
                                             email,
                                             phoneNumber
-                                    ),
+                                    ).idUser,
                                     sectionNumber,
                                     sectionTitle,
                                     idSection

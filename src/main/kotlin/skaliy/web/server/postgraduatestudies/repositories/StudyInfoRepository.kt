@@ -7,7 +7,6 @@ import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 
 import skaliy.web.server.postgraduatestudies.entities.StudyInfo
-import skaliy.web.server.postgraduatestudies.entities.User
 
 
 @Repository
@@ -20,12 +19,12 @@ interface StudyInfoRepository : JpaRepository<StudyInfo, Int> {
     //language=PostgresPLSQL
     @Query(value = """select (study_info_record(
                           cast_int(:id_study_info),
-                          cast_int(:#{#user.idUser})
+                          cast_int(:id_user)
                       )).*""",
             nativeQuery = true)
     fun get(
             @Param("id_study_info") idStudyInfo: Int? = null,
-            @Param("user") user: User? = User()
+            @Param("id_user") idUser: Int? = null
     ): StudyInfo
 
     //language=PostgresPLSQL
@@ -80,12 +79,12 @@ interface StudyInfoRepository : JpaRepository<StudyInfo, Int> {
     //language=PostgresPLSQL
     @Query(value = """select (study_info_delete(
                           cast_int(:id_study_info),
-                          cast_int(:#{#user.idUser})
+                          cast_int(:id_user)
                       )).*""",
             nativeQuery = true)
     fun delete(
             @Param("id_study_info") idStudyInfo: Int? = null,
-            @Param("user") user: User? = User()
+            @Param("id_user") idUser: Int? = null
     ): StudyInfo
 
 }

@@ -6,15 +6,6 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 
-import skaliy.web.server.postgraduatestudies.entities.Branch
-import skaliy.web.server.postgraduatestudies.entities.ContactInfo
-import skaliy.web.server.postgraduatestudies.entities.Degree
-import skaliy.web.server.postgraduatestudies.entities.Department
-import skaliy.web.server.postgraduatestudies.entities.Faculty
-import skaliy.web.server.postgraduatestudies.entities.Institute
-import skaliy.web.server.postgraduatestudies.entities.Section
-import skaliy.web.server.postgraduatestudies.entities.Speciality
-import skaliy.web.server.postgraduatestudies.entities.Task
 import skaliy.web.server.postgraduatestudies.entities.User
 
 
@@ -30,46 +21,46 @@ interface UsersRepository : JpaRepository<User, Int> {
                           cast_int(:id_user),
                           cast_text(:email),
                           cast_text(:phone_number),
-                          cast_int(:#{#contact_info.idContactInfo})
+                          cast_int(:id_contact_info)
                       )).*""",
             nativeQuery = true)
     fun get(
-            @Param("id_user") idUser: Int? = null,
             @Param("email") email: String? = null,
             @Param("phone_number") phoneNumber: String? = null,
-            @Param("contact_info") contactInfo: ContactInfo? = ContactInfo()
+            @Param("id_user") idUser: Int? = null,
+            @Param("id_contact_info") idContactInfo: Int? = null
     ): User
 
     //language=PostgresPLSQL
     @Query(value = """select (user_record(
-                          _id_section => cast_int(:#{#section.idSection}),
-                          _id_task => cast_int(:#{#task.idTask})
+                          _id_section => cast_int(:id_section),
+                          _id_task => cast_int(:id_task)
                       )).*""",
             nativeQuery = true)
     fun get(
-            @Param("section") section: Section? = Section(),
-            @Param("task") task: Task? = Task()
+            @Param("id_section") idSection: Int? = null,
+            @Param("id_task") idTask: Int? = null
     ): User
 
     //language=PostgresPLSQL
     @Query(value = """select (user_record(
-                          _id_degree => cast_int(:#{#degree.idDegree}),
-                          _id_branch => cast_int(:#{#branch.idBranch}),
-                          _id_speciality => cast_int(:#{#speciality.idSpeciality}),
-                          _id_department => cast_int(:#{#department.idDepartment}),
-                          _id_faculty => cast_int(:#{#faculty.idFaculty}),
-                          _id_institute => cast_int(:#{#institute.idInstitute}),
+                          _id_degree => cast_int(:id_degree),
+                          _id_branch => cast_int(:id_branch),
+                          _id_speciality => cast_int(:id_speciality),
+                          _id_department => cast_int(:id_department),
+                          _id_faculty => cast_int(:id_faculty),
+                          _id_institute => cast_int(:id_institute),
                           all_records => cast_bool(:all_records)
                       )).*""",
             nativeQuery = true)
     fun getAll(
             @Param("all_records") allRecords: Boolean? = false,
-            @Param("degree") degree: Degree? = Degree(),
-            @Param("branch") branch: Branch? = Branch(),
-            @Param("speciality") speciality: Speciality? = Speciality(),
-            @Param("department") department: Department? = Department(),
-            @Param("faculty") faculty: Faculty? = Faculty(),
-            @Param("institute") institute: Institute? = Institute()
+            @Param("id_degree") idDegree: Int? = null,
+            @Param("id_branch") idBranch: Int? = null,
+            @Param("id_speciality") idSpeciality: Int? = null,
+            @Param("id_department") idDepartment: Int? = null,
+            @Param("id_faculty") idFaculty: Int? = null,
+            @Param("id_institute") idInstitute: Int? = null
     ): MutableList<User>
 
 
@@ -131,15 +122,15 @@ interface UsersRepository : JpaRepository<User, Int> {
                           cast_int(:id_user),
                           cast_text(:email),
                           cast_text(:phone_number),
-                          cast_int(:#{#contact_info.idContactInfo})
+                          cast_int(:id_contact_info)
                       )).*""",
             nativeQuery = true)
     fun set(
             @Param("user") newUser: User,
-            @Param("id_user") idUser: Int? = null,
             @Param("email") email: String? = null,
             @Param("phone_number") phoneNumber: String? = null,
-            @Param("contact_info") contactInfo: ContactInfo? = ContactInfo()
+            @Param("id_user") idUser: Int? = null,
+            @Param("id_contact_info") idContactInfo: Int? = null
     ): User
 
     //language=PostgresPLSQL
@@ -165,14 +156,14 @@ interface UsersRepository : JpaRepository<User, Int> {
                           cast_int(:id_user),
                           cast_text(:email),
                           cast_text(:phone_number),
-                          cast_int(:#{#contact_info.idContactInfo})
+                          cast_int(:id_contact_info)
                       )).*""",
             nativeQuery = true)
     fun delete(
-            @Param("id_user") idUser: Int? = null,
             @Param("email") email: String? = null,
             @Param("phone_number") phoneNumber: String? = null,
-            @Param("contact_info") contactInfo: ContactInfo? = ContactInfo()
+            @Param("id_user") idUser: Int? = null,
+            @Param("id_contact_info") idContactInfo: Int? = null
     ): User
 
 
@@ -192,3 +183,4 @@ interface UsersRepository : JpaRepository<User, Int> {
 //  todo set id_instructor to 0 for studies in study_info where instructor delete
 //  todo set id_instructor for studies in study_info
 //  todo create delete instructor
+//  todo statistics = user + count tasks done + count tasks not done

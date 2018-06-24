@@ -41,13 +41,14 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                         "/api/contact-info/get/one**",
                         "/api/contact-info/get/all**",
                         "/api/contact-info/post/**",
-                        "/api/contact-info/put/set-one**",
+                        "/api/contact-info/put/set",
+                        "/api/contact-info/put/set-tree",
                         "/api/contact-info/delete/**",
                         "/api/degrees/post/**",
-                        "/api/degrees/put/set-one**",
+                        "/api/degrees/put/**",
                         "/api/degrees/delete/**",
                         "/api/departments/post/**",
-                        "/api/departments/put/set-one**",
+                        "/api/departments/put/**",
                         "/api/departments/delete/**",
                         "/api/faculties/post/**",
                         "/api/faculties/put/**",
@@ -58,11 +59,15 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                         "/api/scientific-links/get/one**",
                         "/api/scientific-links/get/all**",
                         "/api/scientific-links/post/**",
-                        "/api/scientific-links/put/set-one**",
+                        "/api/scientific-links/put/set",
+                        "/api/scientific-links/put/set-tree",
                         "/api/scientific-links/delete/**",
                         "/api/sections/get/one**",
                         "/api/sections/get/all**",
-                        "/api/sections/put/set-one**",
+                        "/api/sections/post/add",
+                        "/api/sections/post/add-tree",
+                        "/api/sections/put/set",
+                        "/api/sections/put/set-tree",
                         "/api/sections/delete/one**",
                         "/api/sections/delete/all**",
                         "/api/specialities/post/**",
@@ -71,17 +76,20 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                         "/api/study-info/get/one**",
                         "/api/study-info/get/all**",
                         "/api/study-info/post/**",
-                        "/api/study-info/put/set-one**",
+                        "/api/study-info/put/set",
+                        "/api/study-info/put/set-tree",
                         "/api/study-info/delete/**",
                         "/api/tasks/get/one**",
                         "/api/tasks/get/all**",
-                        "/api/tasks/put/set-one**",
+                        "/api/tasks/put/set",
+                        "/api/tasks/put/set-tree",
                         "/api/tasks/delete/one**",
                         "/api/tasks/delete/all**",
                         "/api/users/get/one**",
                         "/api/users/get/all**",
                         "/api/users/post/**",
-                        "/api/users/put/set-one**",
+                        "/api/users/put/set",
+                        "/api/users/put/set-tree",
                         "/api/users/delete/**"
                 ).hasRole(
                         UserRole.ADMIN.value
@@ -103,8 +111,8 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                         UserRole.DOCTORAL_STUDENT.value
                 )
                 .antMatchers(
-                        "/api/users/get/my-students**",
-                        "/api/tasks/put/set-mark-instructor**"
+                        "/api/tasks/put/set-mark-instructor**",
+                        "/api/users/get/my-students**"
                 ).hasRole(
                         UserRole.INSTRUCTOR.value
                 )

@@ -61,8 +61,8 @@ class SectionsRestController(
                     view,
                     sectionsRepository.get(
                             usersRepository.get(
-                                    email = authUser.username
-                            ),
+                                    authUser.username
+                            ).idUser,
                             number,
                             title
                     )
@@ -82,7 +82,7 @@ class SectionsRestController(
                     view,
                     sectionsRepository.getAll(
                             usersRepository.get(
-                                    email = authUser.username
+                                    authUser.username
                             )
                     )
             )
@@ -94,9 +94,6 @@ class SectionsRestController(
     @GetMapping(value = ["get/one{-view}"])
     fun getOne(
             @PathVariable(value = "-view") view: String,
-            @RequestParam(
-                    value = "id_section",
-                    required = false) idSection: Int?,
             @RequestParam(
                     value = "id_user",
                     required = false) idUser: Int?,
@@ -111,16 +108,18 @@ class SectionsRestController(
                     required = false) number: Int?,
             @RequestParam(
                     value = "title",
-                    required = false) title: String?
+                    required = false) title: String?,
+            @RequestParam(
+                    value = "id_section",
+                    required = false) idSection: Int?
     ) =
             Json.get(
                     view,
                     sectionsRepository.get(
-                            usersRepository.get(
-                                    idUser,
+                            idUser ?: usersRepository.get(
                                     email,
                                     phoneNumber
-                            ),
+                            ).idUser,
                             number,
                             title,
                             idSection
@@ -142,7 +141,11 @@ class SectionsRestController(
     ) =
             Json.get(
                     view,
-                    sectionsRepository.get(tasksRepository.get(idTask))
+                    sectionsRepository.get(
+                            tasksRepository.get(
+                                    idTask = idTask
+                            )
+                    )
             )
 
 
@@ -153,22 +156,22 @@ class SectionsRestController(
     fun getAll(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
                     value = "email",
                     required = false) email: String?,
             @RequestParam(
                     value = "phone_number",
-                    required = false) phoneNumber: String?
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "id_user",
+                    required = false) idUser: Int?
     ) =
             Json.get(
                     view,
                     sectionsRepository.getAll(
                             usersRepository.get(
-                                    idUser,
                                     email,
-                                    phoneNumber
+                                    phoneNumber,
+                                    idUser
                             )
                     )
             )
@@ -195,7 +198,7 @@ class SectionsRestController(
                     view,
                     sectionsRepository.add(
                             usersRepository.get(
-                                    email = authUser.username
+                                    authUser.username
                             ).idUser,
                             section.number,
                             section.title
@@ -211,20 +214,19 @@ class SectionsRestController(
             @PathVariable(value = "-view") view: String,
             @RequestBody section: Section,
             @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
                     value = "email",
                     required = false) email: String?,
             @RequestParam(
                     value = "phone_number",
-                    required = false) phoneNumber: String?
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "id_user",
+                    required = false) idUser: Int?
     ) =
             Json.get(
                     view,
                     sectionsRepository.add(
-                            usersRepository.get(
-                                    idUser,
+                            idUser ?: usersRepository.get(
                                     email,
                                     phoneNumber
                             ).idUser,
@@ -252,16 +254,16 @@ class SectionsRestController(
             @AuthenticationPrincipal authUser: UserDetails,
             @RequestParam(
                     value = "number",
-                    required = false) number: Int?,
+                    required = false) _number: Int?,
             @RequestParam(
                     value = "title",
                     required = false) title: String?
     ) =
             sectionsRepository.get(
                     usersRepository.get(
-                            email = authUser.username
-                    ),
-                    number,
+                            authUser.username
+                    ).idUser,
+                    _number,
                     title
             ).run {
 
@@ -274,7 +276,7 @@ class SectionsRestController(
                         view,
                         Section(
                                 idSection,
-                                if (newSection.number == 1) this.number
+                                if (newSection.number == 1) number
                                 else newSection.number,
                                 newSection.title,
                                 user
@@ -292,9 +294,6 @@ class SectionsRestController(
             @PathVariable(value = "-view") view: String,
             @RequestBody newSection: Section,
             @RequestParam(
-                    value = "id_section",
-                    required = false) _idSection: Int?,
-            @RequestParam(
                     value = "id_user",
                     required = false) idUser: Int?,
             @RequestParam(
@@ -305,35 +304,37 @@ class SectionsRestController(
                     required = false) phoneNumber: String?,
             @RequestParam(
                     value = "number",
-                    required = false) number: Int?,
+                    required = false) _number: Int?,
             @RequestParam(
                     value = "title",
-                    required = false) title: String?
+                    required = false) _title: String?,
+            @RequestParam(
+                    value = "id_section",
+                    required = false) _idSection: Int?
     ) =
             sectionsRepository.get(
-                    usersRepository.get(
-                            idUser,
+                    idUser ?: usersRepository.get(
                             email,
                             phoneNumber
-                    ),
-                    number,
-                    title,
+                    ).idUser,
+                    _number,
+                    _title,
                     _idSection
             ).run {
 
                 sectionsRepository.set(
                         newSection,
-                        idSection,
                         user.idUser,
                         number,
-                        title
+                        title,
+                        idSection
                 )
 
                 return@run Json.get(
                         view,
                         Section(
                                 idSection,
-                                if (newSection.number == 1) this.number
+                                if (newSection.number == 1) number
                                 else newSection.number,
                                 newSection.title,
                                 user
@@ -368,11 +369,11 @@ class SectionsRestController(
             Json.get(
                     view,
                     sectionsRepository.delete(
-                            user = usersRepository.get(
-                                    email = authUser.username
-                            ),
-                            number = number,
-                            title = title
+                            usersRepository.get(
+                                    authUser.username
+                            ).idUser,
+                            number,
+                            title
                     )
             )
 
@@ -390,7 +391,7 @@ class SectionsRestController(
                     view,
                     sectionsRepository.deleteAll(
                             usersRepository.get(
-                                    email = authUser.username
+                                    authUser.username
                             )
                     )
             )
@@ -402,35 +403,34 @@ class SectionsRestController(
     fun delete(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
-                    value = "id_section",
-                    required = false) idSection: Int?,
-            @RequestParam(
                     value = "id_user",
                     required = false) idUser: Int?,
             @RequestParam(
-                    value = "phone_number",
-                    required = false) phoneNumber: String?,
-            @RequestParam(
                     value = "email",
                     required = false) email: String?,
+            @RequestParam(
+                    value = "phone_number",
+                    required = false) phoneNumber: String?,
             @RequestParam(
                     value = "number",
                     required = false) number: Int?,
             @RequestParam(
                     value = "title",
-                    required = false) title: String?
+                    required = false) title: String?,
+            @RequestParam(
+                    value = "id_section",
+                    required = false) idSection: Int?
     ) =
             Json.get(
                     view,
                     sectionsRepository.delete(
-                            idSection,
-                            usersRepository.get(
-                                    idUser,
+                            idUser ?: usersRepository.get(
                                     email,
                                     phoneNumber
-                            ),
+                            ).idUser,
                             number,
-                            title
+                            title,
+                            idSection
                     )
             )
 
@@ -444,22 +444,22 @@ class SectionsRestController(
     fun deleteAllByUser(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
+                    value = "email",
+                    required = false) email: String?,
             @RequestParam(
                     value = "phone_number",
                     required = false) phoneNumber: String?,
             @RequestParam(
-                    value = "email",
-                    required = false) email: String?
+                    value = "id_user",
+                    required = false) idUser: Int?
     ) =
             Json.get(
                     view,
                     sectionsRepository.deleteAll(
                             usersRepository.get(
-                                    idUser,
                                     email,
-                                    phoneNumber
+                                    phoneNumber,
+                                    idUser
                             )
                     )
             )

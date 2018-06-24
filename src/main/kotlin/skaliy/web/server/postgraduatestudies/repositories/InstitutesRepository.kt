@@ -25,8 +25,8 @@ interface InstitutesRepository : JpaRepository<Institute, Int> {
                       )).*""",
             nativeQuery = true)
     fun get(
-            @Param("id_institute") idInstitute: Int? = null,
-            @Param("name") name: String? = null
+            @Param("name") name: String? = null,
+            @Param("id_institute") idInstitute: Int? = null
     ): Institute
 
     //language=PostgresPLSQL
@@ -89,8 +89,8 @@ interface InstitutesRepository : JpaRepository<Institute, Int> {
                       )).*""",
             nativeQuery = true)
     fun delete(
-            @Param("id_institute") idInstitute: Int? = null,
-            @Param("name") name: String? = null
+            @Param("name") name: String? = null,
+            @Param("id_institute") idInstitute: Int? = null
     ): Institute
 
 }

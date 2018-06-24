@@ -52,7 +52,7 @@ class DegreesRestController(
                     view,
                     degreesRepository.get(
                             usersRepository.get(
-                                    email = authUser.username
+                                    authUser.username
                             )
                     )
             )
@@ -65,21 +65,21 @@ class DegreesRestController(
     fun getOne(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
-                    value = "id_degree",
-                    required = false) idDegree: Int?,
-            @RequestParam(
                     value = "name",
                     required = false) name: String?,
             @RequestParam(
                     value = "branch",
-                    required = false) branch: String?
+                    required = false) branch: String?,
+            @RequestParam(
+                    value = "id_degree",
+                    required = false) idDegree: Int?
     ) =
             Json.get(
                     view,
                     degreesRepository.get(
-                            idDegree,
                             name,
-                            branch
+                            branch,
+                            idDegree
                     )
             )
 
@@ -93,22 +93,22 @@ class DegreesRestController(
     fun getOneByUser(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
                     value = "email",
                     required = false) email: String?,
             @RequestParam(
                     value = "phone_number",
-                    required = false) phoneNumber: String?
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "id_user",
+                    required = false) idUser: Int?
     ) =
             Json.get(
                     view,
                     degreesRepository.get(
                             usersRepository.get(
-                                    idUser,
                                     email,
-                                    phoneNumber
+                                    phoneNumber,
+                                    idUser
                             )
                     )
             )
@@ -180,19 +180,19 @@ class DegreesRestController(
             @PathVariable(value = "-view") view: String,
             @RequestBody newDegree: Degree,
             @RequestParam(
-                    value = "id_degree",
-                    required = false) _idDegree: Int?,
-            @RequestParam(
                     value = "name",
                     required = false) name: String?,
             @RequestParam(
                     value = "branch",
-                    required = false) branch: String?
+                    required = false) branch: String?,
+            @RequestParam(
+                    value = "id_degree",
+                    required = false) _idDegree: Int?
     ) =
             degreesRepository.get(
-                    _idDegree,
                     name,
-                    branch
+                    branch,
+                    _idDegree
             ).run {
 
                 degreesRepository.set(
@@ -227,21 +227,21 @@ class DegreesRestController(
     fun delete(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
-                    value = "id_degree",
-                    required = false) idDegree: Int?,
-            @RequestParam(
                     value = "name",
                     required = false) name: String?,
             @RequestParam(
                     value = "branch",
-                    required = false) branch: String?
+                    required = false) branch: String?,
+            @RequestParam(
+                    value = "id_degree",
+                    required = false) idDegree: Int?
     ) =
             Json.get(
                     view,
                     degreesRepository.delete(
-                            idDegree,
                             name,
-                            branch
+                            branch,
+                            idDegree
                     )
             )
 

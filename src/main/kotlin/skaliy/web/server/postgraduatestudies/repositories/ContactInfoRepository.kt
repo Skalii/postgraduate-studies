@@ -7,7 +7,6 @@ import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 
 import skaliy.web.server.postgraduatestudies.entities.ContactInfo
-import skaliy.web.server.postgraduatestudies.entities.User
 
 
 @Repository
@@ -20,7 +19,7 @@ interface ContactInfoRepository : JpaRepository<ContactInfo, Int> {
     //language=PostgresPLSQL
     @Query(value = """select (contact_info_record(
                           cast_int(:id_contact_info),
-                          cast_int(:#{#user.idUser}),
+                          cast_int(:id_user),
                           cast_text(:phone_number),
                           cast_text(:email)
                       )).*""",
@@ -28,7 +27,7 @@ interface ContactInfoRepository : JpaRepository<ContactInfo, Int> {
     fun get(
             @Param("email") email: String? = null,
             @Param("phone_number") phoneNumber: String? = null,
-            @Param("user") user: User? = User(),
+            @Param("id_user") idUser: Int? = null,
             @Param("id_contact_info") idContactInfo: Int? = null
     ): ContactInfo
 
@@ -49,8 +48,8 @@ interface ContactInfoRepository : JpaRepository<ContactInfo, Int> {
                       )).*""",
             nativeQuery = true)
     fun add(
-            @Param("phone_number") phoneNumber: String,
             @Param("email") email: String,
+            @Param("phone_number") phoneNumber: String,
             @Param("address") address: String?
     ): ContactInfo
 
@@ -83,9 +82,9 @@ interface ContactInfoRepository : JpaRepository<ContactInfo, Int> {
                       )).*""",
             nativeQuery = true)
     fun delete(
-            @Param("id_contact_info") idContactInfo: Int? = null,
+            @Param("email") email: String? = null,
             @Param("phone_number") phoneNumber: String? = null,
-            @Param("email") email: String? = null
+            @Param("id_contact_info") idContactInfo: Int? = null
     ): ContactInfo
 
 }

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository
 
 import skaliy.web.server.postgraduatestudies.entities.Department
 import skaliy.web.server.postgraduatestudies.entities.Faculty
-import skaliy.web.server.postgraduatestudies.entities.Institute
 import skaliy.web.server.postgraduatestudies.entities.User
 
 
@@ -26,8 +25,8 @@ interface FacultiesRepository : JpaRepository<Faculty, Int> {
                       )).*""",
             nativeQuery = true)
     fun get(
-            @Param("id_faculty") idFaculty: Int? = null,
-            @Param("name") name: String? = null
+            @Param("name") name: String? = null,
+            @Param("id_faculty") idFaculty: Int? = null
     ): Faculty
 
     //language=PostgresPLSQL
@@ -42,13 +41,13 @@ interface FacultiesRepository : JpaRepository<Faculty, Int> {
 
     //language=PostgresPLSQL
     @Query(value = """select (faculty_record(
-                          _id_institute => cast_int(:#{#institute.idInstitute}),
+                          _id_institute => cast_int(:id_institute),
                           all_records => cast_bool(:all_records)
                       )).*""",
             nativeQuery = true)
     fun getAll(
             @Param("all_records") allRecords: Boolean? = false,
-            @Param("institute") institute: Institute? = Institute()
+            @Param("id_institute") idInstitute: Int? = null
     ): MutableList<Faculty>
 
 
@@ -86,8 +85,8 @@ interface FacultiesRepository : JpaRepository<Faculty, Int> {
                       )).*""",
             nativeQuery = true)
     fun delete(
-            @Param("id_faculty") idFaculty: Int? = null,
-            @Param("name") name: String? = null
+            @Param("name") name: String? = null,
+            @Param("id_faculty") idFaculty: Int? = null
     ): Faculty
 
 }

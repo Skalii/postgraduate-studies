@@ -54,7 +54,7 @@ class BranchesRestController(
                     view,
                     branchesRepository.get(
                             usersRepository.get(
-                                    email = authUser.username
+                                    authUser.username
                             )
                     )
             )
@@ -67,21 +67,21 @@ class BranchesRestController(
     fun getOne(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
-                    value = "id_branch",
-                    required = false) idBranch: Int?,
-            @RequestParam(
                     value = "number",
                     required = false) number: String?,
             @RequestParam(
                     value = "name",
-                    required = false) name: String?
+                    required = false) name: String?,
+            @RequestParam(
+                    value = "id_branch",
+                    required = false) idBranch: Int?
     ) =
             Json.get(
                     view,
                     branchesRepository.get(
-                            idBranch,
                             number,
-                            name
+                            name,
+                            idBranch
                     )
             )
 
@@ -95,22 +95,22 @@ class BranchesRestController(
     fun getOneBySpeciality(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
-                    value = "id_speciality",
-                    required = false) idSpeciality: Int?,
-            @RequestParam(
                     value = "speciality_number",
                     required = false) specialityNumber: String?,
             @RequestParam(
                     value = "speciality_name",
-                    required = false) specialityName: String?
+                    required = false) specialityName: String?,
+            @RequestParam(
+                    value = "id_speciality",
+                    required = false) idSpeciality: Int?
     ) =
             Json.get(
                     view,
                     branchesRepository.get(
                             specialitiesRepository.get(
-                                    idSpeciality,
                                     specialityNumber,
-                                    specialityName
+                                    specialityName,
+                                    idSpeciality
                             )
                     )
             )
@@ -125,22 +125,22 @@ class BranchesRestController(
     fun getOneByUser(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
                     value = "email",
                     required = false) email: String?,
             @RequestParam(
                     value = "phone_number",
-                    required = false) phoneNumber: String?
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "id_user",
+                    required = false) idUser: Int?
     ) =
             Json.get(
                     view,
                     branchesRepository.get(
                             usersRepository.get(
-                                    idUser,
                                     email,
-                                    phoneNumber
+                                    phoneNumber,
+                                    idUser
                             )
                     )
             )
@@ -198,19 +198,19 @@ class BranchesRestController(
             @PathVariable(value = "-view") view: String,
             @RequestBody newBranch: Branch,
             @RequestParam(
-                    value = "id_branch",
-                    required = false) _idBranch: Int?,
-            @RequestParam(
                     value = "number",
                     required = false) number: String?,
             @RequestParam(
                     value = "name",
-                    required = false) name: String?
+                    required = false) name: String?,
+            @RequestParam(
+                    value = "id_branch",
+                    required = false) _idBranch: Int?
     ) =
             branchesRepository.get(
-                    _idBranch,
                     number,
-                    name
+                    name,
+                    _idBranch
             ).run {
 
                 branchesRepository.set(
@@ -245,21 +245,21 @@ class BranchesRestController(
     fun delete(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
-                    value = "id_branch",
-                    required = false) idBranch: Int?,
-            @RequestParam(
                     value = "number",
                     required = false) number: String?,
             @RequestParam(
                     value = "name",
-                    required = false) name: String?
+                    required = false) name: String?,
+            @RequestParam(
+                    value = "id_branch",
+                    required = false) idBranch: Int?
     ) =
             Json.get(
                     view,
                     branchesRepository.delete(
-                            idBranch,
                             number,
-                            name
+                            name,
+                            idBranch
                     )
             )
 
@@ -273,22 +273,22 @@ class BranchesRestController(
     fun deleteBySpeciality(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
-                    value = "id_speciality",
-                    required = false) idSpeciality: Int?,
-            @RequestParam(
                     value = "speciality_number",
                     required = false) specialityNumber: String?,
             @RequestParam(
                     value = "speciality_name",
-                    required = false) specialityName: String?
+                    required = false) specialityName: String?,
+            @RequestParam(
+                    value = "id_speciality",
+                    required = false) idSpeciality: Int?
     ) =
             Json.get(
                     view,
                     branchesRepository.delete(
                             specialitiesRepository.get(
-                                    idSpeciality,
                                     specialityNumber,
-                                    specialityName
+                                    specialityName,
+                                    idSpeciality
                             )
                     )
             )

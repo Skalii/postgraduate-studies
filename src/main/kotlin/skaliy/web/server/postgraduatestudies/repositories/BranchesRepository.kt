@@ -26,9 +26,9 @@ interface BranchesRepository : JpaRepository<Branch, Int> {
                       )).*""",
             nativeQuery = true)
     fun get(
-            @Param("id_branch") idBranch: Int? = null,
             @Param("number") number: String? = null,
-            @Param("name") name: String? = null
+            @Param("name") name: String? = null,
+            @Param("id_branch") idBranch: Int? = null
     ): Branch
 
     //language=PostgresPLSQL
@@ -89,9 +89,9 @@ interface BranchesRepository : JpaRepository<Branch, Int> {
                       )).*""",
             nativeQuery = true)
     fun delete(
-            @Param("id_branch") idBranch: Int? = null,
             @Param("number") number: String? = null,
-            @Param("name") name: String? = null
+            @Param("name") name: String? = null,
+            @Param("id_branch") idBranch: Int? = null
     ): Branch
 
     //language=PostgresPLSQL

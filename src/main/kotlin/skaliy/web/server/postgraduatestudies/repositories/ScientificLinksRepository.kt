@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 
-import skaliy.web.server.postgraduatestudies.entities.User
 import skaliy.web.server.postgraduatestudies.entities.ScientificLinks
 
 
@@ -20,7 +19,7 @@ interface ScientificLinksRepository : JpaRepository<ScientificLinks, Int> {
     //language=PostgresPLSQL
     @Query(value = """select (scientific_links_record(
                           cast_int(:id_scientific_links),
-                          cast_int(:#{#user.idUser}),
+                          cast_int(:id_user),
                           cast_text(:orcid),
                           cast_text(:researcherid),
                           cast_text(:google_scholar_id),
@@ -28,12 +27,12 @@ interface ScientificLinksRepository : JpaRepository<ScientificLinks, Int> {
                       )).*""",
             nativeQuery = true)
     fun get(
-            @Param("id_scientific_links") idScientificLinks: Int? = null,
             @Param("orcid") orcid: String? = null,
             @Param("researcherid") researcherid: String? = null,
             @Param("google_scholar_id") googleScholarId: String? = null,
             @Param("scopus_author_id") scopusAuthorId: String? = null,
-            @Param("user") user: User? = User()
+            @Param("id_scientific_links") idScientificLinks: Int? = null,
+            @Param("id_user") idUser: Int? = null
     ): ScientificLinks
 
     //language=PostgresPLSQL
@@ -85,7 +84,7 @@ interface ScientificLinksRepository : JpaRepository<ScientificLinks, Int> {
     //language=PostgresPLSQL
     @Query(value = """select (scientific_links_delete(
                           cast_int(:id_scientific_links),
-                          cast_int(:#{#user.idUser}),
+                          cast_int(:id_user),
                           cast_text(:orcid),
                           cast_text(:researcherid),
                           cast_text(:google_scholar_id),
@@ -93,12 +92,12 @@ interface ScientificLinksRepository : JpaRepository<ScientificLinks, Int> {
                       )).*""",
             nativeQuery = true)
     fun delete(
-            @Param("id_scientific_links") idScientificLinks: Int? = null,
             @Param("orcid") orcid: String? = null,
             @Param("researcherid") researcherid: String? = null,
             @Param("google_scholar_id") googleScholarId: String? = null,
             @Param("scopus_author_id") scopusAuthorId: String? = null,
-            @Param("user") user: User? = User()
+            @Param("id_scientific_links") idScientificLinks: Int? = null,
+            @Param("id_user") idUser: Int? = null
     ): ScientificLinks
 
 }

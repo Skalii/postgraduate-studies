@@ -56,7 +56,7 @@ class DepartmentsRestController(
                     view,
                     departmentsRepository.get(
                             usersRepository.get(
-                                    email = authUser.username
+                                    authUser.username
                             )
                     )
             )
@@ -69,17 +69,17 @@ class DepartmentsRestController(
     fun getOne(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
-                    value = "id_department",
-                    required = false) idDepartment: Int?,
-            @RequestParam(
                     value = "name",
-                    required = false) name: String?
+                    required = false) name: String?,
+            @RequestParam(
+                    value = "id_department",
+                    required = false) idDepartment: Int?
     ) =
             Json.get(
                     view,
                     departmentsRepository.get(
-                            idDepartment,
-                            name
+                            name,
+                            idDepartment
                     )
             )
 
@@ -93,22 +93,22 @@ class DepartmentsRestController(
     fun getOneByUser(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
                     value = "email",
                     required = false) email: String?,
             @RequestParam(
                     value = "phone_number",
-                    required = false) phoneNumber: String?
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "id_user",
+                    required = false) idUser: Int?
     ) =
             Json.get(
                     view,
                     departmentsRepository.get(
                             usersRepository.get(
-                                    idUser,
                                     email,
-                                    phoneNumber
+                                    phoneNumber,
+                                    idUser
                             )
                     )
             )
@@ -124,30 +124,28 @@ class DepartmentsRestController(
                     value = "all_records",
                     required = false) allRecords: Boolean?,
             @RequestParam(
-                    value = "id_institute",
-                    required = false) idInstitute: Int?,
-            @RequestParam(
                     value = "institute_name",
                     required = false) instituteName: String?,
             @RequestParam(
-                    value = "id_faculty",
-                    required = false) idFaculty: Int?,
+                    value = "id_institute",
+                    required = false) idInstitute: Int?,
             @RequestParam(
                     value = "faculty_name",
-                    required = false) facultyName: String?
+                    required = false) facultyName: String?,
+            @RequestParam(
+                    value = "id_faculty",
+                    required = false) idFaculty: Int?
     ) =
             Json.get(
                     view,
                     departmentsRepository.getAll(
                             allRecords,
-                            institutesRepository.get(
-                                    idInstitute,
+                            idInstitute ?: institutesRepository.get(
                                     instituteName
-                            ),
-                            facultiesRepository.get(
-                                    idFaculty,
+                            ).idInstitute,
+                            idFaculty ?: facultiesRepository.get(
                                     facultyName
-                            )
+                            ).idFaculty
                     )
             )
 
@@ -168,28 +166,26 @@ class DepartmentsRestController(
             @PathVariable(value = "-view") view: String,
             @RequestBody department: Department,
             @RequestParam(
-                    value = "id_institute",
-                    required = false) idInstitute: Int?,
-            @RequestParam(
                     value = "institute_name",
                     required = false) instituteName: String?,
             @RequestParam(
-                    value = "id_faculty",
-                    required = false) idFaculty: Int?,
+                    value = "id_institute",
+                    required = false) idInstitute: Int?,
             @RequestParam(
                     value = "faculty_name",
-                    required = false) facultyName: String?
+                    required = false) facultyName: String?,
+            @RequestParam(
+                    value = "id_faculty",
+                    required = false) idFaculty: Int?
     ) =
             Json.get(
                     view,
                     departmentsRepository.add(
                             department.name,
-                            institutesRepository.get(
-                                    idInstitute,
+                            idInstitute ?: institutesRepository.get(
                                     instituteName
                             ).idInstitute,
-                            facultiesRepository.get(
-                                    idFaculty,
+                            idFaculty ?: facultiesRepository.get(
                                     facultyName
                             ).idFaculty
                     )
@@ -212,16 +208,16 @@ class DepartmentsRestController(
             @PathVariable(value = "-view") view: String,
             @RequestBody newDepartment: Department,
             @RequestParam(
-                    value = "id_department",
-                    required = false) _idDepartment: Int?,
-            @RequestParam(
                     value = "name",
-                    required = false) name: String?
+                    required = false) name: String?,
+            @RequestParam(
+                    value = "id_department",
+                    required = false) _idDepartment: Int?
     ) =
 
             departmentsRepository.get(
-                    _idDepartment,
-                    name
+                    name,
+                    _idDepartment
             ).run {
 
                 try {
@@ -269,17 +265,17 @@ class DepartmentsRestController(
     fun delete(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
-                    value = "id_department",
-                    required = false) idDepartment: Int?,
-            @RequestParam(
                     value = "name",
-                    required = false) name: String?
+                    required = false) name: String?,
+            @RequestParam(
+                    value = "id_department",
+                    required = false) idDepartment: Int?
     ) =
             Json.get(
                     view,
                     departmentsRepository.delete(
-                            idDepartment,
-                            name
+                            name,
+                            idDepartment
                     )
             )
 

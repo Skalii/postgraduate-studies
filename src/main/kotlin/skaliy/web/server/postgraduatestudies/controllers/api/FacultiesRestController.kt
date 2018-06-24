@@ -56,7 +56,7 @@ class FacultiesRestController(
                     view,
                     facultiesRepository.get(
                             usersRepository.get(
-                                    email = authUser.username
+                                    authUser.username
                             )
                     )
             )
@@ -69,17 +69,17 @@ class FacultiesRestController(
     fun getOne(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
-                    value = "id_faculty",
-                    required = false) idFaculty: Int?,
-            @RequestParam(
                     value = "name",
-                    required = false) name: String?
+                    required = false) name: String?,
+            @RequestParam(
+                    value = "id_faculty",
+                    required = false) idFaculty: Int?
     ) =
             Json.get(
                     view,
                     facultiesRepository.get(
-                            idFaculty,
-                            name
+                            name,
+                            idFaculty
                     )
             )
 
@@ -93,18 +93,18 @@ class FacultiesRestController(
     fun getOneByDepartment(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
-                    value = "id_department",
-                    required = false) idDepartment: Int?,
-            @RequestParam(
                     value = "department_name",
-                    required = false) departmentName: String?
+                    required = false) departmentName: String?,
+            @RequestParam(
+                    value = "id_department",
+                    required = false) idDepartment: Int?
     ) =
             Json.get(
                     view,
                     facultiesRepository.get(
                             departmentsRepository.get(
-                                    idDepartment,
-                                    departmentName
+                                    departmentName,
+                                    idDepartment
                             )
                     )
             )
@@ -119,22 +119,22 @@ class FacultiesRestController(
     fun getOneByUser(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
                     value = "email",
                     required = false) email: String?,
             @RequestParam(
                     value = "phone_number",
-                    required = false) phoneNumber: String?
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "id_user",
+                    required = false) idUser: Int?
     ) =
             Json.get(
                     view,
                     facultiesRepository.get(
                             usersRepository.get(
-                                    idUser,
                                     email,
-                                    phoneNumber
+                                    phoneNumber,
+                                    idUser
                             )
                     )
             )
@@ -150,20 +150,19 @@ class FacultiesRestController(
                     value = "all_records",
                     required = false) allRecords: Boolean?,
             @RequestParam(
-                    value = "id_institute",
-                    required = false) idInstitute: Int?,
-            @RequestParam(
                     value = "institute_name",
-                    required = false) instituteName: String?
+                    required = false) instituteName: String?,
+            @RequestParam(
+                    value = "id_institute",
+                    required = false) idInstitute: Int?
     ) =
             Json.get(
                     view,
                     facultiesRepository.getAll(
                             allRecords,
-                            institutesRepository.get(
-                                    idInstitute,
+                            idInstitute ?: institutesRepository.get(
                                     instituteName
-                            )
+                            ).idInstitute
                     )
             )
 
@@ -206,15 +205,15 @@ class FacultiesRestController(
             @PathVariable(value = "-view") view: String,
             @RequestBody newFaculty: Faculty,
             @RequestParam(
-                    value = "id_faculty",
-                    required = false) _idFaculty: Int?,
-            @RequestParam(
                     value = "name",
-                    required = false) name: String?
+                    required = false) name: String?,
+            @RequestParam(
+                    value = "id_faculty",
+                    required = false) _idFaculty: Int?
     ) =
             facultiesRepository.get(
-                    _idFaculty,
-                    name
+                    name,
+                    _idFaculty
             ).run {
 
                 facultiesRepository.set(
@@ -247,17 +246,17 @@ class FacultiesRestController(
     fun delete(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
-                    value = "id_faculty",
-                    required = false) idFaculty: Int?,
-            @RequestParam(
                     value = "name",
-                    required = false) name: String?
+                    required = false) name: String?,
+            @RequestParam(
+                    value = "id_faculty",
+                    required = false) idFaculty: Int?
     ) =
             Json.get(
                     view,
                     facultiesRepository.delete(
-                            idFaculty,
-                            name
+                            name,
+                            idFaculty
                     )
             )
 

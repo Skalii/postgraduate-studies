@@ -51,9 +51,9 @@ class StudyInfoRestController(
             Json.get(
                     view,
                     studyInfoRepository.get(
-                            user = usersRepository.get(
-                                    email = authUser.username
-                            )
+                            idUser = usersRepository.get(
+                                    authUser.username
+                            ).idUser
                     )
             )
 
@@ -68,24 +68,23 @@ class StudyInfoRestController(
                     value = "id_study_info",
                     required = false) idStudyInfo: Int?,
             @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
                     value = "email",
                     required = false) email: String?,
             @RequestParam(
                     value = "phone_number",
-                    required = false) phoneNumber: String?
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "id_user",
+                    required = false) idUser: Int?
     ) =
             Json.get(
                     view,
                     studyInfoRepository.get(
                             idStudyInfo,
-                            usersRepository.get(
-                                    idUser,
+                            idUser ?: usersRepository.get(
                                     email,
                                     phoneNumber
-                            )
+                            ).idUser
                     )
             )
 
@@ -117,15 +116,14 @@ class StudyInfoRestController(
             @PathVariable(value = "-view") view: String,
             @RequestBody studyInfo: StudyInfo,
             @RequestParam(
-                    value = "id_instructor",
-                    required = false) idUser: Int?,
-            @RequestParam(
                     value = "email",
                     required = false) email: String?,
             @RequestParam(
                     value = "phone_number",
-                    required = false) phoneNumber: String?
-
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "id_instructor",
+                    required = false) idUser: Int?
     ) =
             Json.get(
                     view,
@@ -137,8 +135,7 @@ class StudyInfoRestController(
                             try {
                                 studyInfo.instructor.idUser
                             } catch (e: Exception) {
-                                usersRepository.get(
-                                        idUser,
+                                idUser ?: usersRepository.get(
                                         email,
                                         phoneNumber
                                 ).idUser
@@ -164,11 +161,10 @@ class StudyInfoRestController(
             @RequestBody newStudyInfo: StudyInfo,
             @AuthenticationPrincipal authUser: UserDetails
     ) =
-
             studyInfoRepository.get(
-                    user = usersRepository.get(
-                            email = authUser.username
-                    )
+                    idUser = usersRepository.get(
+                            authUser.username
+                    ).idUser
             ).run {
 
                 try {
@@ -209,23 +205,22 @@ class StudyInfoRestController(
                     value = "id_study_info",
                     required = false) _idStudyInfo: Int?,
             @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
                     value = "email",
                     required = false) email: String?,
             @RequestParam(
                     value = "phone_number",
-                    required = false) phoneNumber: String?
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "id_user",
+                    required = false) idUser: Int?
     ) =
 
             studyInfoRepository.get(
                     _idStudyInfo,
-                    usersRepository.get(
-                            idUser,
+                    idUser ?: usersRepository.get(
                             email,
                             phoneNumber
-                    )
+                    ).idUser
             ).run {
 
                 try {
@@ -273,24 +268,23 @@ class StudyInfoRestController(
                     value = "id_study_info",
                     required = false) idStudyInfo: Int?,
             @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
                     value = "email",
                     required = false) email: String?,
             @RequestParam(
                     value = "phone_number",
-                    required = false) phoneNumber: String?
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "id_user",
+                    required = false) idUser: Int?
     ) =
             Json.get(
                     view,
                     studyInfoRepository.delete(
                             idStudyInfo,
-                            usersRepository.get(
-                                    idUser,
+                            idUser ?: usersRepository.get(
                                     email,
                                     phoneNumber
-                            )
+                            ).idUser
                     )
             )
 

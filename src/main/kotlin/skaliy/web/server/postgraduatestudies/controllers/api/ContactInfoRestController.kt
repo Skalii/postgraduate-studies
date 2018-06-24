@@ -59,9 +59,6 @@ class ContactInfoRestController(
     fun getOne(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
-                    value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
-            @RequestParam(
                     value = "email",
                     required = false) email: String?,
             @RequestParam(
@@ -69,14 +66,17 @@ class ContactInfoRestController(
                     required = false) phoneNumber: String?,
             @RequestParam(
                     value = "id_user",
-                    required = false) idUser: Int?
+                    required = false) idUser: Int?,
+            @RequestParam(
+                    value = "id_contact_info",
+                    required = false) idContactInfo: Int?
     ) =
             Json.get(
                     view,
                     contactInfoRepository.get(
                             email,
                             phoneNumber,
-                            usersRepository.get(idUser),
+                            idUser,
                             idContactInfo
                     )
             )
@@ -136,9 +136,7 @@ class ContactInfoRestController(
             @RequestBody newContactInfo: ContactInfo,
             @AuthenticationPrincipal authUser: UserDetails
     ) =
-            contactInfoRepository.get(
-                    authUser.username
-            ).run {
+            contactInfoRepository.get(authUser.username).run {
 
                 contactInfoRepository.set(
                         newContactInfo,
@@ -166,9 +164,6 @@ class ContactInfoRestController(
             @PathVariable(value = "-view") view: String,
             @RequestBody newContactInfo: ContactInfo,
             @RequestParam(
-                    value = "id_contact_info",
-                    required = false) _idContactInfo: Int?,
-            @RequestParam(
                     value = "email",
                     required = false) email: String?,
             @RequestParam(
@@ -176,12 +171,15 @@ class ContactInfoRestController(
                     required = false) phoneNumber: String?,
             @RequestParam(
                     value = "id_user",
-                    required = false) idUser: Int?
+                    required = false) idUser: Int?,
+            @RequestParam(
+                    value = "id_contact_info",
+                    required = false) _idContactInfo: Int?
     ) =
             contactInfoRepository.get(
                     email,
                     phoneNumber,
-                    usersRepository.get(idUser),
+                    idUser,
                     _idContactInfo
             ).run {
 
@@ -218,21 +216,21 @@ class ContactInfoRestController(
     fun delete(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
-                    value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
-            @RequestParam(
                     value = "email",
                     required = false) email: String?,
             @RequestParam(
                     value = "phone_number",
-                    required = false) phoneNumber: String?
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "id_contact_info",
+                    required = false) idContactInfo: Int?
     ) =
             Json.get(
                     view,
                     contactInfoRepository.delete(
-                            idContactInfo,
+                            email,
                             phoneNumber,
-                            email
+                            idContactInfo
                     )
             )
 

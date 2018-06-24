@@ -26,9 +26,9 @@ interface SpecialitiesRepository : JpaRepository<Speciality, Int> {
                       )).*""",
             nativeQuery = true)
     fun get(
-            @Param("id_speciality") idSpeciality: Int? = null,
             @Param("number") number: String? = null,
-            @Param("name") name: String? = null
+            @Param("name") name: String? = null,
+            @Param("id_speciality") idSpeciality: Int? = null
     ): Speciality
 
     //language=PostgresPLSQL
@@ -38,13 +38,13 @@ interface SpecialitiesRepository : JpaRepository<Speciality, Int> {
 
     //language=PostgresPLSQL
     @Query(value = """select (speciality_record(
-                          all_from_id_branch => cast_int(:#{#branch.idBranch}),
+                          all_from_id_branch => cast_int(:id_branch),
                           all_records => cast_bool(:all_records)
                       )).*""",
             nativeQuery = true)
     fun getAll(
             @Param("all_records") allRecords: Boolean? = false,
-            @Param("branch") branch: Branch? = Branch()
+            @Param("id_branch") idBranch: Int? = null
     ): MutableList<Speciality>
 
     /** ============================== ADD / INSERT ============================== */
@@ -58,9 +58,9 @@ interface SpecialitiesRepository : JpaRepository<Speciality, Int> {
                       )).*""",
             nativeQuery = true)
     fun add(
-            @Param("id_branch") idBranch: Int,
             @Param("number") number: String,
-            @Param("name") name: String
+            @Param("name") name: String,
+            @Param("id_branch") idBranch: Int
     ): Speciality
 
 
@@ -92,9 +92,9 @@ interface SpecialitiesRepository : JpaRepository<Speciality, Int> {
                       )).*""",
             nativeQuery = true)
     fun delete(
-            @Param("id_speciality") idSpeciality: Int? = null,
             @Param("number") number: String? = null,
-            @Param("name") name: String? = null
+            @Param("name") name: String? = null,
+            @Param("id_speciality") idSpeciality: Int? = null
     ): Speciality
 
     //language=PostgresPLSQL

@@ -7,8 +7,6 @@ import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 
 import skaliy.web.server.postgraduatestudies.entities.Department
-import skaliy.web.server.postgraduatestudies.entities.Faculty
-import skaliy.web.server.postgraduatestudies.entities.Institute
 import skaliy.web.server.postgraduatestudies.entities.User
 
 
@@ -26,8 +24,8 @@ interface DepartmentsRepository : JpaRepository<Department, Int> {
                       )).*""",
             nativeQuery = true)
     fun get(
-            @Param("id_department") idDepartment: Int? = null,
-            @Param("name") name: String? = null
+            @Param("name") name: String? = null,
+            @Param("id_department") idDepartment: Int? = null
     ): Department
 
     //language=PostgresPLSQL
@@ -37,15 +35,15 @@ interface DepartmentsRepository : JpaRepository<Department, Int> {
 
     //language=PostgresPLSQL
     @Query(value = """select (department_record(
-                          _id_institute => cast_int(:#{#institute.idInstitute}),
-                          _id_faculty => cast_int(:#{#faculty.idFaculty}),
+                          _id_institute => cast_int(:id_institute),
+                          _id_faculty => cast_int(:id_faculty),
                           all_records => cast_bool(:all_records)
                       )).*""",
             nativeQuery = true)
     fun getAll(
             @Param("all_records") allRecords: Boolean? = false,
-            @Param("institute") institute: Institute? = Institute(),
-            @Param("faculty") faculty: Faculty? = Faculty()
+            @Param("id_institute") idInstitute: Int? = null,
+            @Param("id_faculty") idFaculty: Int? = null
     ): MutableList<Department>
 
 
@@ -93,8 +91,8 @@ interface DepartmentsRepository : JpaRepository<Department, Int> {
                       )).*""",
             nativeQuery = true)
     fun delete(
-            @Param("id_department") idDepartment: Int? = null,
-            @Param("name") name: String? = null
+            @Param("name") name: String? = null,
+            @Param("id_department") idDepartment: Int? = null
     ): Department
 
 }

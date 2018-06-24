@@ -11,15 +11,14 @@
 </ul>
 <h4>API calls:</h4>
 <pre><small><b><i><big>Parameters:</big></i></b>
-<br> |view|   = <b><i>ui</b> / <b>rest</b> / <b>tree</b></i>
-        <u>                                              </u>
-       | ui |------|------| = data / <s> id </s> / <s> foreign </s> | 
-       |----| rest |------| = data /  id  / <s> foreign </s> |
-       |<u>----|------| tree | = data /  id  /  foreign  </u>|
+<br> |-view|   = <b><i>ui</b> / <b>rest</b> / <b>tree</b></i>
+         <u>                                         </u>
+        | rest |------| = data /  id  / <s> foreign </s> |
+        |<u>------| tree | = data /  id  /  foreign  </u>|
 <br>  (?)     = request parameters, <b><i>all optional</i></b>
  {body}   = request body / <b><i>json object</i></b>, <b><i>required</i></b>
-{content} = <b><i>content-type: application/json; charset=UTF8</i></b>
- [auth]   = authorized user
+{content} = <i>content-type: application/json; charset=UTF8</i>, <b><i>required</i></b>
+ [auth]   = authorized user, <b><i>required</i></b>
 <br>|i| = integer
 |s| = string
 |b| = boolean</small><small>
@@ -34,61 +33,54 @@
                    ¦               `
                    ¦                ¦--get--
                    ¦                ¦       `
-                   ¦                ¦        ¦--me-|view|[auth]
+                   ¦                ¦        ¦--me|-view|[auth]
                    ¦                ¦        ¦               
                    ¦                ¦        ¦               
-                   ¦                ¦        ¦--one-|view|(?)
-                   ¦                ¦        ¦               `
-                   ¦                ¦        ¦            |i| ¦--id_branch
-                   ¦                ¦        ¦            |s| ¦--number
-                   ¦                ¦        ¦            's' '--name
+                   ¦                ¦        ¦--one|-view|(?)
+                   ¦                ¦        ¦             ¦
+                   ¦                ¦        ¦      |s| -> ¦--number
+                   ¦                ¦        ¦      |s| -> ¦--name
+                   ¦                ¦        ¦      'i' -> '--id_branch
                    ¦                ¦        ¦               
-                   ¦                ¦        ¦--one-by-speciality-|view|(?)
-                   ¦                ¦        ¦                             `
-                   ¦                ¦        ¦                          |i| ¦--id_speciality
-                   ¦                ¦        ¦                          |s| ¦--number
-                   ¦                ¦        ¦                          's' '--name
+                   ¦                ¦        ¦--one-by-speciality|-view|(?)
+                   ¦                ¦        ¦                           ¦
+                   ¦                ¦        ¦                    |s| -> ¦--number
+                   ¦                ¦        ¦                    |s| -> ¦--name
+                   ¦                ¦        ¦                    'i' -> '--id_speciality
                    ¦                ¦        ¦                              
-                   ¦                ¦        ¦--one-by-user-|view|(?)
-                   ¦                ¦        ¦                       `
-                   ¦                ¦        ¦                    |i| ¦--id_user
-                   ¦                ¦        ¦                    |i| ¦--id_contact_info
-                   ¦                ¦        ¦                    |s| ¦--phone_number
-                   ¦                ¦        ¦                    |s| ¦--email
-                   ¦                ¦        ¦                    |i| ¦--id_study_info
-                   ¦                ¦        ¦                    |i| ¦--id_scientific_links
-                   ¦                ¦        ¦                    |s| ¦--orcid
-                   ¦                ¦        ¦                    |s| ¦--researcherid
-                   ¦                ¦        ¦                    |s| ¦--google_scholar_id
-                   ¦                ¦        ¦                    's' '--scopus_author_id
+                   ¦                ¦        ¦--one-by-user|-view|(?)
+                   ¦                ¦        ¦                     ¦
+                   ¦                ¦        ¦              |s| -> ¦--email
+                   ¦                ¦        ¦              |s| -> ¦--phone_number
+                   ¦                ¦        ¦              'i' -> '--id_user
                    ¦                ¦        ¦
-                   ¦                ¦        '--all-|view|
+                   ¦                ¦        '--all|-view|
                    ¦                ¦        
                    ¦                ¦--post--
                    ¦                ¦        `
-                   ¦                ¦         '--add-|view|{body}{content}
+                   ¦                ¦         '--add|-view|{body}{content}
                    ¦                ¦
                    ¦                ¦--put--
                    ¦                ¦       `
-                   ¦                ¦        '--set-|view|(?){body}{content}
-                   ¦                ¦                        `
-                   ¦                ¦                     |i| ¦--id_speciality
-                   ¦                ¦                     |s| ¦--number
-                   ¦                ¦                     's' '--name
+                   ¦                ¦        '--set|-view|(?){body}{content}
+                   ¦                ¦                      ¦ 
+                   ¦                ¦               |s| -> ¦--number
+                   ¦                ¦               |s| -> ¦--name
+                   ¦                ¦               'i' -> '--id_branch
                    ¦                ¦
                    ¦                '--delete--
                    ¦                           `
-                   ¦                            ¦--one-|view|(?)
-                   ¦                            ¦               `
-                   ¦                            ¦            |i| ¦--id_branch
-                   ¦                            ¦            |s| ¦--number
-                   ¦                            ¦            's' '--name
+                   ¦                            ¦--one|-view|(?)
+                   ¦                            ¦             ¦
+                   ¦                            ¦      |s| -> ¦--number
+                   ¦                            ¦      |s| -> ¦--name
+                   ¦                            ¦      'i' -> '--id_branch
                    ¦                            ¦                
-                   ¦                            '--one-by-speciality-|view|(?)
-                   ¦                                                          `
-                   ¦                                                       |i| ¦--id_speciality
-                   ¦                                                       |s| ¦--number
-                   ¦                                                       's' '--name
+                   ¦                            '--one-by-speciality|-view|(?)
+                   ¦                                                        ¦
+                   ¦                                                 |s| -> ¦--speciality_number
+                   ¦                                                 |s| -> ¦--speciality_name
+                   ¦                                                 'i' -> '--id_speciality
                    ¦                        
                    ¦`
                    ¦ `---contact-info---
