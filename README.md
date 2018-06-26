@@ -15,7 +15,8 @@
          <u>                                         </u>
         | rest |------| = data /  id  / <s> foreign </s> |
         |<u>------| tree | = data /  id  /  foreign  </u>|
-<br>  (?)     = request parameters, <b><i>all optional</i></b>
+<br>@Method   = HHTP Request method (<b>GET</b>, <b>POST</b>, <b>PUT</b>, <b>DELETE</b>)  
+  (?)     = request parameters, <b><i>all optional</i></b>
  {body}   = request body / <b><i>json object</i></b>, <b><i>required</i></b>
 {content} = <i>content-type: application/json; charset=UTF8</i>, <b><i>required</i></b>
  [auth]   = authorized user, <b><i>required</i></b>
@@ -31,56 +32,35 @@
                    ¦ `--branches--
                    ¦              ` 
                    ¦               `
-                   ¦                ¦--get--
-                   ¦                ¦       `
-                   ¦                ¦        ¦--me|-view|[auth]
-                   ¦                ¦        ¦               
-                   ¦                ¦        ¦               
-                   ¦                ¦        ¦--one|-view|(?)
-                   ¦                ¦        ¦             ¦
-                   ¦                ¦        ¦      |s| -> ¦--number
-                   ¦                ¦        ¦      |s| -> ¦--name
-                   ¦                ¦        ¦      'i' -> '--id_branch
-                   ¦                ¦        ¦               
-                   ¦                ¦        ¦--one-by-speciality|-view|(?)
-                   ¦                ¦        ¦                           ¦
-                   ¦                ¦        ¦                    |s| -> ¦--number
-                   ¦                ¦        ¦                    |s| -> ¦--name
-                   ¦                ¦        ¦                    'i' -> '--id_speciality
-                   ¦                ¦        ¦                              
-                   ¦                ¦        ¦--one-by-user|-view|(?)
-                   ¦                ¦        ¦                     ¦
-                   ¦                ¦        ¦              |s| -> ¦--email
-                   ¦                ¦        ¦              |s| -> ¦--phone_number
-                   ¦                ¦        ¦              'i' -> '--id_user
-                   ¦                ¦        ¦
-                   ¦                ¦        '--all|-view|
-                   ¦                ¦        
-                   ¦                ¦--post--
-                   ¦                ¦        `
-                   ¦                ¦         '--add|-view|{body}{content}
+                   ¦        @GET -> ¦--me|-view|[auth]
                    ¦                ¦
-                   ¦                ¦--put--
-                   ¦                ¦       `
-                   ¦                ¦        '--set|-view|(?){body}{content}
-                   ¦                ¦                      ¦ 
-                   ¦                ¦               |s| -> ¦--number
-                   ¦                ¦               |s| -> ¦--name
-                   ¦                ¦               'i' -> '--id_branch
+                   ¦      @GET & -> ¦--one|-view|(?)
+                   ¦      @DELETE   ¦             ¦
+                   ¦                ¦      |s| -> ¦--number
+                   ¦                ¦      |s| -> ¦--name
+                   ¦                ¦      'i' -> '--id_branch
+                   ¦                ¦               
+                   ¦       @POST -> ¦--one|-view|{body}{content}
+                   ¦                ¦                              
+                   ¦        @PUT -> ¦--one|-view|(?){body}{content}
+                   ¦                ¦             ¦ 
+                   ¦                ¦      |s| -> ¦--number
+                   ¦                ¦      |s| -> ¦--name
+                   ¦                ¦      'i' -> '--id_branch
+                   ¦                ¦               
+                   ¦      @GET & -> ¦--one-by-speciality|-view|(?)
+                   ¦      @DELETE   ¦                           ¦
+                   ¦                ¦                    |s| -> ¦--speciality_number
+                   ¦                ¦                    |s| -> ¦--speciality_name
+                   ¦                ¦                    'i' -> '--id_speciality
+                   ¦                ¦               
+                   ¦        @GET -> ¦--one-by-user|-view|(?)
+                   ¦                ¦                     ¦
+                   ¦                ¦              |s| -> ¦--email
+                   ¦                ¦              |s| -> ¦--phone_number
+                   ¦                ¦              'i' -> '--id_user
                    ¦                ¦
-                   ¦                '--delete--
-                   ¦                           `
-                   ¦                            ¦--one|-view|(?)
-                   ¦                            ¦             ¦
-                   ¦                            ¦      |s| -> ¦--number
-                   ¦                            ¦      |s| -> ¦--name
-                   ¦                            ¦      'i' -> '--id_branch
-                   ¦                            ¦                
-                   ¦                            '--one-by-speciality|-view|(?)
-                   ¦                                                        ¦
-                   ¦                                                 |s| -> ¦--speciality_number
-                   ¦                                                 |s| -> ¦--speciality_name
-                   ¦                                                 'i' -> '--id_speciality
+                   ¦        @GET -> '--all|-view|
                    ¦                        
                    ¦`
                    ¦ `---contact-info---
