@@ -36,18 +36,10 @@ class FacultiesRestController(
 ) {
 
 
-    /**
-     *
-     *      GET / SELECT
-     *      requests
-     *
-     */
+    /** ============================== GET requests ============================== */
 
 
-    /** ============================== MY ============================== */
-
-
-    @GetMapping(value = ["get/my{-view}"])
+    @GetMapping(value = ["my{-view}"])
     fun getMy(
             @PathVariable(value = "-view") view: String,
             @AuthenticationPrincipal authUser: UserDetails
@@ -61,11 +53,7 @@ class FacultiesRestController(
                     )
             )
 
-
-    /** ============================== ONE ============================== */
-
-
-    @GetMapping(value = ["get/one{-view}"])
+    @GetMapping(value = ["one{-view}"])
     fun getOne(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
@@ -83,13 +71,7 @@ class FacultiesRestController(
                     )
             )
 
-
-    /** ============================== ONE
-     *                                 BY
-     *                                 DEPARTMENT ============================== */
-
-
-    @GetMapping(value = ["get/one-by-department{-view}"])
+    @GetMapping(value = ["one-by-department{-view}"])
     fun getOneByDepartment(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
@@ -109,13 +91,7 @@ class FacultiesRestController(
                     )
             )
 
-
-    /** ============================== ONE
-     *                                 BY
-     *                                 USER ============================== */
-
-
-    @GetMapping(value = ["get/one-by-user{-view}"])
+    @GetMapping(value = ["one-by-user{-view}"])
     fun getOneByUser(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
@@ -139,11 +115,7 @@ class FacultiesRestController(
                     )
             )
 
-
-    /** ============================== ALL ============================== */
-
-
-    @GetMapping(value = ["get/all{-view}"])
+    @GetMapping(value = ["all{-view}"])
     fun getAll(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
@@ -167,18 +139,10 @@ class FacultiesRestController(
             )
 
 
-    /**
-     *
-     *      ADD / INSERT INTO
-     *      requests
-     *
-     */
+    /** ============================== POST requests ============================== */
 
 
-    /** ============================== ONE ============================== */
-
-
-    @PostMapping(value = ["post/add{-view}"])
+    @PostMapping(value = ["one{-view}"])
     fun add(
             @PathVariable(value = "-view") view: String,
             @RequestBody faculty: Faculty
@@ -189,18 +153,10 @@ class FacultiesRestController(
             )
 
 
-    /**
-     *
-     *      SET / UPDATE
-     *      requests
-     *
-     */
+    /** ============================== PUT requests ============================== */
 
 
-    /** ============================== ONE ============================== */
-
-
-    @PutMapping(value = ["put/set{-view}"])
+    @PutMapping(value = ["one{-view}"])
     fun set(
             @PathVariable(value = "-view") view: String,
             @RequestBody newFaculty: Faculty,
@@ -231,18 +187,10 @@ class FacultiesRestController(
             }
 
 
-    /**
-     *
-     *      DELETE
-     *      requests
-     *
-     */
+    /** ============================== DELETE requests ============================== */
 
 
-    /** ============================== ONE ============================== */
-
-
-    @DeleteMapping(value = ["delete/one{-view}"])
+    @DeleteMapping(value = ["one{-view}"])
     fun delete(
             @PathVariable(value = "-view") view: String,
             @RequestParam(

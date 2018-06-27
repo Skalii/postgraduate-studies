@@ -11,6 +11,9 @@ import skalii.web.server.postgraduatestudies.entities.Speciality
 import skalii.web.server.postgraduatestudies.entities.User
 
 
+/**
+ * Repository
+ */
 @Repository
 interface BranchesRepository : JpaRepository<Branch, Int> {
 

@@ -37,19 +37,10 @@ class TasksRestController(
 ) {
 
 
-    /**
-     *
-     *      GET / SELECT
-     *      requests
-     *
-     */
+    /** ============================== GET requests ============================== */
 
 
-    /** ============================== MY
-     *                                 ONE ============================== */
-
-
-    @GetMapping(value = ["get/my-one{-view}"])
+    @GetMapping(value = ["my-one{-view}"])
     fun getMyOne(
             @PathVariable(value = "-view") view: String,
             @AuthenticationPrincipal authUser: UserDetails,
@@ -84,12 +75,7 @@ class TasksRestController(
 
             }
 
-
-    /** ============================== MY
-     *                                 ALL ============================== */
-
-
-    @GetMapping(value = ["get/my-all{-view}"])
+    @GetMapping(value = ["my-all{-view}"])
     fun getMyAll(
             @PathVariable(value = "-view") view: String,
             @AuthenticationPrincipal authUser: UserDetails
@@ -103,14 +89,7 @@ class TasksRestController(
                     )
             )
 
-
-    /** ============================== MY
-     *                                 ALL
-     *                                 BY
-     *                                 SECTION ============================== */
-
-
-    @GetMapping(value = ["get/my-all-by-section{-view}"])
+    @GetMapping(value = ["my-all-by-section{-view}"])
     fun getMyAllBySection(
             @PathVariable(value = "-view") view: String,
             @AuthenticationPrincipal authUser: UserDetails,
@@ -134,11 +113,7 @@ class TasksRestController(
                     )
             )
 
-
-    /** ============================== ONE ============================== */
-
-
-    @GetMapping(value = ["get/one{-view}"])
+    @GetMapping(value = ["one{-view}"])
     fun getOne(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
@@ -193,11 +168,7 @@ class TasksRestController(
 
             }
 
-
-    /** ============================== ALL ============================== */
-
-
-    @GetMapping(value = ["get/all{-view}"])
+    @GetMapping(value = ["all{-view}"])
     fun getAll(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
@@ -241,18 +212,10 @@ class TasksRestController(
             }
 
 
-    /**
-     *
-     *      ADD / INSERT INTO
-     *      requests
-     *
-     */
+    /** ============================== POST requests ============================== */
 
 
-    /** ============================== MY ============================== */
-
-
-    @PostMapping(value = ["post/add-my{-view}"])
+    @PostMapping(value = ["my{-view}"])
     fun add(
             @PathVariable(value = "-view") view: String,
             @AuthenticationPrincipal authUser: UserDetails,
@@ -282,18 +245,10 @@ class TasksRestController(
             )
 
 
-    /**
-     *
-     *      SET / UPDATE
-     *      requests
-     *
-     */
+    /** ============================== PUT requests ============================== */
 
 
-    /** ============================== MY ============================== */
-
-
-    @PutMapping(value = ["put/set-my{-view}"])
+    @PutMapping(value = ["my{-view}"])
     fun setMy(
             @PathVariable(value = "-view") view: String,
             @RequestBody newTask: Task,
@@ -358,12 +313,7 @@ class TasksRestController(
 
             }
 
-
-    /** ============================== MARK
-     *                                 INSTRUCTOR ============================== */
-
-
-    @PutMapping(value = ["put/set-mark-instructor{-view}"])
+    @PutMapping(value = ["mark-instructor{-view}"])
     fun setMarkInstructor(
             @PathVariable(value = "-view") view: String,
             @RequestBody task: Task,
@@ -456,11 +406,7 @@ class TasksRestController(
                     }
             )
 
-
-    /** ============================== ONE ============================== */
-
-
-    @PutMapping(value = ["put/set{-view}"])
+    @PutMapping(value = ["one{-view}"])
     fun set(
             @PathVariable(value = "-view") view: String,
             @RequestBody newTask: Task,
@@ -536,18 +482,10 @@ class TasksRestController(
             }
 
 
-    /**
-     *
-     *      DELETE
-     *      requests
-     *
-     */
+    /** ============================== DELETE requests ============================== */
 
 
-    /** ============================== MY ============================== */
-
-
-    @DeleteMapping(value = ["delete/my{-view}"])
+    @DeleteMapping(value = ["my-one{-view}"])
     fun deleteMy(
             @PathVariable(value = "-view") view: String,
             @AuthenticationPrincipal authUser: UserDetails,
@@ -579,12 +517,7 @@ class TasksRestController(
                     )
             )
 
-
-    /** ============================== MY
-     *                                 ALL ============================== */
-
-
-    @DeleteMapping(value = ["delete/my-all{-view}"])
+    @DeleteMapping(value = ["my-all-by-section{-view}"])
     fun deleteMyAll(
             @PathVariable(value = "-view") view: String,
             @AuthenticationPrincipal authUser: UserDetails,
@@ -608,11 +541,7 @@ class TasksRestController(
                     )
             )
 
-
-    /** ============================== ONE ============================== */
-
-
-    @DeleteMapping(value = ["delete/one{-view}"])
+    @DeleteMapping(value = ["one{-view}"])
     fun delete(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
@@ -661,11 +590,7 @@ class TasksRestController(
                     )
             )
 
-
-    /** ============================== ALL ============================== */
-
-
-    @GetMapping(value = ["delete/all{-view}"])
+    @GetMapping(value = ["all{-view}"])
     fun deleteAll(
             @PathVariable(value = "-view") view: String,
             @RequestParam(

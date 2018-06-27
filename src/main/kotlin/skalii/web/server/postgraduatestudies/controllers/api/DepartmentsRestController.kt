@@ -36,18 +36,10 @@ class DepartmentsRestController(
 ) {
 
 
-    /**
-     *
-     *      GET / SELECT
-     *      requests
-     *
-     */
+    /** ============================== GET requests ============================== */
 
 
-    /** ============================== MY ============================== */
-
-
-    @GetMapping(value = ["get/my{-view}"])
+    @GetMapping(value = ["my{-view}"])
     fun getMy(
             @PathVariable(value = "-view") view: String,
             @AuthenticationPrincipal authUser: UserDetails
@@ -61,11 +53,7 @@ class DepartmentsRestController(
                     )
             )
 
-
-    /** ============================== ONE ============================== */
-
-
-    @GetMapping(value = ["get/one{-view}"])
+    @GetMapping(value = ["one{-view}"])
     fun getOne(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
@@ -83,13 +71,7 @@ class DepartmentsRestController(
                     )
             )
 
-
-    /** ============================== ONE
-     *                                 BY
-     *                                 USER ============================== */
-
-
-    @GetMapping(value = ["get/one-by-user{-view}"])
+    @GetMapping(value = ["one-by-user{-view}"])
     fun getOneByUser(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
@@ -113,11 +95,7 @@ class DepartmentsRestController(
                     )
             )
 
-
-    /** ============================== ALL ============================== */
-
-
-    @GetMapping(value = ["get/all{-view}"])
+    @GetMapping(value = ["all{-view}"])
     fun getAll(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
@@ -150,18 +128,10 @@ class DepartmentsRestController(
             )
 
 
-    /**
-     *
-     *      ADD / INSERT INTO
-     *      requests
-     *
-     */
+    /** ============================== POST requests ============================== */
 
 
-    /** ============================== ONE ============================== */
-
-
-    @PostMapping(value = ["post/add{-view}"])
+    @PostMapping(value = ["one{-view}"])
     fun add(
             @PathVariable(value = "-view") view: String,
             @RequestBody department: Department,
@@ -192,18 +162,10 @@ class DepartmentsRestController(
             )
 
 
-    /**
-     *
-     *      SET / UPDATE
-     *      requests
-     *
-     */
+    /** ============================== PUT requests ============================== */
 
 
-    /** ============================== ONE ============================== */
-
-
-    @PutMapping(value = ["put/set{-view}"])
+    @PutMapping(value = ["one{-view}"])
     fun set(
             @PathVariable(value = "-view") view: String,
             @RequestBody newDepartment: Department,
@@ -250,18 +212,10 @@ class DepartmentsRestController(
             }
 
 
-    /**
-     *
-     *      DELETE
-     *      requests
-     *
-     */
+    /** ============================== DELETE requests ============================== */
 
 
-    /** ============================== ONE ============================== */
-
-
-    @DeleteMapping(value = ["delete/one{-view}"])
+    @DeleteMapping(value = ["one{-view}"])
     fun delete(
             @PathVariable(value = "-view") view: String,
             @RequestParam(

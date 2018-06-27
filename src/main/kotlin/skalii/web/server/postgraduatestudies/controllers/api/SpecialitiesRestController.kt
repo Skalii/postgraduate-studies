@@ -34,18 +34,10 @@ class SpecialitiesRestController(
 ) {
 
 
-    /**
-     *
-     *      GET / SELECT
-     *      requests
-     *
-     */
+    /** ============================== GET requests ============================== */
 
 
-    /** ============================== MY ============================== */
-
-
-    @GetMapping(value = ["get/my{-view}"])
+    @GetMapping(value = ["my{-view}"])
     fun getMy(
             @PathVariable(value = "-view") view: String,
             @AuthenticationPrincipal authUser: UserDetails
@@ -59,11 +51,7 @@ class SpecialitiesRestController(
                     )
             )
 
-
-    /** ============================== ONE ============================== */
-
-
-    @GetMapping(value = ["get/one{-view}"])
+    @GetMapping(value = ["one{-view}"])
     fun getOne(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
@@ -85,13 +73,7 @@ class SpecialitiesRestController(
                     )
             )
 
-
-    /** ============================== ONE
-     *                                 BY
-     *                                 USER ============================== */
-
-
-    @GetMapping(value = ["get/one-by-user{-view}"])
+    @GetMapping(value = ["one-by-user{-view}"])
     fun getOneByUser(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
@@ -115,11 +97,7 @@ class SpecialitiesRestController(
                     )
             )
 
-
-    /** ============================== ALL ============================== */
-
-
-    @GetMapping(value = ["get/all{-view}"])
+    @GetMapping(value = ["all{-view}"])
     fun getAll(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
@@ -147,18 +125,10 @@ class SpecialitiesRestController(
             )
 
 
-    /**
-     *
-     *      ADD / INSERT INTO
-     *      requests
-     *
-     */
+    /** ============================== POST requests ============================== */
 
 
-    /** ============================== ONE ============================== */
-
-
-    @PostMapping(value = ["post/add{-view}"])
+    @PostMapping(value = ["one{-view}"])
     fun add(
             @PathVariable(value = "-view") view: String,
             @RequestBody speciality: Speciality,
@@ -185,18 +155,10 @@ class SpecialitiesRestController(
             )
 
 
-    /**
-     *
-     *      SET / UPDATE
-     *      requests
-     *
-     */
+    /** ============================== PUT requests ============================== */
 
 
-    /** ============================== ONE ============================== */
-
-
-    @PutMapping(value = ["put/set{-view}"])
+    @PutMapping(value = ["one{-view}"])
     fun set(
             @PathVariable(value = "-view") view: String,
             @RequestBody newSpeciality: Speciality,
@@ -239,18 +201,10 @@ class SpecialitiesRestController(
             }
 
 
-    /**
-     *
-     *      DELETE
-     *      requests
-     *
-     */
+    /** ============================== DELETE requests ============================== */
 
 
-    /** ============================== ONE ============================== */
-
-
-    @DeleteMapping(value = ["delete/one{-view}"])
+    @DeleteMapping(value = ["one{-view}"])
     fun deleteUI(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
@@ -272,13 +226,7 @@ class SpecialitiesRestController(
                     )
             )
 
-
-    /** ============================== ALL
-     *                                 BY
-     *                                 BRANCH ============================== */
-
-
-    @DeleteMapping(value = ["delete/all-by-branch{-view}"])
+    @DeleteMapping(value = ["all-by-branch{-view}"])
     fun deleteAllByBranchUI(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
