@@ -590,7 +590,7 @@ class TasksRestController(
                     )
             )
 
-    @GetMapping(value = ["all{-view}"])
+    @GetMapping(value = ["all-by-section{-view}"])
     fun deleteAll(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
