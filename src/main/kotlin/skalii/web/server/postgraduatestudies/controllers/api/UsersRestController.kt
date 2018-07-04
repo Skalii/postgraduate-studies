@@ -15,15 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 import skalii.web.server.postgraduatestudies.entities.User
-import skalii.web.server.postgraduatestudies.repositories.BranchesRepository
-import skalii.web.server.postgraduatestudies.repositories.ContactInfoRepository
-import skalii.web.server.postgraduatestudies.repositories.DegreesRepository
-import skalii.web.server.postgraduatestudies.repositories.DepartmentsRepository
-import skalii.web.server.postgraduatestudies.repositories.FacultiesRepository
-import skalii.web.server.postgraduatestudies.repositories.InstitutesRepository
-import skalii.web.server.postgraduatestudies.repositories.ScientificLinksRepository
-import skalii.web.server.postgraduatestudies.repositories.SpecialitiesRepository
-import skalii.web.server.postgraduatestudies.repositories.UsersRepository
+import skalii.web.server.postgraduatestudies.entities.enums.UserRole
+import skalii.web.server.postgraduatestudies.repositories.*
 import skalii.web.server.postgraduatestudies.views.Json
 
 
@@ -40,7 +33,8 @@ class UsersRestController(
         var facultiesRepository: FacultiesRepository,
         var institutesRepository: InstitutesRepository,
         var scientificLinksRepository: ScientificLinksRepository,
-        var specialitiesRepository: SpecialitiesRepository
+        var specialitiesRepository: SpecialitiesRepository,
+        var studyInfoRepository: StudyInfoRepository
 ) {
 
 
@@ -91,11 +85,11 @@ class UsersRestController(
     fun get(
             @PathVariable("-view") view: String,
             @RequestParam(
-                    value = "phone_number",
-                    required = false) phoneNumber: String?,
-            @RequestParam(
                     value = "email",
                     required = false) email: String?,
+            @RequestParam(
+                    value = "phone_number",
+                    required = false) phoneNumber: String?,
             @RequestParam(
                     value = "id_user",
                     required = false) idUser: Int?
@@ -196,94 +190,49 @@ class UsersRestController(
     @PostMapping(value = ["one{-view}"])
     fun add(
             @PathVariable("-view") view: String,
-            @RequestBody user: User,
-            @RequestParam(
-                    value = "degree_name",
-                    required = false) degreeName: String?,
-            @RequestParam(
-                    value = "degree_branch",
-                    required = false) degreeBranch: String?,
-            @RequestParam(
-                    value = "id_degree",
-                    required = false) idDegree: Int?,
-            @RequestParam(
-                    value = "speciality_number",
-                    required = false) specialityNumber: String?,
-            @RequestParam(
-                    value = "speciality_name",
-                    required = false) specialityName: String?,
-            @RequestParam(
-                    value = "id_speciality",
-                    required = false) idSpeciality: Int?,
-            @RequestParam(
-                    value = "department_name",
-                    required = false) departmentName: String?,
-            @RequestParam(
-                    value = "id_department",
-                    required = false) idDepartment: Int?,
-            @RequestParam(
-                    value = "phone_number",
-                    required = false) phoneNumber: String?,
-            @RequestParam(
-                    value = "email",
-                    required = false) email: String?,
-            @RequestParam(
-                    value = "id_contact_info",
-                    required = false) idContactInfo: Int?,
-            @RequestParam(
-                    value = "id_study_info",
-                    required = false) idStudyInfo: Int?,
-            @RequestParam(
-                    value = "orcid",
-                    required = false) orcid: String?,
-            @RequestParam(
-                    value = "researcherid",
-                    required = false) researcherid: String?,
-            @RequestParam(
-                    value = "google_scholar_id",
-                    required = false) googleScholarId: String?,
-            @RequestParam(
-                    value = "scopus_author_id",
-                    required = false) scopusAuthorId: String?,
-            @RequestParam(
-                    value = "id_scientific_links",
-                    required = false) idScientificLinks: Int?
+            @RequestBody newUser: User
     ) =
             Json.getUser(
                     view,
                     usersRepository.add(
-                            user.role.value,
-                            user.hash,
-                            user.fullNameUa,
-                            user.fullNameEn,
-                            user.birthday.toString(),
-                            user.familyStatus?.value,
-                            user.children,
-                            user.academicRank?.value,
-                            idDegree ?: degreesRepository.get(
-                                    degreeName,
-                                    degreeBranch
-                            ).idDegree,
-                            idSpeciality ?: specialitiesRepository.get(
-                                    specialityNumber,
-                                    specialityName
-                            ).idSpeciality,
-                            idDepartment ?: departmentsRepository.get(
-                                    departmentName
-                            ).idDepartment,
-                            idContactInfo ?: contactInfoRepository.get(
-                                    email,
-                                    phoneNumber
-                            ).idContactInfo,
-                            idStudyInfo,
-                            idScientificLinks ?: scientificLinksRepository.get(
-                                    orcid,
-                                    researcherid,
-                                    googleScholarId,
-                                    scopusAuthorId
-                            ).idScientificLinks
+                            "Керівник"/*newUser.role.value*/,
+                            "instructor2",
+                            "Керівник 2"/*newUser.fullNameUa*/,
+                            "Instructor 2"/*newUser.fullNameEn*/,
+                            /*newUser.birthday.toString()*/"1990-10-10",
+                            null/*newUser.familyStatus?.value*/,
+                            null/*newUser.children*/,
+                            null/*newUser.academicRank?.value*/,
+                            1/*newUser.degree?.idDegree*/,
+                            2/*newUser.speciality.idSpeciality*/,
+                            41/*newUser.department.idDepartment*/,
+                            1/*contactInfoRepository.add(
+                                    newUser.contactInfo.email,
+                                    newUser.contactInfo.phoneNumber,
+                                    newUser.contactInfo.address
+                            ).idContactInfo*/,
+                            1/*if (newUser.role == UserRole.GRADUATE_STUDENT
+                                    || newUser.role == UserRole.DOCTORAL_STUDENT) {
+                                try {
+                                    studyInfoRepository.add(
+                                            newUser.studyInfo!!.year,
+                                            newUser.studyInfo!!.form.value,
+                                            newUser.studyInfo!!.basis.value,
+                                            newUser.studyInfo!!.themeTitle,
+                                            newUser.studyInfo!!.instructor.idUser
+                                    ).idStudyInfo
+                                } catch (e: NullPointerException) {
+                                    null
+                                }
+                            } else null*/,
+                            1/*scientificLinksRepository.add(
+                                    newUser.scientificLinks.orcid,
+                                    newUser.scientificLinks.researcherid,
+                                    newUser.scientificLinks.googleScholarId,
+                                    newUser.scientificLinks.scopusAuthorId
+                            ).idScientificLinks*/
                     )
-            )
+            ).also { println(it) }
 
 
     /** ============================== PUT requests ============================== */
@@ -330,11 +279,11 @@ class UsersRestController(
             @PathVariable("-view") view: String,
             @RequestBody newUser: User,
             @RequestParam(
-                    value = "phone_number",
-                    required = false) phoneNumber: String?,
-            @RequestParam(
                     value = "email",
                     required = false) email: String?,
+            @RequestParam(
+                    value = "phone_number",
+                    required = false) phoneNumber: String?,
             @RequestParam(
                     value = "id_user",
                     required = false) _idUser: Int?
@@ -381,22 +330,30 @@ class UsersRestController(
     fun delete(
             @PathVariable("-view") view: String,
             @RequestParam(
-                    value = "phone_number",
-                    required = false) phoneNumber: String?,
-            @RequestParam(
                     value = "email",
                     required = false) email: String?,
+            @RequestParam(
+                    value = "phone_number",
+                    required = false) phoneNumber: String?,
             @RequestParam(
                     value = "id_user",
                     required = false) idUser: Int?
     ) =
             Json.getUser(
                     view,
-                    usersRepository.delete(
-                            email,
-                            phoneNumber,
-                            idUser
-                    )
+                    usersRepository.run {
+
+                        val oldUser = get(email, phoneNumber, idUser)
+
+                        return@run delete(
+                                idUser = oldUser.idUser
+                        ).also {
+                            it.contactInfo = oldUser.contactInfo
+                            it.studyInfo = oldUser.studyInfo
+                            it.scientificLinks = oldUser.scientificLinks
+                        }
+
+                    }
             )
 
 }

@@ -94,7 +94,7 @@ data class StudyInfo(
             foreignKey = ForeignKey(name = "study_info_instructors_fkey"))
     @JsonIgnoreProperties(value = ["study_info", "students", "sections"])
     @get:JsonProperty(value = "instructor")
-    @JsonView(View.STUDENT_TREE::class)
+    @JsonView(View.STUDENT::class)
     @ManyToOne(
             targetEntity = User::class,
             fetch = LAZY,

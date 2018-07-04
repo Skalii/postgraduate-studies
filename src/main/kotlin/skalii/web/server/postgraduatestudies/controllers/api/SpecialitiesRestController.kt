@@ -230,10 +230,10 @@ class SpecialitiesRestController(
     fun deleteAllByBranchUI(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
-                    value = "number",
+                    value = "branch_number",
                     required = false) number: String?,
             @RequestParam(
-                    value = "name",
+                    value = "branch_name",
                     required = false) name: String?,
             @RequestParam(
                     value = "id_branch",

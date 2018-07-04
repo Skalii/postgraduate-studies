@@ -73,7 +73,7 @@ interface UsersRepository : JpaRepository<User, Int> {
                           cast_text(:hash),
                           cast_text(:full_name_ua),
                           cast_text(:full_name_en),
-                          :birthday,
+                          cast(:birthday as date),
                           cast_family(:family_status),
                           cast_int(:children),
                           cast_rank(:academic_rank),
