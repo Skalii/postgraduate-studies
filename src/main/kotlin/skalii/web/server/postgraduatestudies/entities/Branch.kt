@@ -63,7 +63,7 @@ data class Branch(
         @JsonView(REST::class)
         @NotNull
         @Size(max = 30)
-        val number: String = "Невідомий шифр",
+        val number: String = "",
 
         @Column(name = "name",
                 nullable = false,
@@ -72,7 +72,7 @@ data class Branch(
         @JsonView(REST::class)
         @NotNull
         @Size(max = 200)
-        val name: String = "Невідома галузь"
+        val name: String = ""
 
 ) {
 
@@ -88,8 +88,8 @@ data class Branch(
 
     constructor() : this(
             0,
-            "Невідомий шифр",
-            "Невідома галузь"
+            "",
+            ""
     )
 
 }

@@ -62,12 +62,18 @@ interface ContactInfoRepository : JpaRepository<ContactInfo, Int> {
                           cast_text(:#{#contact_info.phoneNumber}),
                           cast_text(:#{#contact_info.email}),
                           cast_text(:#{#contact_info.address}),
-                          cast_int(:id_contact_info)
+                          cast_int(:id_contact_info),
+                          cast_int(:id_user),
+                          cast_text(:phone_number),
+                          cast_text(:email)
                       )).*""",
             nativeQuery = true)
     fun set(
             @Param("contact_info") newContactInfo: ContactInfo,
-            @Param("id_contact_info") idContactInfo: Int
+            @Param("email") email: String? = null,
+            @Param("phone_number") phoneNumber: String? = null,
+            @Param("id_user") idUser: Int? = null,
+            @Param("id_contact_info") idContactInfo: Int? = null
     ): ContactInfo
 
 

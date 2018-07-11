@@ -80,9 +80,18 @@ interface UsersRepository : JpaRepository<User, Int> {
                           cast_int(:id_degree),
                           cast_int(:id_speciality),
                           cast_int(:id_department),
-                          cast_int(:id_contact_info),
-                          cast_int(:id_study_info),
-                          cast_int(:id_scientific_links)
+                          cast_text(:email),
+                          cast_text(:phone_number),
+                          cast_text(:address),
+                          cast_text(:orcid),
+                          cast_text(:researcherid),
+                          cast_text(:google_scholar_id),
+                          cast_text(:scopus_author_id),
+                          cast_int(:year),
+                          cast_form(:form),
+                          cast_basis(:basis),
+                          cast_text(:theme_title),
+                          cast_int(:id_instructor)
                       )).*""",
             nativeQuery = true)
     fun add(
@@ -97,9 +106,18 @@ interface UsersRepository : JpaRepository<User, Int> {
             @Param("id_degree") idDegree: Int?,
             @Param("id_speciality") idSpeciality: Int,
             @Param("id_department") idDepartment: Int,
-            @Param("id_contact_info") idContactInfo: Int,
-            @Param("id_study_info") idStudyInfo: Int?,
-            @Param("id_scientific_links") idScientificLinks: Int
+            @Param("email") email: String,
+            @Param("phone_number") phoneNumber: String,
+            @Param("address") address: String,
+            @Param("orcid") orcid: String,
+            @Param("researcherid") researcherid: String,
+            @Param("google_scholar_id") googleScholarId: String,
+            @Param("scopus_author_id") scopusAuthorId: String,
+            @Param("year") year: Int? = null,
+            @Param("form") form: String? = null,
+            @Param("basis") basis: String? = null,
+            @Param("theme_title") themeTitle: String? = null,
+            @Param("id_instructor") idInstructor: Int? = null
     ): User
 
 
@@ -109,7 +127,7 @@ interface UsersRepository : JpaRepository<User, Int> {
     //language=PostgresPLSQL
     @Query(value = """select (user_update(
                           cast_role(:#{#user.role.value}),
-                          cast_text(:#{#user.hash}),
+                          cast_text(:_password),
                           cast_text(:#{#user.fullNameUa}),
                           cast_text(:#{#user.fullNameEn}),
                           cast(:#{#user.birthday.toString()} as date),
@@ -127,6 +145,7 @@ interface UsersRepository : JpaRepository<User, Int> {
             nativeQuery = true)
     fun set(
             @Param("user") newUser: User,
+            @Param("_password") newPassword: String? = null,
             @Param("email") email: String? = null,
             @Param("phone_number") phoneNumber: String? = null,
             @Param("id_user") idUser: Int? = null,
@@ -135,6 +154,7 @@ interface UsersRepository : JpaRepository<User, Int> {
 
     //language=PostgresPLSQL
     @Query(value = """select (user_update(
+                          new_hash => cast_text(:_password),
                           new_full_name_ua => cast_text(:#{#user.fullNameUa}),
                           new_full_name_en => cast_text(:#{#user.fullNameEn}),
                           new_birthday => cast(:#{#user.birthday.toString()} as date),
@@ -145,6 +165,7 @@ interface UsersRepository : JpaRepository<User, Int> {
             nativeQuery = true)
     fun setMe(
             @Param("user") newUser: User,
+            @Param("_password") newPassword: String? = null,
             @Param("email") email: String
     ): User
 
@@ -176,11 +197,3 @@ interface UsersRepository : JpaRepository<User, Int> {
     fun decrypt(@Param("id_user") idUser: Int): String?
 
 }
-
-
-//  todo fix setMe
-//  todo setMePassword
-//  todo set id_instructor to 0 for studies in study_info where instructor delete
-//  todo set id_instructor for studies in study_info
-//  todo create delete instructor
-//  todo statistics = user + count tasks done + count tasks not done

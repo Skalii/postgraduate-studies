@@ -94,7 +94,7 @@ data class StudyInfo(
             foreignKey = ForeignKey(name = "study_info_instructors_fkey"))
     @JsonIgnoreProperties(value = ["study_info", "students", "sections"])
     @get:JsonProperty(value = "instructor")
-    @JsonView(View.STUDENT::class)
+    @JsonView(View.STUDENT_TREE::class)
     @ManyToOne(
             targetEntity = User::class,
             fetch = LAZY,
@@ -103,7 +103,7 @@ data class StudyInfo(
 
     @JsonIgnoreProperties(value = ["study_info", "students", "sections"])
     @get:JsonProperty(value = "user")
-    @JsonView(View.TREE::class, View.INSTRUCTOR_TREE::class)
+    @JsonView(View.TREE::class, View.STUDENT_TREE::class, View.INSTRUCTOR_TREE::class)
     @OneToOne(
             targetEntity = User::class,
             fetch = LAZY,
@@ -146,8 +146,7 @@ data class StudyInfo(
                 year=$year,
                 form=${form.value},
                 basis=${basis.value},
-                themeTitle=$themeTitle,
-                instructor=$instructor
+                themeTitle=$themeTitle
                 )""".trimMargin()
 
 }

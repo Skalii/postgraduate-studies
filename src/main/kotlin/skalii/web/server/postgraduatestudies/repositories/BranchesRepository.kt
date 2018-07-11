@@ -11,9 +11,6 @@ import skalii.web.server.postgraduatestudies.entities.Speciality
 import skalii.web.server.postgraduatestudies.entities.User
 
 
-/**
- * Repository
- */
 @Repository
 interface BranchesRepository : JpaRepository<Branch, Int> {
 
@@ -72,12 +69,16 @@ interface BranchesRepository : JpaRepository<Branch, Int> {
     @Query(value = """select (branch_update(
                           cast_text(:#{#branch.number}),
                           cast_text(:#{#branch.name}),
-                          cast_int(:id_branch)
+                          cast_int(:id_branch),
+                          cast_text(:number),
+                          cast_text(:name)
                       )).*""",
             nativeQuery = true)
     fun set(
             @Param("branch") newBranch: Branch,
-            @Param("id_branch") idBranch: Int
+            @Param("number") number: String? = null,
+            @Param("name") name: String? = null,
+            @Param("id_branch") idBranch: Int? = null
     ): Branch
 
 

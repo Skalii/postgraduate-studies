@@ -104,24 +104,18 @@ class ContactInfoRestController(
             @RequestBody newContactInfo: ContactInfo,
             @AuthenticationPrincipal authUser: UserDetails
     ) =
-            contactInfoRepository.get(authUser.username).run {
-
-                contactInfoRepository.set(
-                        newContactInfo,
-                        idContactInfo
-                )
-
-                return@run Json.get(
-                        view,
-                        ContactInfo(
-                                idContactInfo,
-                                newContactInfo.phoneNumber,
-                                newContactInfo.email,
-                                newContactInfo.address,
-                                user
+            Json.get(
+                    view,
+                    contactInfoRepository.run {
+                        flush()
+                        set(
+                                newContactInfo,
+                                authUser.username
                         )
-                )
-            }
+                        flush()
+                        get(authUser.username)
+                    }
+            )
 
     @PutMapping(value = ["one{-view}"])
     fun set(
@@ -140,30 +134,20 @@ class ContactInfoRestController(
                     value = "id_contact_info",
                     required = false) _idContactInfo: Int?
     ) =
-            contactInfoRepository.get(
-                    email,
-                    phoneNumber,
-                    idUser,
-                    _idContactInfo
-            ).run {
-
-                contactInfoRepository.set(
-                        newContactInfo,
-                        idContactInfo
-                )
-
-                return@run Json.get(
-                        view,
-                        ContactInfo(
-                                idContactInfo,
-                                newContactInfo.phoneNumber,
-                                newContactInfo.email,
-                                newContactInfo.address,
-                                user
-                        )
-                )
-
-            }
+            Json.get(view,
+                    contactInfoRepository.run {
+                        flush()
+                        val foundId = set(
+                                newContactInfo,
+                                email,
+                                phoneNumber,
+                                idUser,
+                                _idContactInfo
+                        ).idContactInfo
+                        flush()
+                        get(idContactInfo = foundId)
+                    }
+            )
 
 
     /** ============================== DELETE requests ============================== */

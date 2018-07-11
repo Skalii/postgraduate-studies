@@ -163,27 +163,20 @@ class BranchesRestController(
                     value = "id_branch",
                     required = false) _idBranch: Int?
     ) =
-            branchesRepository.get(
-                    number,
-                    name,
-                    _idBranch
-            ).run {
-
-                branchesRepository.set(
-                        newBranch,
-                        idBranch
-                )
-
-                return@run Json.get(
-                        view,
-                        Branch(
-                                idBranch,
-                                newBranch.number,
-                                newBranch.name
-                        )
-                )
-
-            }
+            Json.get(
+                    view,
+                    branchesRepository.run {
+                        flush()
+                        val foundId = set(
+                                newBranch,
+                                number,
+                                name,
+                                _idBranch
+                        ).idBranch
+                        flush()
+                        get(idBranch = foundId)
+                    }
+            )
 
 
     /** ============================== DELETE requests ============================== */

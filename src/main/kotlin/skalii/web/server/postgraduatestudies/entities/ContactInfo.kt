@@ -78,7 +78,7 @@ data class ContactInfo(
         @JsonProperty(value = "address")
         @JsonView(View.REST::class)
         @Size(max = 200)
-        val address: String? = "Невідома адреса"
+        val address: String? = null
 
 ) {
 
@@ -96,14 +96,14 @@ data class ContactInfo(
             0,
             "",
             "",
-            "Невідома адреса"
+            null
     )
 
     constructor(
             idContactInfo: Int = 0,
             phoneNumber: String = "",
             email: String = "",
-            address: String? = "Невідома адреса",
+            address: String? = null,
             user: User = User()
     ) : this(
             idContactInfo,

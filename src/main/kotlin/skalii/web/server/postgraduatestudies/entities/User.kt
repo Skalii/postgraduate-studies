@@ -131,18 +131,18 @@ data class User(
         @Column(name = "family_status")
         @Convert(converter = FamilyStatus.Companion.EnumConverter::class)
         @get:JsonProperty(value = "family_status")
-        val familyStatus: FamilyStatus? = FamilyStatus.UNKNOWN,
+        val familyStatus: FamilyStatus? = null,
 
         @Column(name = "children")
         @get:JsonProperty(value = "children")
         @JsonView(REST::class)
-        val children: Int?,
+        val children: Int? = null,
 
         @Column(name = "academic_rank")
         @Convert(converter = AcademicRank.Companion.EnumConverter::class)
         @get:JsonProperty(value = "academic_rank")
         @JsonView(REST::class)
-        val academicRank: AcademicRank? = AcademicRank.UNKNOWN
+        val academicRank: AcademicRank? = null
 
 ) {
 
@@ -247,9 +247,9 @@ data class User(
             "Невідомий користувач",
             "Unknown User",
             Date(0),
-            FamilyStatus.UNKNOWN,
-            0,
-            AcademicRank.UNKNOWN
+            null,
+            null,
+            null
     )
 
     constructor(

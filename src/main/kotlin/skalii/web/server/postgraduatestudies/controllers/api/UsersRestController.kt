@@ -15,8 +15,14 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 import skalii.web.server.postgraduatestudies.entities.User
-import skalii.web.server.postgraduatestudies.entities.enums.UserRole
-import skalii.web.server.postgraduatestudies.repositories.*
+import skalii.web.server.postgraduatestudies.repositories.BranchesRepository
+import skalii.web.server.postgraduatestudies.repositories.ContactInfoRepository
+import skalii.web.server.postgraduatestudies.repositories.DegreesRepository
+import skalii.web.server.postgraduatestudies.repositories.DepartmentsRepository
+import skalii.web.server.postgraduatestudies.repositories.FacultiesRepository
+import skalii.web.server.postgraduatestudies.repositories.InstitutesRepository
+import skalii.web.server.postgraduatestudies.repositories.SpecialitiesRepository
+import skalii.web.server.postgraduatestudies.repositories.UsersRepository
 import skalii.web.server.postgraduatestudies.views.Json
 
 
@@ -32,9 +38,7 @@ class UsersRestController(
         val departmentsRepository: DepartmentsRepository,
         var facultiesRepository: FacultiesRepository,
         var institutesRepository: InstitutesRepository,
-        var scientificLinksRepository: ScientificLinksRepository,
-        var specialitiesRepository: SpecialitiesRepository,
-        var studyInfoRepository: StudyInfoRepository
+        var specialitiesRepository: SpecialitiesRepository
 ) {
 
 
@@ -190,47 +194,48 @@ class UsersRestController(
     @PostMapping(value = ["one{-view}"])
     fun add(
             @PathVariable("-view") view: String,
-            @RequestBody newUser: User
+            @RequestBody newUser: User,
+            @RequestParam(
+                    value = "instructor_email",
+                    required = false) email: String?,
+            @RequestParam(
+                    value = "instructor_phone",
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "instructor_id",
+                    required = false) idInstructor: Int?,
+            @RequestParam(
+                    value = "password") password: String
     ) =
             Json.getUser(
                     view,
                     usersRepository.add(
-                            "Керівник"/*newUser.role.value*/,
-                            "instructor2",
-                            "Керівник 2"/*newUser.fullNameUa*/,
-                            "Instructor 2"/*newUser.fullNameEn*/,
-                            /*newUser.birthday.toString()*/"1990-10-10",
-                            null/*newUser.familyStatus?.value*/,
-                            null/*newUser.children*/,
-                            null/*newUser.academicRank?.value*/,
-                            1/*newUser.degree?.idDegree*/,
-                            2/*newUser.speciality.idSpeciality*/,
-                            41/*newUser.department.idDepartment*/,
-                            1/*contactInfoRepository.add(
-                                    newUser.contactInfo.email,
-                                    newUser.contactInfo.phoneNumber,
-                                    newUser.contactInfo.address
-                            ).idContactInfo*/,
-                            1/*if (newUser.role == UserRole.GRADUATE_STUDENT
-                                    || newUser.role == UserRole.DOCTORAL_STUDENT) {
-                                try {
-                                    studyInfoRepository.add(
-                                            newUser.studyInfo!!.year,
-                                            newUser.studyInfo!!.form.value,
-                                            newUser.studyInfo!!.basis.value,
-                                            newUser.studyInfo!!.themeTitle,
-                                            newUser.studyInfo!!.instructor.idUser
-                                    ).idStudyInfo
-                                } catch (e: NullPointerException) {
-                                    null
-                                }
-                            } else null*/,
-                            1/*scientificLinksRepository.add(
-                                    newUser.scientificLinks.orcid,
-                                    newUser.scientificLinks.researcherid,
-                                    newUser.scientificLinks.googleScholarId,
-                                    newUser.scientificLinks.scopusAuthorId
-                            ).idScientificLinks*/
+                            newUser.role.value,
+                            password,
+                            newUser.fullNameUa,
+                            newUser.fullNameEn,
+                            newUser.birthday.toString(),
+                            newUser.familyStatus?.value,
+                            newUser.children,
+                            newUser.academicRank?.value,
+                            newUser.degree?.idDegree,
+                            newUser.speciality.idSpeciality,
+                            newUser.department.idDepartment,
+                            newUser.contactInfo.email,
+                            newUser.contactInfo.phoneNumber,
+                            newUser.contactInfo.address!!,
+                            newUser.scientificLinks.orcid!!,
+                            newUser.scientificLinks.researcherid!!,
+                            newUser.scientificLinks.googleScholarId!!,
+                            newUser.scientificLinks.scopusAuthorId!!,
+                            newUser.studyInfo!!.year,
+                            newUser.studyInfo!!.form.value,
+                            newUser.studyInfo!!.basis.value,
+                            newUser.studyInfo!!.themeTitle,
+                            idInstructor ?: usersRepository.get(
+                                    email,
+                                    phoneNumber
+                            ).idUser
                     )
             ).also { println(it) }
 
@@ -242,12 +247,16 @@ class UsersRestController(
     fun setMe(
             @PathVariable("-view") view: String,
             @RequestBody newUser: User,
-            @AuthenticationPrincipal authUser: UserDetails
+            @AuthenticationPrincipal authUser: UserDetails,
+            @RequestParam(
+                    value = "password",
+                    required = false) newPassword: String?
     ) =
             usersRepository.get(authUser.username).run {
 
                 usersRepository.setMe(
                         newUser,
+                        newPassword,
                         authUser.username
                 )
 
@@ -279,6 +288,9 @@ class UsersRestController(
             @PathVariable("-view") view: String,
             @RequestBody newUser: User,
             @RequestParam(
+                    value = "password",
+                    required = false) newPassword: String?,
+            @RequestParam(
                     value = "email",
                     required = false) email: String?,
             @RequestParam(
@@ -296,6 +308,7 @@ class UsersRestController(
 
                 usersRepository.set(
                         newUser,
+                        newPassword,
                         idUser = idUser
                 )
 
