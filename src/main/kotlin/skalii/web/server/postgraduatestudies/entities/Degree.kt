@@ -60,14 +60,14 @@ data class Degree(
         @Convert(converter = AcademicDegree.Companion.EnumConverter::class)
         @get:JsonProperty(value = "name")
         @NotNull
-        val name: AcademicDegree = AcademicDegree.UNKNOWN,
+        val name: AcademicDegree = AcademicDegree.EMPTY,
 
         @Column(name = "branch",
                 nullable = false)
         @Convert(converter = BranchOfScience.Companion.EnumConverter::class)
         @get:JsonProperty(value = "branch")
         @NotNull
-        val branch: BranchOfScience = BranchOfScience.UNKNOWN
+        val branch: BranchOfScience = BranchOfScience.EMPTY
 
 ) {
 

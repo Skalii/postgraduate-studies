@@ -152,27 +152,20 @@ class DegreesRestController(
                     value = "id_degree",
                     required = false) _idDegree: Int?
     ) =
-            degreesRepository.get(
-                    name,
-                    branch,
-                    _idDegree
-            ).run {
-
-                degreesRepository.set(
-                        newDegree,
-                        idDegree
-                )
-
-                return@run Json.get(
-                        view,
-                        Degree(
-                                idDegree,
-                                newDegree.name,
-                                newDegree.branch
-                        )
-                )
-
-            }
+            Json.get(
+                    view,
+                    degreesRepository.run {
+                        flush()
+                        val foundId = set(
+                                newDegree,
+                                name,
+                                branch,
+                                _idDegree
+                        ).idDegree
+                        flush()
+                        get(idDegree = foundId)
+                    }
+            )
 
 
     /** ============================== DELETE requests ============================== */

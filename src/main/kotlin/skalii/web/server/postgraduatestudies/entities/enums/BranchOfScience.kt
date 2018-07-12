@@ -9,6 +9,7 @@ import javax.persistence.Converter
 
 enum class BranchOfScience(@get:JsonValue val value: String) {
 
+    EMPTY(""),
     UNKNOWN("Невідома галузь науки"),
     ECONOMIC("економічних наук"),
     TECHNICAL("технічних наук"),

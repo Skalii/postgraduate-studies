@@ -9,6 +9,7 @@ import javax.persistence.Converter
 
 enum class AcademicDegree(@get:JsonValue val value: String) {
 
+    EMPTY(""),
     UNKNOWN("Невідомий вчений ступінь"),
     CANDIDATE("Кандидат"),
     DOCTOR("Доктор"),

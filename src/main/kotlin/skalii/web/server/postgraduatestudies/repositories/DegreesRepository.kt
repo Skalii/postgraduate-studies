@@ -71,12 +71,16 @@ interface DegreesRepository : JpaRepository<Degree, Int> {
     @Query(value = """select (degree_update(
                           cast_degree(:#{#degree.name.value}),
                           cast_branch(:#{#degree.branch.value}),
-                          cast_int(:id_degree)
+                          cast_int(:id_degree),
+                          cast_degree(:name),
+                          cast_branch(:branch)
                       )).*""",
             nativeQuery = true)
     fun set(
             @Param("degree") newDegree: Degree,
-            @Param("id_degree") idDegree: Int
+            @Param("name") name: String? = null,
+            @Param("branch") branch: String? = null,
+            @Param("id_degree") idDegree: Int? = null
     ): Degree
 
 
