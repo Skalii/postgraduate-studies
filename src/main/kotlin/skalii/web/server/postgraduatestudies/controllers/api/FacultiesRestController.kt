@@ -145,11 +145,11 @@ class FacultiesRestController(
     @PostMapping(value = ["one{-view}"])
     fun add(
             @PathVariable(value = "-view") view: String,
-            @RequestBody faculty: Faculty
+            @RequestBody newFaculty: Faculty
     ) =
             Json.get(
                     view,
-                    facultiesRepository.add(faculty.name)
+                    facultiesRepository.add(newFaculty.name)
             )
 
 
@@ -159,26 +159,21 @@ class FacultiesRestController(
     @PutMapping(value = ["one{-view}"])
     fun set(
             @PathVariable(value = "-view") view: String,
-            @RequestBody newFaculty: Faculty,
+            @RequestBody changedFaculty: Faculty,
             @RequestParam(
                     value = "name",
                     required = false) name: String?,
             @RequestParam(
                     value = "id_faculty",
-                    required = false) _idFaculty: Int?
+                    required = false) idFaculty: Int?
     ) =
             Json.get(
                     view,
-                    facultiesRepository.run {
-                        flush()
-                        val foundId = set(
-                                newFaculty,
-                                name,
-                                _idFaculty
-                        ).idFaculty
-                        flush()
-                        get(idFaculty = foundId)
-                    }
+                    facultiesRepository.set(
+                            changedFaculty,
+                            name,
+                            idFaculty
+                    )
             )
 
 

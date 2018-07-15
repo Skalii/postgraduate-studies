@@ -77,7 +77,7 @@ interface DegreesRepository : JpaRepository<Degree, Int> {
                       )).*""",
             nativeQuery = true)
     fun set(
-            @Param("degree") newDegree: Degree,
+            @Param("degree") changedDegree: Degree,
             @Param("name") name: String? = null,
             @Param("branch") branch: String? = null,
             @Param("id_degree") idDegree: Int? = null

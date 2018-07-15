@@ -64,12 +64,15 @@ interface StudyInfoRepository : JpaRepository<StudyInfo, Int> {
                           cast_basis(:#{#study_info.basis.value}),
                           cast_text(:#{#study_info.themeTitle}),
                           cast_int(:#{#study_info.instructor.idUser}),
-                          cast_int(:id_study_info)
+                          cast_int(:id_study_info),
+                          cast_int(:id_user)
                       )).*""",
             nativeQuery = true)
     fun set(
-            @Param("study_info") newStudyInfo: StudyInfo,
-            @Param("id_study_info") idStudyInfo: Int
+            @Param("study_info") changedStudyInfo: StudyInfo,
+            @Param("id_study_info") idStudyInfo: Int? = null,
+            @Param("id_user") idUser: Int? = null
+
     ): StudyInfo
 
 

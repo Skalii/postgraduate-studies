@@ -94,15 +94,15 @@ data class ContactInfo(
 
     constructor() : this(
             0,
-            "",
-            "",
+            "Невідомий номер телефону",
+            "Невідомий email",
             null
     )
 
     constructor(
             idContactInfo: Int = 0,
-            phoneNumber: String = "",
-            email: String = "",
+            phoneNumber: String = "Невідомий номер телефону",
+            email: String = "Невідомий email",
             address: String? = null,
             user: User = User()
     ) : this(

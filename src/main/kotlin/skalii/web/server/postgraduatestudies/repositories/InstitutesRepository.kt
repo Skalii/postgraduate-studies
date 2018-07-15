@@ -70,12 +70,14 @@ interface InstitutesRepository : JpaRepository<Institute, Int> {
                           cast_text(:#{#institute.name}),
                           cast_text(:#{#institute.namedAfter}),
                           cast_text(:#{#institute.abbreviation}),
-                          cast_int(:id_institute)
+                          cast_int(:id_institute),
+                          cast_text(:name)
                       )).*""",
             nativeQuery = true)
     fun set(
-            @Param("institute") newInstitute: Institute,
-            @Param("id_institute") idInstitute: Int
+            @Param("institute") changedInstitute: Institute,
+            @Param("name") name: String? = null,
+            @Param("id_institute") idInstitute: Int? = null
     ): Institute
 
 

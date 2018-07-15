@@ -60,7 +60,7 @@ data class Faculty(
         @JsonView(REST::class)
         @NotNull
         @Size(max = 200)
-        val name: String = "Невідомий факультет"
+        val name: String = ""
 
 ) {
 

@@ -83,14 +83,14 @@ class ContactInfoRestController(
     @PostMapping(value = ["one{-view}"])
     fun add(
             @PathVariable(value = "-view") view: String,
-            @RequestBody contactInfo: ContactInfo
+            @RequestBody newContactInfo: ContactInfo
     ) =
             Json.get(
                     view,
                     contactInfoRepository.add(
-                            contactInfo.phoneNumber,
-                            contactInfo.email,
-                            contactInfo.address
+                            newContactInfo.phoneNumber,
+                            newContactInfo.email,
+                            newContactInfo.address
                     )
             )
 
@@ -101,26 +101,21 @@ class ContactInfoRestController(
     @PutMapping(value = ["my{-view}"])
     fun setMy(
             @PathVariable(value = "-view") view: String,
-            @RequestBody newContactInfo: ContactInfo,
+            @RequestBody changedContactInfo: ContactInfo,
             @AuthenticationPrincipal authUser: UserDetails
     ) =
             Json.get(
                     view,
-                    contactInfoRepository.run {
-                        flush()
-                        set(
-                                newContactInfo,
-                                authUser.username
-                        )
-                        flush()
-                        get(authUser.username)
-                    }
+                    contactInfoRepository.set(
+                            changedContactInfo,
+                            authUser.username
+                    )
             )
 
     @PutMapping(value = ["one{-view}"])
     fun set(
             @PathVariable(value = "-view") view: String,
-            @RequestBody newContactInfo: ContactInfo,
+            @RequestBody changedContactInfo: ContactInfo,
             @RequestParam(
                     value = "email",
                     required = false) email: String?,
@@ -132,21 +127,16 @@ class ContactInfoRestController(
                     required = false) idUser: Int?,
             @RequestParam(
                     value = "id_contact_info",
-                    required = false) _idContactInfo: Int?
+                    required = false) idContactInfo: Int?
     ) =
             Json.get(view,
-                    contactInfoRepository.run {
-                        flush()
-                        val foundId = set(
-                                newContactInfo,
-                                email,
-                                phoneNumber,
-                                idUser,
-                                _idContactInfo
-                        ).idContactInfo
-                        flush()
-                        get(idContactInfo = foundId)
-                    }
+                    contactInfoRepository.set(
+                            changedContactInfo,
+                            email,
+                            phoneNumber,
+                            idUser,
+                            idContactInfo
+                    )
             )
 
 

@@ -135,14 +135,11 @@ class BranchesRestController(
     @PostMapping(value = ["one{-view}"])
     fun add(
             @PathVariable(value = "-view") view: String,
-            @RequestBody branch: Branch
+            @RequestBody newBranch: Branch
     ) =
             Json.get(
                     view,
-                    branchesRepository.add(
-                            branch.number,
-                            branch.name
-                    )
+                    branchesRepository.add(newBranch)
             )
 
 
@@ -152,7 +149,7 @@ class BranchesRestController(
     @PutMapping(value = ["one{-view}"])
     fun set(
             @PathVariable(value = "-view") view: String,
-            @RequestBody newBranch: Branch,
+            @RequestBody changedBranch: Branch,
             @RequestParam(
                     value = "number",
                     required = false) number: String?,
@@ -161,21 +158,16 @@ class BranchesRestController(
                     required = false) name: String?,
             @RequestParam(
                     value = "id_branch",
-                    required = false) _idBranch: Int?
+                    required = false) idBranch: Int?
     ) =
             Json.get(
                     view,
-                    branchesRepository.run {
-                        flush()
-                        val foundId = set(
-                                newBranch,
-                                number,
-                                name,
-                                _idBranch
-                        ).idBranch
-                        flush()
-                        get(idBranch = foundId)
-                    }
+                    branchesRepository.set(
+                            changedBranch,
+                            number,
+                            name,
+                            idBranch
+                    )
             )
 
 

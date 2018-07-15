@@ -72,12 +72,16 @@ interface SpecialitiesRepository : JpaRepository<Speciality, Int> {
                           cast_int(:#{#speciality.branch.idBranch}),
                           cast_text(:#{#speciality.number}),
                           cast_text(:#{#speciality.name}),
-                          cast_int(:id_speciality)
+                          cast_int(:id_speciality),
+                          cast_text(:number),
+                          cast_text(:name)
                       )).*""",
             nativeQuery = true)
     fun set(
-            @Param("speciality") newSpeciality: Speciality,
-            @Param("id_speciality") idSpeciality: Int
+            @Param("speciality") changedSpeciality: Speciality,
+            @Param("number") number: String? = null,
+            @Param("name") name: String? = null,
+            @Param("id_speciality") idSpeciality: Int? = null
     ): Speciality
 
 

@@ -69,12 +69,22 @@ interface ScientificLinksRepository : JpaRepository<ScientificLinks, Int> {
                           cast_text(:#{#scientific_links.researcherid}),
                           cast_text(:#{#scientific_links.googleScholarId}),
                           cast_text(:#{#scientific_links.scopusAuthorId}),
-                          cast_int(:id_scientific_links)
+                          cast_int(:id_scientific_links),
+                          cast_int(:id_user),
+                          cast_text(:orcid),
+                          cast_text(:researcherid),
+                          cast_text(:google_scholar_id),
+                          cast_text(:scopus_author_id)
                       )).*""",
             nativeQuery = true)
     fun set(
-            @Param("scientific_links") newScientificLinks: ScientificLinks,
-            @Param("id_scientific_links") idScientificLinks: Int
+            @Param("scientific_links") changedScientificLinks: ScientificLinks,
+            @Param("orcid") orcid: String? = null,
+            @Param("researcherid") researcherid: String? = null,
+            @Param("google_scholar_id") googleScholarId: String? = null,
+            @Param("scopus_author_id") scopusAuthorId: String? = null,
+            @Param("id_scientific_links") idScientificLinks: Int? = null,
+            @Param("id_user") idUser: Int? = null
     ): ScientificLinks
 
 

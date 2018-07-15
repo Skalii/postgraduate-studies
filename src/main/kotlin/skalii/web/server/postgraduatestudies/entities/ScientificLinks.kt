@@ -104,18 +104,18 @@ data class ScientificLinks(
 
     constructor() : this(
             0,
-            "",
-            "",
-            "",
-            ""
+            "Інформація відсутня",
+            "Інформація відсутня",
+            "Інформація відсутня",
+            "Інформація відсутня"
     )
 
     constructor(
             idScientificLinks: Int = 0,
-            orcid: String? = "",
-            researcherid: String? = "",
-            googleScholarId: String? = "",
-            scopusAuthorId: String? = "",
+            orcid: String? = "Інформація відсутня",
+            researcherid: String? = "Інформація відсутня",
+            googleScholarId: String? = "Інформація відсутня",
+            scopusAuthorId: String? = "Інформація відсутня",
             user: User = User()
     ) : this(
             idScientificLinks,

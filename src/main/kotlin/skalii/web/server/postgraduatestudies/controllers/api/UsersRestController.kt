@@ -195,22 +195,16 @@ class UsersRestController(
     fun add(
             @PathVariable("-view") view: String,
             @RequestBody newUser: User,
-            @RequestParam(
-                    value = "instructor_email",
-                    required = false) email: String?,
-            @RequestParam(
-                    value = "instructor_phone",
-                    required = false) phoneNumber: String?,
-            @RequestParam(
-                    value = "instructor_id",
-                    required = false) idInstructor: Int?,
-            @RequestParam(
-                    value = "password") password: String
+            @RequestParam(value = "password") password: String
     ) =
             Json.getUser(
                     view,
                     usersRepository.add(
-                            newUser.role.value,
+                            newUser.fixInitializedAdd(
+                                    degreesRepository,
+                                    specialitiesRepository,
+                                    departmentsRepository
+                            ).role.value,
                             password,
                             newUser.fullNameUa,
                             newUser.fullNameEn,
@@ -232,10 +226,7 @@ class UsersRestController(
                             newUser.studyInfo!!.form.value,
                             newUser.studyInfo!!.basis.value,
                             newUser.studyInfo!!.themeTitle,
-                            idInstructor ?: usersRepository.get(
-                                    email,
-                                    phoneNumber
-                            ).idUser
+                            newUser.studyInfo!!.instructor.idUser
                     )
             )
 
@@ -246,7 +237,7 @@ class UsersRestController(
     @PutMapping(value = ["me{-view}"])
     fun setMe(
             @PathVariable("-view") view: String,
-            @RequestBody newUser: User,
+            @RequestBody changedUser: User,
             @AuthenticationPrincipal authUser: UserDetails,
             @RequestParam(
                     value = "password",
@@ -255,7 +246,7 @@ class UsersRestController(
             usersRepository.get(authUser.username).run {
 
                 usersRepository.setMe(
-                        newUser,
+                        changedUser,
                         newPassword,
                         authUser.username
                 )
@@ -267,11 +258,11 @@ class UsersRestController(
                                 role,
                                 salt,
                                 hash,
-                                newUser.fullNameUa,
-                                newUser.fullNameEn,
-                                newUser.birthday,
-                                newUser.familyStatus,
-                                newUser.children,
+                                changedUser.fullNameUa,
+                                changedUser.fullNameEn,
+                                changedUser.birthday,
+                                changedUser.familyStatus,
+                                changedUser.children,
                                 academicRank,
                                 degree,
                                 speciality,
@@ -286,7 +277,7 @@ class UsersRestController(
     @PutMapping(value = ["one{-view}"])
     fun set(
             @PathVariable("-view") view: String,
-            @RequestBody newUser: User,
+            @RequestBody changedUser: User,
             @RequestParam(
                     value = "password",
                     required = false) newPassword: String?,
@@ -298,42 +289,23 @@ class UsersRestController(
                     required = false) phoneNumber: String?,
             @RequestParam(
                     value = "id_user",
-                    required = false) _idUser: Int?
+                    required = false) idUser: Int?
     ) =
-            usersRepository.get(
-                    email,
-                    phoneNumber,
-                    _idUser
-            ).run {
-
-                usersRepository.set(
-                        newUser,
-                        newPassword,
-                        idUser = idUser
-                )
-
-                return@run Json.get(
-                        view,
-                        User(
-                                idUser,
-                                role,
-                                newUser.salt,
-                                newUser.hash,
-                                newUser.fullNameUa,
-                                newUser.fullNameEn,
-                                newUser.birthday,
-                                newUser.familyStatus,
-                                newUser.children,
-                                academicRank,
-                                degree,
-                                speciality,
-                                department,
-                                contactInfo,
-                                studyInfo,
-                                scientificLinks
-                        )
-                )
-            }
+            Json.get(
+                    view,
+                    usersRepository.set(
+                            changedUser.fixInitializedSet(
+                                    usersRepository,
+                                    degreesRepository,
+                                    specialitiesRepository,
+                                    departmentsRepository
+                            ),
+                            newPassword,
+                            email,
+                            phoneNumber,
+                            idUser
+                    )
+            )
 
 
     /** ============================== DELETE requests ============================== */

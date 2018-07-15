@@ -4,6 +4,9 @@ package skalii.web.server.postgraduatestudies.entities
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonView
+import skalii.web.server.postgraduatestudies.repositories.DepartmentsRepository
+import skalii.web.server.postgraduatestudies.repositories.FacultiesRepository
+import skalii.web.server.postgraduatestudies.repositories.InstitutesRepository
 
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -64,7 +67,7 @@ data class Department(
         @JsonView(REST::class)
         @NotNull
         @Size(max = 200)
-        val name: String = "Невідома кафедра"
+        val name: String = ""
 
 ) {
 
@@ -80,7 +83,6 @@ data class Department(
             fetch = LAZY,
             optional = false)
     lateinit var institute: Institute
-
 
     @JoinColumn(
             name = "id_faculty",
@@ -121,6 +123,43 @@ data class Department(
     ) {
         this.institute = institute
         this.faculty = faculty
+    }
+
+
+    fun fixInitializedAdd(
+            institutesRepository: InstitutesRepository,
+            facultiesRepository: FacultiesRepository
+    ): Department {
+        if (this.institute.idInstitute == 0
+                && this.institute.name != "Невідомий інститут") {
+            this.institute = institutesRepository.get(this.institute.name)
+        }
+        if (this.faculty.idFaculty == 0
+                && this.faculty.name != "Невідомий факультет") {
+            this.faculty = facultiesRepository.get(this.faculty.name)
+        }
+        return this
+    }
+
+    fun fixInitializedSet(
+            departmentsRepository: DepartmentsRepository,
+            institutesRepository: InstitutesRepository,
+            facultiesRepository: FacultiesRepository
+    ): Department {
+        var foundDepartment: Department? = null
+        if (!this::institute.isInitialized) {
+            foundDepartment = departmentsRepository.get(this.name)
+            this.institute = foundDepartment.institute
+        }
+        if (!this::faculty.isInitialized) {
+            this.faculty = foundDepartment?.faculty
+                    ?: departmentsRepository.get(this.name).faculty
+        }
+        fixInitializedAdd(
+                institutesRepository,
+                facultiesRepository
+        )
+        return this
     }
 
 }

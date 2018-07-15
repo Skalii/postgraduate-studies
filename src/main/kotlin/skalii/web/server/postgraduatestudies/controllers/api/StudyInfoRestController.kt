@@ -90,32 +90,19 @@ class StudyInfoRestController(
     @PostMapping(value = ["one{-view}"])
     fun add(
             @PathVariable(value = "-view") view: String,
-            @RequestBody studyInfo: StudyInfo,
-            @RequestParam(
-                    value = "email",
-                    required = false) email: String?,
-            @RequestParam(
-                    value = "phone_number",
-                    required = false) phoneNumber: String?,
-            @RequestParam(
-                    value = "id_instructor",
-                    required = false) idUser: Int?
+            @RequestBody newStudyInfo: StudyInfo
     ) =
             Json.get(
                     view,
                     studyInfoRepository.add(
-                            studyInfo.year,
-                            studyInfo.form.value,
-                            studyInfo.basis.value,
-                            studyInfo.themeTitle,
-                            try {
-                                studyInfo.instructor.idUser
-                            } catch (e: Exception) {
-                                idUser ?: usersRepository.get(
-                                        email,
-                                        phoneNumber
-                                ).idUser
-                            }
+                            newStudyInfo.fixInitializedAdd(
+                                    usersRepository
+                            ).year,
+                            newStudyInfo.form.value,
+                            newStudyInfo.basis.value,
+                            newStudyInfo.themeTitle,
+                            newStudyInfo.instructor.idUser
+
                     )
             )
 
@@ -126,48 +113,29 @@ class StudyInfoRestController(
     @PutMapping(value = ["my{-view}"])
     fun setMy(
             @PathVariable(value = "-view") view: String,
-            @RequestBody newStudyInfo: StudyInfo,
+            @RequestBody changedStudyInfo: StudyInfo,
             @AuthenticationPrincipal authUser: UserDetails
     ) =
-            studyInfoRepository.get(
-                    idUser = usersRepository.get(
-                            authUser.username
-                    ).idUser
-            ).run {
-
-                try {
-                    newStudyInfo.instructor
-                } catch (e: Exception) {
-                    newStudyInfo.instructor = instructor
-                }
-
-                studyInfoRepository.set(
-                        newStudyInfo,
-                        idStudyInfo
-                )
-
-                return@run Json.get(
-                        view,
-                        StudyInfo(
-                                idStudyInfo,
-                                newStudyInfo.year,
-                                newStudyInfo.form,
-                                newStudyInfo.basis,
-                                newStudyInfo.themeTitle,
-                                instructor,
-                                user
-                        )
-                )
-
-            }
+            Json.get(
+                    view,
+                    studyInfoRepository.set(
+                            changedStudyInfo.fixInitializedSet(
+                                    studyInfoRepository,
+                                    usersRepository
+                            ),
+                            idUser = usersRepository.get(
+                                    authUser.username
+                            ).idUser
+                    )
+            )
 
     @PutMapping(value = ["one{-view}"])
     fun set(
             @PathVariable(value = "-view") view: String,
-            @RequestBody newStudyInfo: StudyInfo,
+            @RequestBody changedStudyInfo: StudyInfo,
             @RequestParam(
                     value = "id_study_info",
-                    required = false) _idStudyInfo: Int?,
+                    required = false) idStudyInfo: Int?,
             @RequestParam(
                     value = "email",
                     required = false) email: String?,
@@ -179,39 +147,20 @@ class StudyInfoRestController(
                     required = false) idUser: Int?
     ) =
 
-            studyInfoRepository.get(
-                    _idStudyInfo,
-                    idUser ?: usersRepository.get(
-                            email,
-                            phoneNumber
-                    ).idUser
-            ).run {
-
-                try {
-                    newStudyInfo.instructor
-                } catch (e: Exception) {
-                    newStudyInfo.instructor = instructor
-                }
-
-                studyInfoRepository.set(
-                        newStudyInfo,
-                        idStudyInfo
-                )
-
-                return@run Json.get(
-                        view,
-                        StudyInfo(
-                                idStudyInfo,
-                                newStudyInfo.year,
-                                newStudyInfo.form,
-                                newStudyInfo.basis,
-                                newStudyInfo.themeTitle,
-                                newStudyInfo.instructor,
-                                user
-                        )
-                )
-
-            }
+            Json.get(
+                    view,
+                    studyInfoRepository.set(
+                            changedStudyInfo.fixInitializedSet(
+                                    studyInfoRepository,
+                                    usersRepository
+                            ),
+                           idStudyInfo,
+                            idUser ?: usersRepository.get(
+                                    email,
+                                    phoneNumber
+                            ).idUser
+                    )
+            )
 
 
     /** ============================== DELETE requests ============================== */

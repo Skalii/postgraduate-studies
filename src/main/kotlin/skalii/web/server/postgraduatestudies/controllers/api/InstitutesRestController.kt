@@ -127,14 +127,14 @@ class InstitutesRestController(
     @PostMapping(value = ["one{-view}"])
     fun add(
             @PathVariable(value = "-view") view: String,
-            @RequestBody institute: Institute
+            @RequestBody newInstitute: Institute
     ) =
             Json.get(
                     view,
                     institutesRepository.add(
-                            institute.name,
-                            institute.namedAfter,
-                            institute.abbreviation
+                            newInstitute.name,
+                            newInstitute.namedAfter,
+                            newInstitute.abbreviation
                     )
             )
 
@@ -145,35 +145,22 @@ class InstitutesRestController(
     @PutMapping(value = ["one{-view}"])
     fun set(
             @PathVariable(value = "-view") view: String,
-            @RequestBody newInstitute: Institute,
+            @RequestBody changedInstitute: Institute,
             @RequestParam(
                     value = "name",
                     required = false) name: String?,
             @RequestParam(
                     value = "id_institute",
-                    required = false) _idInstitute: Int?
+                    required = false) idInstitute: Int?
     ) =
-            institutesRepository.get(
-                    name,
-                    _idInstitute
-            ).run {
-
-                institutesRepository.set(
-                        newInstitute,
-                        idInstitute
-                )
-
-                return@run Json.get(
-                        view,
-                        Institute(
-                                idInstitute,
-                                newInstitute.name,
-                                newInstitute.namedAfter,
-                                newInstitute.abbreviation
-                        )
-                )
-
-            }
+            Json.get(
+                    view,
+                    institutesRepository.set(
+                            changedInstitute,
+                            name,
+                            idInstitute
+                    )
+            )
 
 
     /** ============================== DELETE requests ============================== */

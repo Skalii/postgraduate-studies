@@ -138,21 +138,14 @@ class DepartmentsRestController(
     ) =
             Json.get(
                     view,
-                    departmentsRepository.run {
-                        newDepartment.also {
-                            if (it.institute.idInstitute == 0) {
-                                it.institute = institutesRepository.get(it.institute.name)
-                            }
-                            if (it.faculty.idFaculty == 0) {
-                                it.faculty = facultiesRepository.get(it.faculty.name)
-                            }
-                        }
-                        add(
-                                newDepartment.name,
-                                newDepartment.institute.idInstitute,
-                                newDepartment.faculty.idFaculty
-                        )
-                    }
+                    departmentsRepository.add(
+                            newDepartment.fixInitializedAdd(
+                                    institutesRepository,
+                                    facultiesRepository
+                            ).name,
+                            newDepartment.institute.idInstitute,
+                            newDepartment.faculty.idFaculty
+                    )
             )
 
 
@@ -162,43 +155,25 @@ class DepartmentsRestController(
     @PutMapping(value = ["one{-view}"])
     fun set(
             @PathVariable(value = "-view") view: String,
-            @RequestBody newDepartment: Department,
+            @RequestBody changedDepartment: Department,
             @RequestParam(
                     value = "name",
                     required = false) name: String?,
             @RequestParam(
                     value = "id_department",
-                    required = false) _idDepartment: Int?
+                    required = false) idDepartment: Int?
     ) =
             Json.get(
                     view,
-                    departmentsRepository.run {
-                        flush()
-                        try {
-                            newDepartment.institute
-                        } catch (e: Exception) {
-                            newDepartment.institute = get(
-                                    name,
-                                    _idDepartment
-                            ).institute
-                        }
-                        try {
-                            newDepartment.faculty
-                        } catch (e: Exception) {
-                            newDepartment.faculty = get(
-                                    name,
-                                    _idDepartment
-                            ).faculty
-                        }
-                        flush()
-                        val foundId = set(
-                                newDepartment,
-                                name,
-                                _idDepartment
-                        ).idDepartment
-                        flush()
-                        get(idDepartment = foundId)
-                    }
+                    departmentsRepository.set(
+                            changedDepartment.fixInitializedSet(
+                                    departmentsRepository,
+                                    institutesRepository,
+                                    facultiesRepository
+                            ),
+                            name,
+                            idDepartment
+                    )
             )
 
 

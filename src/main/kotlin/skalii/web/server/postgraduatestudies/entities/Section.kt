@@ -4,6 +4,8 @@ package skalii.web.server.postgraduatestudies.entities
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonView
+import skalii.web.server.postgraduatestudies.repositories.SectionsRepository
+import skalii.web.server.postgraduatestudies.repositories.UsersRepository
 
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -61,7 +63,7 @@ data class Section(
         @get:JsonProperty(value = "number")
         @JsonView(View.REST::class)
         @NotNull
-        val number: Int = 1,
+        val number: Int = 0,
 
         @Column(name = "title",
                 nullable = false,
@@ -70,7 +72,7 @@ data class Section(
         @JsonView(View.REST::class)
         @NotNull
         @Size(max = 200)
-        val title: String = "Новий розділ"
+        val title: String = ""
 
 ) {
 
@@ -114,6 +116,39 @@ data class Section(
             title
     ) {
         this.user = user
+    }
+
+
+    fun fixInitializedAdd(usersRepository: UsersRepository): Section {
+        if (this.user.idUser == 0) {
+            if (this.user.contactInfo.email != "Невідомий email") {
+                this.user = usersRepository.get(
+                        this.user.contactInfo.email
+                )
+            } else if (this.user.contactInfo.phoneNumber != "Невідомий номер телефону") {
+                this.user = usersRepository.get(
+                        phoneNumber = this.user.contactInfo.phoneNumber
+                )
+            }
+        }
+        return this
+    }
+
+    fun fixInitializedSet(
+            sectionsRepository: SectionsRepository,
+            usersRepository: UsersRepository
+    ): Section {
+        if (!this::user.isInitialized) {
+            this.user = sectionsRepository.get(
+                    usersRepository.get(
+                            this.idSection
+                    ).idUser,
+                    this.number,
+                    this.title
+            ).user
+        }
+        fixInitializedAdd(usersRepository)
+        return this
     }
 
 }

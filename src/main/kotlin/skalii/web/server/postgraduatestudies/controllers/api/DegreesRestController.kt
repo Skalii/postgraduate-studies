@@ -124,13 +124,13 @@ class DegreesRestController(
     @PostMapping(value = ["one{-view}"])
     fun add(
             @PathVariable(value = "-view") view: String,
-            @RequestBody degree: Degree
+            @RequestBody newDegree: Degree
     ) =
             Json.get(
                     view,
                     degreesRepository.add(
-                            degree.name.value,
-                            degree.branch.value
+                            newDegree.name.value,
+                            newDegree.branch.value
                     )
             )
 
@@ -141,7 +141,7 @@ class DegreesRestController(
     @PutMapping(value = ["one{-view}"])
     fun set(
             @PathVariable(value = "-view") view: String,
-            @RequestBody newDegree: Degree,
+            @RequestBody changedDegree: Degree,
             @RequestParam(
                     value = "name",
                     required = false) name: String?,
@@ -150,21 +150,16 @@ class DegreesRestController(
                     required = false) branch: String?,
             @RequestParam(
                     value = "id_degree",
-                    required = false) _idDegree: Int?
+                    required = false) idDegree: Int?
     ) =
             Json.get(
                     view,
-                    degreesRepository.run {
-                        flush()
-                        val foundId = set(
-                                newDegree,
-                                name,
-                                branch,
-                                _idDegree
-                        ).idDegree
-                        flush()
-                        get(idDegree = foundId)
-                    }
+                    degreesRepository.set(
+                            changedDegree,
+                            name,
+                            branch,
+                            idDegree
+                    )
             )
 
 

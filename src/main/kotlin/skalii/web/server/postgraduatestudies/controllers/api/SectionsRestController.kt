@@ -155,7 +155,7 @@ class SectionsRestController(
     @PostMapping(value = ["my{-view}"])
     fun addMy(
             @PathVariable(value = "-view") view: String,
-            @RequestBody section: Section,
+            @RequestBody newSection: Section,
             @AuthenticationPrincipal authUser: UserDetails
     ) =
             Json.get(
@@ -164,34 +164,24 @@ class SectionsRestController(
                             usersRepository.get(
                                     authUser.username
                             ).idUser,
-                            section.number,
-                            section.title
+                            newSection.number,
+                            newSection.title
                     )
             )
 
     @PostMapping(value = ["one{-view}"])
     fun add(
             @PathVariable(value = "-view") view: String,
-            @RequestBody section: Section,
-            @RequestParam(
-                    value = "email",
-                    required = false) email: String?,
-            @RequestParam(
-                    value = "phone_number",
-                    required = false) phoneNumber: String?,
-            @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?
+            @RequestBody newSection: Section
     ) =
             Json.get(
                     view,
                     sectionsRepository.add(
-                            idUser ?: usersRepository.get(
-                                    email,
-                                    phoneNumber
-                            ).idUser,
-                            section.number,
-                            section.title
+                            newSection.fixInitializedAdd(
+                                    usersRepository
+                            ).user.idUser,
+                            newSection.number,
+                            newSection.title
                     )
             )
 
@@ -202,94 +192,53 @@ class SectionsRestController(
     @PutMapping(value = ["my{-view}"])
     fun setMy(
             @PathVariable(value = "-view") view: String,
-            @RequestBody newSection: Section,
+            @RequestBody changedSection: Section,
             @AuthenticationPrincipal authUser: UserDetails,
             @RequestParam(
                     value = "number",
-                    required = false) _number: Int?,
+                    required = false) number: Int?,
             @RequestParam(
                     value = "title",
                     required = false) title: String?
     ) =
-            sectionsRepository.get(
-                    usersRepository.get(
-                            authUser.username
-                    ).idUser,
-                    _number,
-                    title
-            ).run {
-
-                sectionsRepository.set(
-                        newSection,
-                        idSection
-                )
-
-                return@run Json.get(
-                        view,
-                        Section(
-                                idSection,
-                                if (newSection.number == 1) number
-                                else newSection.number,
-                                newSection.title,
-                                user
-                        )
-                )
-
-            }
+            Json.get(
+                    view,
+                    sectionsRepository.get(
+                            usersRepository.get(
+                                    authUser.username
+                            ).idUser,
+                            number,
+                            title
+                    )
+            )
 
     @PutMapping(value = ["one{-view}"])
     fun set(
             @PathVariable(value = "-view") view: String,
-            @RequestBody newSection: Section,
-            @RequestParam(
-                    value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
-                    value = "email",
-                    required = false) email: String?,
-            @RequestParam(
-                    value = "phone_number",
-                    required = false) phoneNumber: String?,
+            @RequestBody changedSection: Section,
             @RequestParam(
                     value = "number",
-                    required = false) _number: Int?,
+                    required = false) number: Int?,
             @RequestParam(
                     value = "title",
-                    required = false) _title: String?,
+                    required = false) title: String?,
             @RequestParam(
                     value = "id_section",
-                    required = false) _idSection: Int?
+                    required = false) idSection: Int?
     ) =
-            sectionsRepository.get(
-                    idUser ?: usersRepository.get(
-                            email,
-                            phoneNumber
-                    ).idUser,
-                    _number,
-                    _title,
-                    _idSection
-            ).run {
-
-                sectionsRepository.set(
-                        newSection,
-                        user.idUser,
-                        number,
-                        title,
-                        idSection
-                )
-
-                return@run Json.get(
-                        view,
-                        Section(
-                                idSection,
-                                if (newSection.number == 1) number
-                                else newSection.number,
-                                newSection.title,
-                                user
-                        )
-                )
-
-            }
+            Json.get(
+                    view,
+                    sectionsRepository.set(
+                            changedSection.fixInitializedSet(
+                                    sectionsRepository,
+                                    usersRepository
+                            ),
+                            changedSection.user.idUser,
+                            number,
+                            title,
+                            idSection
+                    )
+            )
 
 
     /** ============================== DELETE requests ============================== */

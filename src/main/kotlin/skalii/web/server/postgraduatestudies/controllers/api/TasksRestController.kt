@@ -216,31 +216,22 @@ class TasksRestController(
 
 
     @PostMapping(value = ["my{-view}"])
-    fun add(
+    fun addMy(
             @PathVariable(value = "-view") view: String,
             @AuthenticationPrincipal authUser: UserDetails,
-            @RequestParam(
-                    value = "section_number",
-                    required = false) sectionNumber: Int?,
-            @RequestParam(
-                    value = "section_title",
-                    required = false) sectionTitle: String?,
-            @RequestBody task: Task
+            @RequestBody newTask: Task
     ) =
             Json.get(
                     view,
                     tasksRepository.add(
-                            sectionsRepository.get(
-                                    usersRepository.get(
-                                            authUser.username
-                                    ).idUser,
-                                    sectionNumber,
-                                    sectionTitle
-                            ).idSection,
-                            task.title,
-                            task.balkline.toString(),
-                            task.deadline.toString(),
-                            task.link
+                            newTask.fixInitializedAdd(
+                                    sectionsRepository,
+                                    usersRepository
+                            ).section.idSection,
+                            newTask.title,
+                            newTask.balkline.toString(),
+                            newTask.deadline.toString(),
+                            newTask.link
                     )
             )
 
@@ -251,72 +242,39 @@ class TasksRestController(
     @PutMapping(value = ["my{-view}"])
     fun setMy(
             @PathVariable(value = "-view") view: String,
-            @RequestBody newTask: Task,
+            @RequestBody changedTask: Task,
             @AuthenticationPrincipal authUser: UserDetails,
             @RequestParam(
-                    value = "section_number",
-                    required = false) sectionNumber: Int?,
+                    value = "number",
+                    required = false) number: Int?,
             @RequestParam(
-                    value = "section_title",
-                    required = false) sectionTitle: String?,
-            @RequestParam(
-                    value = "task_number",
-                    required = false) taskNumber: Int?,
-            @RequestParam(
-                    value = "task_title",
-                    required = false) taskTitle: String?,
+                    value = "title",
+                    required = false) title: String?,
             @RequestParam(
                     value = "id_task",
                     required = false) idTask: Int?
     ) =
-            usersRepository.get(authUser.username).run {
+            Json.get(
+                    view,
+                    tasksRepository.set(
+                            changedTask.fixInitializedSet(
+                                    tasksRepository,
+                                    sectionsRepository,
+                                    usersRepository
+                            ),
+                            changedTask.section,
+                            changedTask.section.user.idUser,
+                            number,
+                            title,
+                            idTask
+                    )
 
-                val task =
-                        tasksRepository.set(
-                                newTask,
-                                sectionsRepository.get(
-                                        idUser,
-                                        sectionNumber,
-                                        sectionTitle
-                                ),
-                                idUser,
-                                taskNumber,
-                                taskTitle,
-                                idTask
-                        )
-
-                return@run Json.get(
-                        view,
-                        Task(
-                                task.idTask,
-                                if (newTask.number == 1) task.number
-                                else newTask.number,
-                                if (newTask.title == "Нове завдання") task.title
-                                else newTask.title,
-                                if (newTask.balkline == Date.from(Instant.now())) task.balkline
-                                else newTask.balkline,
-                                if (newTask.deadline == Date.from(Instant.now()).also { it.time = it.time + 2592000000 }) task.deadline
-                                else newTask.deadline,
-                                if (newTask.markDoneUser == false) task.markDoneUser
-                                else newTask.markDoneUser,
-                                if (newTask.markDoneInstructor == false) task.markDoneInstructor
-                                else newTask.markDoneInstructor,
-                                if (newTask.link == "Невідоме посилання") task.link
-                                else newTask.link,
-                                if (newTask.timestampDoneUser == null) task.timestampDoneUser
-                                else newTask.timestampDoneUser,
-                                if (newTask.timestampDoneInstructor == null) task.timestampDoneInstructor
-                                else newTask.timestampDoneInstructor,
-                                sectionsRepository.get(task)
-                        )
-                )
-
-            }
+            )
 
     @PutMapping(value = ["mark-instructor{-view}"])
     fun setMarkInstructor(
             @PathVariable(value = "-view") view: String,
-            @RequestBody task: Task,
+            @RequestBody changedTask: Task,
             @AuthenticationPrincipal authUser: UserDetails,
             @RequestParam(
                     value = "email",
@@ -339,7 +297,7 @@ class TasksRestController(
     ) =
             Json.get(
                     view,
-                    task.run {
+                    changedTask.run {
 
                         var thisIdTask = 0
 
@@ -409,77 +367,33 @@ class TasksRestController(
     @PutMapping(value = ["one{-view}"])
     fun set(
             @PathVariable(value = "-view") view: String,
-            @RequestBody newTask: Task,
+            @RequestBody changedTask: Task,
             @RequestParam(
-                    value = "section_number",
-                    required = false) sectionNumber: Int?,
+                    value = "number",
+                    required = false) number: Int?,
             @RequestParam(
-                    value = "section_title",
-                    required = false) sectionTitle: String?,
-            @RequestParam(
-                    value = "id_section",
-                    required = false) idSection: Int?,
-            @RequestParam(
-                    value = "email",
-                    required = false) email: String?,
-            @RequestParam(
-                    value = "phone_number",
-                    required = false) phoneNumber: String?,
-            @RequestParam(
-                    value = "id_user",
-                    required = false) _idUser: Int?,
-            @RequestParam(
-                    value = "task_number",
-                    required = false) taskNumber: Int?,
-            @RequestParam(
-                    value = "task_title",
-                    required = false) taskTitle: String?,
+                    value = "title",
+                    required = false) title: String?,
             @RequestParam(
                     value = "id_task",
                     required = false) idTask: Int?
     ) =
-            usersRepository.get(
-                    email,
-                    phoneNumber,
-                    _idUser
-            ).run {
+            Json.get(
+                    view,
+                    tasksRepository.set(
+                            changedTask.fixInitializedSet(
+                                    tasksRepository,
+                                    sectionsRepository,
+                                    usersRepository
+                            ),
+                            changedTask.section,
+                            changedTask.section.user.idUser,
+                            number,
+                            title,
+                            idTask
+                    )
 
-                val task =
-                        tasksRepository.set(
-                                newTask,
-                                sectionsRepository.get(
-                                        idUser,
-                                        sectionNumber,
-                                        sectionTitle
-                                ),
-                                idUser,
-                                taskNumber,
-                                taskTitle,
-                                idTask
-                        )
-
-                return@run Json.get(
-                        view,
-                        Task(
-                                task.idTask,
-                                newTask.number,
-                                newTask.title,
-                                newTask.balkline,
-                                newTask.deadline,
-                                newTask.markDoneUser,
-                                newTask.markDoneInstructor,
-                                newTask.link,
-                                if (newTask.markDoneUser == false
-                                        || newTask.markDoneUser == null) null
-                                else Date.from(Instant.now()),
-                                if (newTask.markDoneInstructor == false
-                                        || newTask.markDoneInstructor == null) null
-                                else Date.from(Instant.now()),
-                                sectionsRepository.get(task)
-                        )
-                )
-
-            }
+            )
 
 
     /** ============================== DELETE requests ============================== */

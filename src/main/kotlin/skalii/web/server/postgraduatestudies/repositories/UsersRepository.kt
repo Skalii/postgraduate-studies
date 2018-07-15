@@ -144,7 +144,7 @@ interface UsersRepository : JpaRepository<User, Int> {
                       )).*""",
             nativeQuery = true)
     fun set(
-            @Param("user") newUser: User,
+            @Param("user") changedUser: User,
             @Param("_password") newPassword: String? = null,
             @Param("email") email: String? = null,
             @Param("phone_number") phoneNumber: String? = null,
@@ -164,7 +164,7 @@ interface UsersRepository : JpaRepository<User, Int> {
                       )).*""",
             nativeQuery = true)
     fun setMe(
-            @Param("user") newUser: User,
+            @Param("user") changedUser: User,
             @Param("_password") newPassword: String? = null,
             @Param("email") email: String
     ): User

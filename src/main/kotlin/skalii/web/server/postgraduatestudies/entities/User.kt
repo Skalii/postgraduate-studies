@@ -27,9 +27,11 @@ import javax.persistence.Table
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
-import skalii.web.server.postgraduatestudies.entities.enums.AcademicRank
-import skalii.web.server.postgraduatestudies.entities.enums.FamilyStatus
-import skalii.web.server.postgraduatestudies.entities.enums.UserRole
+import skalii.web.server.postgraduatestudies.entities.enums.*
+import skalii.web.server.postgraduatestudies.repositories.DegreesRepository
+import skalii.web.server.postgraduatestudies.repositories.DepartmentsRepository
+import skalii.web.server.postgraduatestudies.repositories.SpecialitiesRepository
+import skalii.web.server.postgraduatestudies.repositories.UsersRepository
 import skalii.web.server.postgraduatestudies.views.View.*
 
 
@@ -300,5 +302,74 @@ data class User(
                 children=$children,
                 academicRank=${academicRank?.value}
                 )""".trimMargin()
+
+
+    fun fixInitializedAdd(
+            degreesRepository: DegreesRepository,
+            specialitiesRepository: SpecialitiesRepository,
+            departmentsRepository: DepartmentsRepository
+    ): User {
+        if (this.degree != null
+                && this.degree!!.idDegree == 0
+                && (this.degree!!.name != AcademicDegree.UNKNOWN
+                        && this.degree!!.branch != BranchOfScience.UNKNOWN)) {
+            this.degree = degreesRepository.get(
+                    this.degree!!.name.value,
+                    this.degree!!.branch.value
+            )
+        }
+        if (this.speciality.idSpeciality == 0) {
+            if (this.speciality.number != "Невiдомий код") {
+                this.speciality = specialitiesRepository.get(
+                        this.speciality.number
+                )
+            } else if (this.speciality.name != "Невідома спеціальність") {
+                this.speciality = specialitiesRepository.get(
+                        name = this.speciality.name
+                )
+            }
+        }
+        if (this.department.idDepartment == 0
+                && this.department.name != "Невідома кафедра") {
+            this.department = departmentsRepository.get(this.department.name)
+        }
+        return this
+    }
+
+    fun fixInitializedSet(
+            usersRepository: UsersRepository,
+            degreesRepository: DegreesRepository,
+            specialitiesRepository: SpecialitiesRepository,
+            departmentsRepository: DepartmentsRepository
+    ): User {
+        var foundUser: User? = null
+        if (!this::contactInfo.isInitialized) {
+            foundUser = usersRepository.get(
+                    this.contactInfo.email,
+                    this.contactInfo.phoneNumber
+            )
+            this.contactInfo = foundUser.contactInfo
+        }
+        if (!this::speciality.isInitialized) {
+            this.speciality = foundUser?.speciality
+                    ?: usersRepository.get(
+                    this.contactInfo.email,
+                    this.contactInfo.phoneNumber
+            ).speciality
+        }
+        if (!this::department.isInitialized) {
+            this.department = foundUser?.department
+                    ?: usersRepository.get(
+                    this.contactInfo.email,
+                    this.contactInfo.phoneNumber
+            ).department
+        }
+        fixInitializedAdd(
+                degreesRepository,
+                specialitiesRepository,
+                departmentsRepository
+        )
+        return this
+    }
 
 }

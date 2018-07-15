@@ -78,7 +78,7 @@ interface SectionsRepository : JpaRepository<Section, Int> {
                       )).*""",
             nativeQuery = true)
     fun set(
-            @Param("section") newSection: Section,
+            @Param("section") changedSection: Section,
             @Param("id_user") idUser: Int? = null,
             @Param("number") number: Int? = null,
             @Param("title") title: String? = null,

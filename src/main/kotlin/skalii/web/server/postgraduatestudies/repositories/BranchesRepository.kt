@@ -52,14 +52,11 @@ interface BranchesRepository : JpaRepository<Branch, Int> {
 
     //language=PostgresPLSQL
     @Query(value = """select (branch_insert(
-                          cast_text(:number),
-                          cast_text(:name)
+                          cast_text(:#{#branch.number}),
+                          cast_text(:#{#branch.name})
                       )).*""",
             nativeQuery = true)
-    fun add(
-            @Param("number") number: String,
-            @Param("name") name: String
-    ): Branch
+    fun add(@Param("branch") newBranch: Branch): Branch
 
 
     /** ============================== SET / UPDATE ============================== */
@@ -75,7 +72,7 @@ interface BranchesRepository : JpaRepository<Branch, Int> {
                       )).*""",
             nativeQuery = true)
     fun set(
-            @Param("branch") newBranch: Branch,
+            @Param("branch") changedBranch: Branch,
             @Param("number") number: String? = null,
             @Param("name") name: String? = null,
             @Param("id_branch") idBranch: Int? = null

@@ -92,7 +92,7 @@ interface TasksRepository : JpaRepository<Task, Int> {
                       )).*""",
             nativeQuery = true)
     fun set(
-            @Param("task") newTask: Task?,
+            @Param("task") changedTask: Task?,
             @Param("section") section: Section? = Section(),
             @Param("id_user") idUser: Int? = null,
             @Param("task_number") number: Int? = null,

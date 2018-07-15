@@ -88,8 +88,8 @@ data class Branch(
 
     constructor() : this(
             0,
-            "",
-            ""
+            "Невідомий шифр",
+            "Невідома галузь"
     )
 
 }

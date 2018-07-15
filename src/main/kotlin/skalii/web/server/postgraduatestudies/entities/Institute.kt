@@ -60,7 +60,7 @@ data class Institute(
                 length = 200)
         @get:JsonProperty(value = "name")
         @JsonView(REST::class)
-        val name: String = "Невідомий інститут",
+        val name: String = "",
 
         @Column(name = "named_after",
                 length = 100)

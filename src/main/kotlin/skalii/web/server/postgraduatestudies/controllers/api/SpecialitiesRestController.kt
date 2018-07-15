@@ -131,26 +131,16 @@ class SpecialitiesRestController(
     @PostMapping(value = ["one{-view}"])
     fun add(
             @PathVariable(value = "-view") view: String,
-            @RequestBody speciality: Speciality,
-            @RequestParam(
-                    value = "branch_number",
-                    required = false) branchNumber: String?,
-            @RequestParam(
-                    value = "branch_name",
-                    required = false) branchName: String?,
-            @RequestParam(
-                    value = "id_branch",
-                    required = false) idBranch: Int?
+            @RequestBody newSpeciality: Speciality
     ) =
             Json.get(
                     view,
                     specialitiesRepository.add(
-                            speciality.number,
-                            speciality.name,
-                            idBranch ?: branchesRepository.get(
-                                    branchNumber,
-                                    branchName
-                            ).idBranch
+                            newSpeciality.fixInitializedAdd(
+                                    branchesRepository
+                            ).number,
+                            newSpeciality.name,
+                            newSpeciality.branch.idBranch
                     )
             )
 
@@ -161,7 +151,7 @@ class SpecialitiesRestController(
     @PutMapping(value = ["one{-view}"])
     fun set(
             @PathVariable(value = "-view") view: String,
-            @RequestBody newSpeciality: Speciality,
+            @RequestBody changedSpeciality: Speciality,
             @RequestParam(
                     value = "number",
                     required = false) number: String?,
@@ -170,42 +160,27 @@ class SpecialitiesRestController(
                     required = false) name: String?,
             @RequestParam(
                     value = "id_speciality",
-                    required = false) _idSpeciality: Int?
+                    required = false) idSpeciality: Int?
     ) =
-            specialitiesRepository.get(
-                    number,
-                    name,
-                    _idSpeciality
-            ).run {
-
-                try {
-                    newSpeciality.branch
-                } catch (e: Exception) {
-                    newSpeciality.branch = branch
-                }
-
-                specialitiesRepository.set(
-                        newSpeciality,
-                        idSpeciality
-                )
-
-                return@run Json.get(
-                        view,
-                        Speciality(
-                                idSpeciality,
-                                newSpeciality.number,
-                                newSpeciality.name,
-                                newSpeciality.branch
-                        )
-                )
-            }
+            Json.get(
+                    view,
+                    specialitiesRepository.set(
+                            changedSpeciality.fixInitializedSet(
+                                    specialitiesRepository,
+                                    branchesRepository
+                            ),
+                            number,
+                            name,
+                            idSpeciality
+                    )
+            )
 
 
     /** ============================== DELETE requests ============================== */
 
 
     @DeleteMapping(value = ["one{-view}"])
-    fun deleteUI(
+    fun delete(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
                     value = "number",
@@ -227,7 +202,7 @@ class SpecialitiesRestController(
             )
 
     @DeleteMapping(value = ["all-by-branch{-view}"])
-    fun deleteAllByBranchUI(
+    fun deleteAll(
             @PathVariable(value = "-view") view: String,
             @RequestParam(
                     value = "branch_number",

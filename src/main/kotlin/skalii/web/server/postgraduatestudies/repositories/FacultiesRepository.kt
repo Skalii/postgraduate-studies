@@ -71,7 +71,7 @@ interface FacultiesRepository : JpaRepository<Faculty, Int> {
                       )).*""",
             nativeQuery = true)
     fun set(
-            @Param("faculty") newFaculty: Faculty,
+            @Param("faculty") changedFaculty: Faculty,
             @Param("name") name: String? = null,
             @Param("id_faculty") idFaculty: Int? = null
     ): Faculty

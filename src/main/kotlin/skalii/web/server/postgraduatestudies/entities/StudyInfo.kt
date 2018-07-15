@@ -24,6 +24,8 @@ import javax.validation.constraints.Size
 
 import skalii.web.server.postgraduatestudies.entities.enums.StudyBasis
 import skalii.web.server.postgraduatestudies.entities.enums.StudyForm
+import skalii.web.server.postgraduatestudies.repositories.StudyInfoRepository
+import skalii.web.server.postgraduatestudies.repositories.UsersRepository
 import skalii.web.server.postgraduatestudies.views.View
 
 
@@ -60,7 +62,7 @@ data class StudyInfo(
         @get:JsonProperty(value = "year")
         @JsonView(View.REST::class)
         @NotNull
-        val year: Int = 1,
+        val year: Int = 0,
 
         @Column(name = "form",
                 nullable = false)
@@ -68,7 +70,7 @@ data class StudyInfo(
         @get:JsonProperty(value = "form")
         @JsonView(View.REST::class)
         @NotNull
-        val form: StudyForm = StudyForm.FULL_TIME,
+        val form: StudyForm = StudyForm.EMPTY,
 
         @Column(name = "basis",
                 nullable = false)
@@ -76,7 +78,7 @@ data class StudyInfo(
         @get:JsonProperty(value = "basis")
         @JsonView(View.REST::class)
         @NotNull
-        val basis: StudyBasis = StudyBasis.CONTRACT,
+        val basis: StudyBasis = StudyBasis.EMPTY,
 
         @Column(name = "theme_title",
                 nullable = false,
@@ -85,7 +87,7 @@ data class StudyInfo(
         @NotNull
         @Size(max = 200)
         @JsonView(View.REST::class)
-        val themeTitle: String = "Невідома тема роботи"
+        val themeTitle: String = ""
 
 ) {
 
@@ -121,7 +123,7 @@ data class StudyInfo(
     )
 
     constructor(
-            idStudyInfo: Int= 0,
+            idStudyInfo: Int = 0,
             year: Int = 1,
             form: StudyForm = StudyForm.FULL_TIME,
             basis: StudyBasis = StudyBasis.CONTRACT,
@@ -139,6 +141,25 @@ data class StudyInfo(
         this.user = user
     }
 
+
+    fun fixInitializedAdd(usersRepository: UsersRepository): StudyInfo {
+        if (this.instructor.idUser == 0
+                && this.instructor.contactInfo.email != "Невідомий email") {
+            this.instructor = usersRepository.get(this.instructor.contactInfo.email)
+        }
+        return this
+    }
+
+    fun fixInitializedSet(
+            studyInfoRepository: StudyInfoRepository,
+            usersRepository: UsersRepository
+    ): StudyInfo {
+        if (!this::instructor.isInitialized) {
+            this.instructor = studyInfoRepository.get(idUser = this.user?.idUser).instructor
+        }
+        fixInitializedAdd(usersRepository)
+        return this
+    }
 
     override fun toString() =
             """StudyInfo(

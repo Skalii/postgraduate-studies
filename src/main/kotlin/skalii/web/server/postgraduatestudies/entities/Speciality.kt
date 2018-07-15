@@ -4,6 +4,8 @@ package skalii.web.server.postgraduatestudies.entities
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonView
+import skalii.web.server.postgraduatestudies.repositories.BranchesRepository
+import skalii.web.server.postgraduatestudies.repositories.SpecialitiesRepository
 
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -67,7 +69,7 @@ data class Speciality(
         @JsonView(REST::class)
         @NotNull
         @Size(max = 30)
-        val number: String = "Невідомий код",
+        val number: String = "",
 
         @Column(name = "name",
                 nullable = false,
@@ -76,7 +78,7 @@ data class Speciality(
         @get:JsonProperty(value = "name")
         @NotNull
         @Size(max = 200)
-        val name: String = "Невідома спеціальність"
+        val name: String = ""
 
 ) {
 
@@ -120,6 +122,33 @@ data class Speciality(
             name
     ) {
         this.branch = branch
+    }
+
+
+    fun fixInitializedAdd(branchesRepository: BranchesRepository): Speciality {
+        if (this.branch.idBranch == 0) {
+            if (this.branch.number != "Невідомий шифр") {
+                this.branch = branchesRepository.get(this.branch.number)
+            } else if (this.branch.name != "Невідома галузь") {
+                this.branch = branchesRepository.get(name = this.branch.name)
+            }
+        }
+        return this
+    }
+
+    fun fixInitializedSet(
+            specialitiesRepository: SpecialitiesRepository,
+            branchesRepository: BranchesRepository
+    ): Speciality {
+        if (!this::branch.isInitialized) {
+            if (this.branch.number != "Невідомий шифр") {
+                this.branch = specialitiesRepository.get(this.number).branch
+            } else if (this.branch.name != "Невідома галузь") {
+                this.branch = specialitiesRepository.get(name = this.name).branch
+            }
+        }
+        fixInitializedAdd(branchesRepository)
+        return this
     }
 
 }

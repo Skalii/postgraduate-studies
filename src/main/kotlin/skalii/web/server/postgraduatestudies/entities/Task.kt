@@ -5,10 +5,11 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonView
+import skalii.web.server.postgraduatestudies.repositories.SectionsRepository
+import skalii.web.server.postgraduatestudies.repositories.TasksRepository
+import skalii.web.server.postgraduatestudies.repositories.UsersRepository
 
-import java.time.Clock
 import java.time.Instant
-import java.time.ZoneId
 import java.util.Date
 
 import javax.persistence.Column
@@ -188,6 +189,52 @@ data class Task(
             timestampDoneInstructor
     ) {
         this.section = section
+    }
+
+
+    fun fixInitializedAdd(
+            sectionsRepository: SectionsRepository,
+            usersRepository: UsersRepository
+    ): Task {
+        if (this.section.idSection == 0) {
+            if (this.section.user.idUser == 0) {
+                if (this.section.user.contactInfo.email != "Невідомий email") {
+                    this.section.user = usersRepository.get(
+                            this.section.user.contactInfo.email
+                    )
+                } else if (this.section.user.contactInfo.phoneNumber != "Невідомий номер телефону") {
+                    this.section.user = usersRepository.get(
+                            phoneNumber = this.section.user.contactInfo.phoneNumber
+                    )
+                }
+            }
+            this.section = sectionsRepository.get(
+                    this.section.user.idUser,
+                    this.section.number,
+                    this.section.title
+            )
+        }
+        return this
+    }
+
+    fun fixInitializedSet(
+            tasksRepository: TasksRepository,
+            sectionsRepository: SectionsRepository,
+            usersRepository: UsersRepository
+    ): Task {
+        if (!this::section.isInitialized) {
+            this.section = tasksRepository.get(
+                    idUser = usersRepository.get(
+                            this.section.user.contactInfo.email,
+                            this.section.user.contactInfo.phoneNumber
+                    ).idUser
+            ).section
+        }
+        fixInitializedAdd(
+                sectionsRepository,
+                usersRepository
+        )
+        return this
     }
 
 }

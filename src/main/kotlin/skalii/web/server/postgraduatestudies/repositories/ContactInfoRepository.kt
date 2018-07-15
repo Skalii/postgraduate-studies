@@ -69,7 +69,7 @@ interface ContactInfoRepository : JpaRepository<ContactInfo, Int> {
                       )).*""",
             nativeQuery = true)
     fun set(
-            @Param("contact_info") newContactInfo: ContactInfo,
+            @Param("contact_info") changedContactInfo: ContactInfo,
             @Param("email") email: String? = null,
             @Param("phone_number") phoneNumber: String? = null,
             @Param("id_user") idUser: Int? = null,
