@@ -9,6 +9,7 @@ import javax.persistence.Converter
 
 enum class StudyBasis(@get:JsonValue val value: String) {
 
+    EMPTY(""),
     UNKNOWN("Невідома основа навчання"),
     BUDGET("Бюджет"),
     CONTRACT("Контракт");

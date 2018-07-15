@@ -9,6 +9,7 @@ import javax.persistence.Converter
 
 enum class StudyForm(@get:JsonValue val value: String) {
 
+    EMPTY(""),
     UNKNOWN("Невідома форма навчання"),
     FULL_TIME("Денна"),
     EXTRAMURAL("Заочна");

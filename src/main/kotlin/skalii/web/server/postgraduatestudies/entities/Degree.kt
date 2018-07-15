@@ -83,8 +83,8 @@ data class Degree(
 
     constructor() : this(
             0,
-            AcademicDegree.UNKNOWN,
-            BranchOfScience.UNKNOWN
+            AcademicDegree.EMPTY,
+            BranchOfScience.EMPTY
     )
 
 

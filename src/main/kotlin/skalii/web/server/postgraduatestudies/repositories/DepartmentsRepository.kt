@@ -70,14 +70,26 @@ interface DepartmentsRepository : JpaRepository<Department, Int> {
     //language=PostgresPLSQL
     @Query(value = """select (department_update(
                           cast_text(:#{#department.name}),
-                          cast_int(:#{#department.institute.idInstitute}),
-                          cast_int(:#{#department.faculty.idFaculty}),
-                          cast_int(:id_department)
+                          cast_int(
+                            (select (institute_record(
+                                       :#{#department.institute.idInstitute},
+                                       :#{#department.institute.name}
+                                     )).id_institute)
+                            ),
+                          cast_int(
+                            (select (faculty_record(
+                                       :#{#department.faculty.idFaculty},
+                                       :#{#department.faculty.name}
+                                     )).id_faculty)
+                          ),
+                          cast_int(:id_department),
+                          cast_text(:name)
                       )).*""",
             nativeQuery = true)
     fun set(
             @Param("department") newDepartment: Department,
-            @Param("id_department") idDepartment: Int
+            @Param("name") name: String? = null,
+            @Param("id_department") idDepartment: Int? = null
     ): Department
 
 

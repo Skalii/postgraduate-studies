@@ -66,12 +66,14 @@ interface FacultiesRepository : JpaRepository<Faculty, Int> {
     //language=PostgresPLSQL
     @Query(value = """select (faculty_update(
                           cast_text(:#{#faculty.name}),
-                          cast_int(:id_faculty)
+                          cast_int(:id_faculty),
+                          cast_text(:name)
                       )).*""",
             nativeQuery = true)
     fun set(
             @Param("faculty") newFaculty: Faculty,
-            @Param("id_faculty") idFaculty: Int
+            @Param("name") name: String? = null,
+            @Param("id_faculty") idFaculty: Int? = null
     ): Faculty
 
 

@@ -237,7 +237,7 @@ class UsersRestController(
                                     phoneNumber
                             ).idUser
                     )
-            ).also { println(it) }
+            )
 
 
     /** ============================== PUT requests ============================== */

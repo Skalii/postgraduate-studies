@@ -167,24 +167,19 @@ class FacultiesRestController(
                     value = "id_faculty",
                     required = false) _idFaculty: Int?
     ) =
-            facultiesRepository.get(
-                    name,
-                    _idFaculty
-            ).run {
-
-                facultiesRepository.set(
-                        newFaculty,
-                        idFaculty
-                )
-
-                return@run Json.get(view,
-                        Faculty(
-                                idFaculty,
-                                newFaculty.name
-                        )
-                )
-
-            }
+            Json.get(
+                    view,
+                    facultiesRepository.run {
+                        flush()
+                        val foundId = set(
+                                newFaculty,
+                                name,
+                                _idFaculty
+                        ).idFaculty
+                        flush()
+                        get(idFaculty = foundId)
+                    }
+            )
 
 
     /** ============================== DELETE requests ============================== */

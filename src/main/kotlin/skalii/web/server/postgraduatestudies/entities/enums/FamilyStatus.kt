@@ -9,6 +9,7 @@ import javax.persistence.Converter
 
 enum class FamilyStatus(@get:JsonValue val value: String) {
 
+    EMPTY(""),
     UNKNOWN("Невідомий сімейний стан"),
     MARRIED_FEMALE("Заміжня"),
     MARRIED_MALE("Одружений"),

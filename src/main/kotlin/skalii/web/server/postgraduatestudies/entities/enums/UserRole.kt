@@ -9,6 +9,7 @@ import javax.persistence.Converter
 
 enum class UserRole(@get:JsonValue val value: String) {
 
+    EMPTY(""),
     UNKNOWN("Невідомий користувач"),
     ADMIN("Аспірантура"),
     GRADUATE_STUDENT("Аспірант"),

@@ -134,31 +134,25 @@ class DepartmentsRestController(
     @PostMapping(value = ["one{-view}"])
     fun add(
             @PathVariable(value = "-view") view: String,
-            @RequestBody department: Department,
-            @RequestParam(
-                    value = "institute_name",
-                    required = false) instituteName: String?,
-            @RequestParam(
-                    value = "id_institute",
-                    required = false) idInstitute: Int?,
-            @RequestParam(
-                    value = "faculty_name",
-                    required = false) facultyName: String?,
-            @RequestParam(
-                    value = "id_faculty",
-                    required = false) idFaculty: Int?
+            @RequestBody newDepartment: Department
     ) =
             Json.get(
                     view,
-                    departmentsRepository.add(
-                            department.name,
-                            idInstitute ?: institutesRepository.get(
-                                    instituteName
-                            ).idInstitute,
-                            idFaculty ?: facultiesRepository.get(
-                                    facultyName
-                            ).idFaculty
-                    )
+                    departmentsRepository.run {
+                        newDepartment.also {
+                            if (it.institute.idInstitute == 0) {
+                                it.institute = institutesRepository.get(it.institute.name)
+                            }
+                            if (it.faculty.idFaculty == 0) {
+                                it.faculty = facultiesRepository.get(it.faculty.name)
+                            }
+                        }
+                        add(
+                                newDepartment.name,
+                                newDepartment.institute.idInstitute,
+                                newDepartment.faculty.idFaculty
+                        )
+                    }
             )
 
 
@@ -176,40 +170,36 @@ class DepartmentsRestController(
                     value = "id_department",
                     required = false) _idDepartment: Int?
     ) =
-
-            departmentsRepository.get(
-                    name,
-                    _idDepartment
-            ).run {
-
-                try {
-                    newDepartment.institute
-                } catch (e: Exception) {
-                    newDepartment.institute = institute
-                }
-
-                try {
-                    newDepartment.faculty
-                } catch (e: Exception) {
-                    newDepartment.faculty = faculty
-                }
-
-                departmentsRepository.set(
-                        newDepartment,
-                        idDepartment
-                )
-
-                return@run Json.get(
-                        view,
-                        Department(
-                                idDepartment,
-                                newDepartment.name,
-                                newDepartment.institute,
-                                newDepartment.faculty
-                        )
-                )
-
-            }
+            Json.get(
+                    view,
+                    departmentsRepository.run {
+                        flush()
+                        try {
+                            newDepartment.institute
+                        } catch (e: Exception) {
+                            newDepartment.institute = get(
+                                    name,
+                                    _idDepartment
+                            ).institute
+                        }
+                        try {
+                            newDepartment.faculty
+                        } catch (e: Exception) {
+                            newDepartment.faculty = get(
+                                    name,
+                                    _idDepartment
+                            ).faculty
+                        }
+                        flush()
+                        val foundId = set(
+                                newDepartment,
+                                name,
+                                _idDepartment
+                        ).idDepartment
+                        flush()
+                        get(idDepartment = foundId)
+                    }
+            )
 
 
     /** ============================== DELETE requests ============================== */
