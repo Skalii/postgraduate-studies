@@ -88,8 +88,8 @@ class ContactInfoRestController(
             Json.get(
                     view,
                     contactInfoRepository.add(
-                            newContactInfo.phoneNumber,
                             newContactInfo.email,
+                            newContactInfo.phoneNumber,
                             newContactInfo.address
                     )
             )

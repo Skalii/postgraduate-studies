@@ -142,22 +142,10 @@ data class StudyInfo(
     }
 
 
-    fun fixInitializedAdd(usersRepository: UsersRepository): StudyInfo {
-        if (this.instructor.idUser == 0
-                && this.instructor.contactInfo.email != "Невідомий email") {
-            this.instructor = usersRepository.get(this.instructor.contactInfo.email)
-        }
-        return this
-    }
-
-    fun fixInitializedSet(
-            studyInfoRepository: StudyInfoRepository,
-            usersRepository: UsersRepository
-    ): StudyInfo {
+    fun fixInitializedSet(studyInfoRepository: StudyInfoRepository): StudyInfo {
         if (!this::instructor.isInitialized) {
             this.instructor = studyInfoRepository.get(idUser = this.user?.idUser).instructor
         }
-        fixInitializedAdd(usersRepository)
         return this
     }
 

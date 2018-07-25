@@ -90,19 +90,29 @@ class StudyInfoRestController(
     @PostMapping(value = ["one{-view}"])
     fun add(
             @PathVariable(value = "-view") view: String,
-            @RequestBody newStudyInfo: StudyInfo
+            @RequestBody newStudyInfo: StudyInfo,
+            @RequestParam(
+                    value = "instructor_email",
+                    required = false) email: String?,
+            @RequestParam(
+                    value = "instructor_phone",
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "id_instructor",
+                    required = false) idUser: Int?
     ) =
             Json.get(
                     view,
                     studyInfoRepository.add(
-                            newStudyInfo.fixInitializedAdd(
-                                    usersRepository
-                            ).year,
+                            newStudyInfo.year,
                             newStudyInfo.form.value,
                             newStudyInfo.basis.value,
                             newStudyInfo.themeTitle,
-                            newStudyInfo.instructor.idUser
-
+                            usersRepository.get(
+                                    email,
+                                    phoneNumber,
+                                    idUser
+                            ).idUser
                     )
             )
 
@@ -118,15 +128,38 @@ class StudyInfoRestController(
     ) =
             Json.get(
                     view,
-                    studyInfoRepository.set(
-                            changedStudyInfo.fixInitializedSet(
-                                    studyInfoRepository,
-                                    usersRepository
-                            ),
-                            idUser = usersRepository.get(
-                                    authUser.username
-                            ).idUser
-                    )
+                    studyInfoRepository.run {
+                        val found = set(
+                                changedStudyInfo.fixInitializedSet(studyInfoRepository),
+                                usersRepository.get(
+                                        authUser.username
+                                ).studyInfo?.idStudyInfo
+                        )
+                        StudyInfo(
+                                found.idStudyInfo,
+                                if (found.year != changedStudyInfo.year
+                                        && changedStudyInfo.year != 0)
+                                    changedStudyInfo.year
+                                else found.year,
+                                if (found.form != changedStudyInfo.form
+                                        && changedStudyInfo.form.value != "")
+                                    changedStudyInfo.form
+                                else found.form,
+                                if (found.basis != changedStudyInfo.basis
+                                        && changedStudyInfo.basis.value != "")
+                                    changedStudyInfo.basis
+                                else found.basis,
+                                if (found.themeTitle != changedStudyInfo.themeTitle
+                                        && changedStudyInfo.themeTitle != "")
+                                    changedStudyInfo.themeTitle
+                                else found.themeTitle,
+                                if (found.instructor != changedStudyInfo.instructor
+                                        && changedStudyInfo.instructor.idUser != 0)
+                                    changedStudyInfo.instructor
+                                else found.instructor,
+                                found.user
+                        )
+                    }
             )
 
     @PutMapping(value = ["one{-view}"])
@@ -150,11 +183,8 @@ class StudyInfoRestController(
             Json.get(
                     view,
                     studyInfoRepository.set(
-                            changedStudyInfo.fixInitializedSet(
-                                    studyInfoRepository,
-                                    usersRepository
-                            ),
-                           idStudyInfo,
+                            changedStudyInfo.fixInitializedSet(studyInfoRepository),
+                            idStudyInfo,
                             idUser ?: usersRepository.get(
                                     email,
                                     phoneNumber
