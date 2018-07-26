@@ -81,7 +81,7 @@ data class User(
         @Convert(converter = UserRole.Companion.EnumConverter::class)
         @get:JsonProperty(value = "role")
         @NotNull
-        val role: UserRole = UserRole.UNKNOWN,
+        val role: UserRole = UserRole.EMPTY,
 
         @Column(name = "salt",
                 length = 64,
@@ -133,7 +133,7 @@ data class User(
         @Column(name = "family_status")
         @Convert(converter = FamilyStatus.Companion.EnumConverter::class)
         @get:JsonProperty(value = "family_status")
-        val familyStatus: FamilyStatus? = null,
+        val familyStatus: FamilyStatus? = FamilyStatus.EMPTY,
 
         @Column(name = "children")
         @get:JsonProperty(value = "children")
@@ -144,7 +144,7 @@ data class User(
         @Convert(converter = AcademicRank.Companion.EnumConverter::class)
         @get:JsonProperty(value = "academic_rank")
         @JsonView(REST::class)
-        val academicRank: AcademicRank? = null
+        val academicRank: AcademicRank? = AcademicRank.EMPTY
 
 ) {
 
@@ -340,13 +340,23 @@ data class User(
             usersRepository: UsersRepository,
             degreesRepository: DegreesRepository,
             specialitiesRepository: SpecialitiesRepository,
-            departmentsRepository: DepartmentsRepository
+            departmentsRepository: DepartmentsRepository,
+            email: String? = null,
+            phoneNumber: String? = null
     ): User {
         var foundUser: User? = null
         if (!this::contactInfo.isInitialized) {
             foundUser = usersRepository.get(
-                    this.contactInfo.email,
-                    this.contactInfo.phoneNumber
+                    try {
+                        this.contactInfo.email
+                    } catch (e: Exception) {
+                        email
+                    },
+                    try {
+                        this.contactInfo.phoneNumber
+                    } catch (e: Exception) {
+                        phoneNumber
+                    }
             )
             this.contactInfo = foundUser.contactInfo
         }
@@ -363,6 +373,13 @@ data class User(
                     this.contactInfo.email,
                     this.contactInfo.phoneNumber
             ).department
+        }
+        if (this.degree?.idDegree == null) {
+            this.degree = foundUser?.degree
+                    ?: usersRepository.get(
+                    this.contactInfo.email,
+                    this.contactInfo.phoneNumber
+            ).degree
         }
         fixInitializedAdd(
                 degreesRepository,

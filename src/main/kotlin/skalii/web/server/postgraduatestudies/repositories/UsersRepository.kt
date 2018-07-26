@@ -127,7 +127,7 @@ interface UsersRepository : JpaRepository<User, Int> {
     //language=PostgresPLSQL
     @Query(value = """select (user_update(
                           cast_role(:#{#user.role.value}),
-                          cast_text(:_password),
+                          cast_text(:new_password),
                           cast_text(:#{#user.fullNameUa}),
                           cast_text(:#{#user.fullNameEn}),
                           cast(:#{#user.birthday.toString()} as date),
@@ -145,29 +145,13 @@ interface UsersRepository : JpaRepository<User, Int> {
             nativeQuery = true)
     fun set(
             @Param("user") changedUser: User,
-            @Param("_password") newPassword: String? = null,
+            @Param("new_password") newPassword: String? = null,
             @Param("email") email: String? = null,
             @Param("phone_number") phoneNumber: String? = null,
             @Param("id_user") idUser: Int? = null,
             @Param("id_contact_info") idContactInfo: Int? = null
     ): User
 
-    //language=PostgresPLSQL
-    @Query(value = """select (user_update(
-                          new_hash => cast_text(:_password),
-                          new_full_name_ua => cast_text(:#{#user.fullNameUa}),
-                          new_full_name_en => cast_text(:#{#user.fullNameEn}),
-                          new_birthday => cast(:#{#user.birthday.toString()} as date),
-                          new_family_status => cast_family(:#{#user.familyStatus.value}),
-                          new_children => cast_int(:#{#user.children}),
-                          _email => cast_text(:email)
-                      )).*""",
-            nativeQuery = true)
-    fun setMe(
-            @Param("user") changedUser: User,
-            @Param("_password") newPassword: String? = null,
-            @Param("email") email: String
-    ): User
 
     /** ============================== DELETE ============================== */
 

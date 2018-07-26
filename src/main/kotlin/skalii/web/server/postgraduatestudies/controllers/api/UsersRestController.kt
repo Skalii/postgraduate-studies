@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 import skalii.web.server.postgraduatestudies.entities.User
+import skalii.web.server.postgraduatestudies.entities.enums.UserRole
 import skalii.web.server.postgraduatestudies.repositories.BranchesRepository
 import skalii.web.server.postgraduatestudies.repositories.ContactInfoRepository
 import skalii.web.server.postgraduatestudies.repositories.DegreesRepository
@@ -222,11 +223,11 @@ class UsersRestController(
                             newUser.scientificLinks.researcherid!!,
                             newUser.scientificLinks.googleScholarId!!,
                             newUser.scientificLinks.scopusAuthorId!!,
-                            newUser.studyInfo!!.year,
-                            newUser.studyInfo!!.form.value,
-                            newUser.studyInfo!!.basis.value,
-                            newUser.studyInfo!!.themeTitle,
-                            newUser.studyInfo!!.instructor.idUser
+                            newUser.studyInfo?.year,
+                            newUser.studyInfo?.form?.value,
+                            newUser.studyInfo?.basis?.value,
+                            newUser.studyInfo?.themeTitle,
+                            newUser.studyInfo?.instructor?.idUser
                     )
             )
 
@@ -243,36 +244,66 @@ class UsersRestController(
                     value = "password",
                     required = false) newPassword: String?
     ) =
-            usersRepository.get(authUser.username).run {
-
-                usersRepository.setMe(
-                        changedUser,
-                        newPassword,
-                        authUser.username
-                )
-
-                return@run Json.get(
-                        view,
+            Json.get(
+                    view,
+                    usersRepository.run {
+                        val found = usersRepository.set(
+                                changedUser.fixInitializedSet(
+                                        usersRepository,
+                                        degreesRepository,
+                                        specialitiesRepository,
+                                        departmentsRepository,
+                                        authUser.username
+                                ),
+                                newPassword,
+                                authUser.username
+                        )
                         User(
-                                idUser,
-                                role,
-                                salt,
-                                hash,
+                                found.idUser,
+                                if (found.role == UserRole.ADMIN
+                                        && found.role != changedUser.role
+                                        && changedUser.role.value != "")
+                                    changedUser.role
+                                else found.role,
+                                found.salt,
+                                found.hash,
                                 changedUser.fullNameUa,
                                 changedUser.fullNameEn,
                                 changedUser.birthday,
-                                changedUser.familyStatus,
-                                changedUser.children,
-                                academicRank,
-                                degree,
-                                speciality,
-                                department,
-                                contactInfo,
-                                studyInfo,
-                                scientificLinks
+                                if (found.familyStatus != changedUser.familyStatus
+                                        && changedUser.familyStatus?.value != "")
+                                    changedUser.familyStatus
+                                else found.familyStatus,
+                                if (found.children != changedUser.children
+                                        && changedUser.children != 0)
+                                    changedUser.children
+                                else found.children,
+                                if (found.role == UserRole.ADMIN
+                                        && found.academicRank != changedUser.academicRank
+                                        && changedUser.academicRank?.value != "")
+                                    changedUser.academicRank
+                                else found.academicRank,
+                                if (found.role == UserRole.ADMIN
+                                        && found.degree != changedUser.degree
+                                        && changedUser.degree?.idDegree != 0)
+                                    changedUser.degree
+                                else found.degree,
+                                if (found.role == UserRole.ADMIN
+                                        && found.speciality != changedUser.speciality
+                                        && changedUser.speciality.idSpeciality != 0)
+                                    changedUser.speciality
+                                else found.speciality,
+                                if (found.role == UserRole.ADMIN
+                                        && found.department != changedUser.department
+                                        && changedUser.department.idDepartment != 0)
+                                    changedUser.department
+                                else found.department,
+                                found.contactInfo,
+                                found.studyInfo,
+                                found.scientificLinks
                         )
-                )
-            }
+                    }
+            )
 
     @PutMapping(value = ["one{-view}"])
     fun set(
@@ -289,22 +320,68 @@ class UsersRestController(
                     required = false) phoneNumber: String?,
             @RequestParam(
                     value = "id_user",
-                    required = false) idUser: Int?
+                    required = false) idUser: Int?,
+            @RequestParam(
+                    value = "id_contact_info",
+                    required = false) idContactInfo: Int?
     ) =
             Json.get(
                     view,
-                    usersRepository.set(
-                            changedUser.fixInitializedSet(
-                                    usersRepository,
-                                    degreesRepository,
-                                    specialitiesRepository,
-                                    departmentsRepository
-                            ),
-                            newPassword,
-                            email,
-                            phoneNumber,
-                            idUser
-                    )
+                    usersRepository.run {
+                        val found = usersRepository.set(
+                                changedUser.fixInitializedSet(
+                                        usersRepository,
+                                        degreesRepository,
+                                        specialitiesRepository,
+                                        departmentsRepository,
+                                        email,
+                                        phoneNumber
+                                ),
+                                newPassword,
+                                email,
+                                phoneNumber,
+                                idUser
+                        )
+                        User(
+                                found.idUser,
+                                if (found.role != changedUser.role
+                                        && changedUser.role.value != "")
+                                    changedUser.role
+                                else found.role,
+                                found.salt,
+                                found.hash,
+                                changedUser.fullNameUa,
+                                changedUser.fullNameEn,
+                                changedUser.birthday,
+                                if (found.familyStatus != changedUser.familyStatus
+                                        && changedUser.familyStatus?.value != "")
+                                    changedUser.familyStatus
+                                else found.familyStatus,
+                                if (found.children != changedUser.children
+                                        && changedUser.children != 0)
+                                    changedUser.children
+                                else found.children,
+                                if (found.academicRank != changedUser.academicRank
+                                        && changedUser.academicRank?.value != "")
+                                    changedUser.academicRank
+                                else found.academicRank,
+                                if (found.degree != changedUser.degree
+                                        && changedUser.degree?.idDegree != 0)
+                                    changedUser.degree
+                                else found.degree,
+                                if (found.speciality != changedUser.speciality
+                                        && changedUser.speciality.idSpeciality != 0)
+                                    changedUser.speciality
+                                else found.speciality,
+                                if (found.department != changedUser.department
+                                        && changedUser.department.idDepartment != 0)
+                                    changedUser.department
+                                else found.department,
+                                found.contactInfo,
+                                found.studyInfo,
+                                found.scientificLinks
+                        )
+                    }
             )
 
 
