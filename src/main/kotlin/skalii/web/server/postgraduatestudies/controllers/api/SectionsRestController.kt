@@ -172,12 +172,24 @@ class SectionsRestController(
     @PostMapping(value = ["one{-view}"])
     fun add(
             @PathVariable(value = "-view") view: String,
-            @RequestBody newSection: Section
+            @RequestBody newSection: Section,
+            @RequestParam(
+                    value = "email",
+                    required = false) email: String?,
+            @RequestParam(
+                    value = "phone_number",
+                    required = false) phoneNumber: String?,
+            @RequestParam(
+                    value = "id_user",
+                    required = false) idUser: Int?
     ) =
             Json.get(
                     view,
                     sectionsRepository.add(
-                            newSection.fixInitializedAdd(
+                            idUser ?: usersRepository.get(
+                                    email,
+                                    phoneNumber
+                            ).idUser ?: newSection.fixInitializedAdd(
                                     usersRepository
                             ).user.idUser,
                             newSection.number,
@@ -203,7 +215,11 @@ class SectionsRestController(
     ) =
             Json.get(
                     view,
-                    sectionsRepository.get(
+                    sectionsRepository.set(
+                            changedSection.fixInitializedSet(
+                                    sectionsRepository,
+                                    usersRepository
+                            ),
                             usersRepository.get(
                                     authUser.username
                             ).idUser,
