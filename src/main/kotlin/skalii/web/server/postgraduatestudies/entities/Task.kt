@@ -67,7 +67,7 @@ data class Task(
         @get:JsonProperty(value = "number")
         @JsonView(REST::class)
         @NotNull
-        val number: Int = 1,
+        val number: Int = 0,
 
         @Column(name = "title",
                 nullable = false,
@@ -76,30 +76,29 @@ data class Task(
         @JsonView(REST::class)
         @NotNull
         @Size(max = 500)
-        val title: String = "Нове завдання",
+        val title: String = "",
 
         @Column(name = "balkline",
                 nullable = false)
         @get:JsonFormat(
                 pattern = "yyyy-MM-dd HH:mm:ss",
                 shape = JsonFormat.Shape.STRING,
-                timezone = "Europe/Kiev") //todo set time zone
+                timezone = "Europe/Kiev")
         @get:JsonProperty(value = "balkline")
         @JsonView(REST::class)
         @NotNull
-        val balkline: Date = Date.from(Instant.now()),
+        val balkline: Date?,
 
         @Column(name = "deadline",
                 nullable = false)
         @get:JsonFormat(
                 pattern = "yyyy-MM-dd HH:mm:ss",
                 shape = JsonFormat.Shape.STRING,
-                timezone = "Europe/Kiev") //todo UTC
+                timezone = "Europe/Kiev")
         @get:JsonProperty(value = "deadline")
         @JsonView(REST::class)
         @NotNull
-        val deadline: Date = Date.from(Instant.now())
-                .also { it.time = it.time + 2592000000 },
+        val deadline: Date?,
 
         @Column(name = "mark_done_user")
         @get:JsonProperty(value = "mark_done_user")
@@ -109,14 +108,14 @@ data class Task(
         @Column(name = "mark_done_instructor")
         @get:JsonProperty(value = "mark_done_instructor")
         @JsonView(REST::class)
-        val markDoneInstructor: Boolean? = false,
+        val markDoneInstructor: Boolean?,
 
         @Column(name = "link",
                 length = 1000)
         @get:JsonProperty(value = "link")
         @JsonView(REST::class)
         @Size(max = 1000)
-        val link: String? = "Невідоме посилання",
+        val link: String? = "",
 
         @Column(name = "timestamp_done_user")
         @get:JsonFormat(
@@ -168,8 +167,8 @@ data class Task(
             idTask: Int = 0,
             number: Int = 1,
             title: String = "Нове завдання",
-            balkline: Date = Date.from(Instant.now()),
-            deadline: Date = Date.from(Instant.now()).also { it.time = it.time + 2592000000 },
+            balkline: Date? = Date.from(Instant.now()),
+            deadline: Date? = Date.from(Instant.now()).also { it.time = it.time + 2592000000 },
             markDoneUser: Boolean? = false,
             markDoneInstructor: Boolean? = false,
             link: String? = "Невідоме посилання",
@@ -194,8 +193,30 @@ data class Task(
 
     fun fixInitializedAdd(
             sectionsRepository: SectionsRepository,
-            usersRepository: UsersRepository
+            usersRepository: UsersRepository,
+            email: String? = null,
+            phoneNumber: String? = null,
+            idUser: Int? = null
     ): Task {
+
+        try {
+            section.user.idUser
+        } catch (e: Exception) {
+            if ((email != null
+                            && email != "Невідомий email")
+                    || (phoneNumber != null
+                            && phoneNumber != "Невідомий номер телефону")
+                    || (idUser != null
+                            && idUser != 0)) {
+                section.user =
+                        usersRepository.get(
+                                email,
+                                phoneNumber,
+                                idUser
+                        )
+            }
+        }
+
         if (this.section.idSection == 0) {
             if (this.section.user.idUser == 0) {
                 if (this.section.user.contactInfo.email != "Невідомий email") {
@@ -208,6 +229,7 @@ data class Task(
                     )
                 }
             }
+
             this.section = sectionsRepository.get(
                     this.section.user.idUser,
                     this.section.number,
@@ -220,19 +242,41 @@ data class Task(
     fun fixInitializedSet(
             tasksRepository: TasksRepository,
             sectionsRepository: SectionsRepository,
-            usersRepository: UsersRepository
+            usersRepository: UsersRepository,
+            email: String? = null,
+            phoneNumber: String? = null,
+            idUser: Int? = null,
+            user: User? = null
     ): Task {
+
         if (!this::section.isInitialized) {
             this.section = tasksRepository.get(
-                    idUser = usersRepository.get(
-                            this.section.user.contactInfo.email,
-                            this.section.user.contactInfo.phoneNumber
-                    ).idUser
+                    idUser = if (user != null
+                            && user.idUser != 0) {
+                        user.idUser
+                    } else {
+                        usersRepository.get(
+                                this.section.user.contactInfo.email,
+                                this.section.user.contactInfo.phoneNumber
+                        ).idUser
+                    }
             ).section
         }
+
+        if (user != null) {
+            try {
+                this.section.user
+            } catch (e: Exception) {
+                this.section.user = user
+            }
+        }
+
         fixInitializedAdd(
                 sectionsRepository,
-                usersRepository
+                usersRepository,
+                email,
+                phoneNumber,
+                idUser
         )
         return this
     }

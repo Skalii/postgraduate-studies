@@ -77,18 +77,16 @@ interface TasksRepository : JpaRepository<Task, Int> {
     @Query(value = """select (task_update(
                           cast_int(:#{#task.number}),
                           cast_text(:#{#task.title}),
-                          cast_ts(:#{#task.balkline.toInstant().toString()}),
-                          cast_ts(:#{#task.deadline.toInstant().toString()}),
-                          cast_bool(:#{#task.markDoneUser}),
-                          cast_bool(:#{#task.markDoneInstructor}),
-                          cast_text(:#{#task.link}),
-                          cast_int(:id_task),
-                          cast_int(:#{#section.idSection}),
-                          cast_int(:id_user),
-                          cast_int(:task_number),
-                          cast_text(:task_title),
-                          cast_int(:#{#section.number}),
-                          cast_text(:#{#section.title})
+                          cast(cast(:#{#task.balkline} as character varying) as timestamp with time zone),
+                          cast(cast(:#{#task.deadline} as character varying) as timestamp with time zone),
+                          new_link => cast_text(:#{#task.link}),
+                          _id_task => cast_int(:id_task),
+                          _id_section => cast_int(:#{#section.idSection}),
+                          _id_user => cast_int(:id_user),
+                          task_number => cast_int(:task_number),
+                          task_title => cast_text(:task_title),
+                          section_number => cast_int(:#{#section.number}),
+                          section_title => cast_text(:#{#section.title})
                       )).*""",
             nativeQuery = true)
     fun set(
@@ -98,6 +96,17 @@ interface TasksRepository : JpaRepository<Task, Int> {
             @Param("task_number") number: Int? = null,
             @Param("task_title") title: String? = null,
             @Param("id_task") idTask: Int? = null
+    ): Task
+
+    //language=PostgresPLSQL
+    @Query(value = """select (task_update(
+                          new_mark_done_user => cast_bool(:mark_done_user),
+                          _id_task => cast_int(:id_task)
+                      )).*""",
+            nativeQuery = true)
+    fun setMarkUser(
+            @Param("mark_done_user") markDoneUser: Boolean?,
+            @Param("id_task") idTask: Int
     ): Task
 
     //language=PostgresPLSQL

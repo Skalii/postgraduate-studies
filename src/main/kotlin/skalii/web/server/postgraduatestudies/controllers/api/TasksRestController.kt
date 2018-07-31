@@ -2,7 +2,6 @@ package skalii.web.server.postgraduatestudies.controllers.api
 
 
 import java.time.Instant
-import java.util.Date
 
 import org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -23,6 +22,8 @@ import skalii.web.server.postgraduatestudies.repositories.SectionsRepository
 import skalii.web.server.postgraduatestudies.repositories.TasksRepository
 import skalii.web.server.postgraduatestudies.repositories.UsersRepository
 import skalii.web.server.postgraduatestudies.views.Json
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 
 @RequestMapping(
@@ -57,10 +58,9 @@ class TasksRestController(
                     value = "task_title",
                     required = false) taskTitle: String?
     ) =
-            usersRepository.get(authUser.username).run {
-
-                return@run Json.get(
-                        view,
+            Json.get(
+                    view,
+                    usersRepository.get(authUser.username).run {
                         tasksRepository.get(
                                 sectionsRepository.get(
                                         idUser,
@@ -71,9 +71,8 @@ class TasksRestController(
                                 taskNumber,
                                 taskTitle
                         )
-                )
-
-            }
+                    }
+            )
 
     @GetMapping(value = ["my-all{-view}"])
     fun getMyAll(
@@ -144,14 +143,13 @@ class TasksRestController(
                     value = "id_task",
                     required = false) idTask: Int?
     ) =
-            usersRepository.get(
-                    email,
-                    phoneNumber,
-                    _idUser
-            ).run {
-
-                return@run Json.get(
-                        view,
+            Json.get(
+                    view,
+                    usersRepository.get(
+                            email,
+                            phoneNumber,
+                            _idUser
+                    ).run {
                         tasksRepository.get(
                                 sectionsRepository.get(
                                         idUser,
@@ -164,9 +162,8 @@ class TasksRestController(
                                 title,
                                 idTask
                         )
-                )
-
-            }
+                    }
+            )
 
     @GetMapping(value = ["all{-view}"])
     fun getAll(
@@ -190,14 +187,13 @@ class TasksRestController(
                     value = "id_user",
                     required = false) _idUser: Int?
     ) =
-            usersRepository.get(
-                    email,
-                    phoneNumber,
-                    _idUser
-            ).run {
-
-                return@run Json.get(
-                        view,
+            Json.get(
+                    view,
+                    usersRepository.get(
+                            email,
+                            phoneNumber,
+                            _idUser
+                    ).run {
                         tasksRepository.getAll(
                                 sectionsRepository.get(
                                         idUser,
@@ -207,9 +203,8 @@ class TasksRestController(
                                 ).idSection,
                                 idUser
                         )
-                )
-
-            }
+                    }
+            )
 
 
     /** ============================== POST requests ============================== */
@@ -226,7 +221,8 @@ class TasksRestController(
                     tasksRepository.add(
                             newTask.fixInitializedAdd(
                                     sectionsRepository,
-                                    usersRepository
+                                    usersRepository,
+                                    authUser.username
                             ).section.idSection,
                             newTask.title,
                             newTask.balkline.toString(),
@@ -260,7 +256,8 @@ class TasksRestController(
                             changedTask.fixInitializedSet(
                                     tasksRepository,
                                     sectionsRepository,
-                                    usersRepository
+                                    usersRepository,
+                                    authUser.username
                             ),
                             changedTask.section,
                             changedTask.section.user.idUser,
@@ -271,8 +268,57 @@ class TasksRestController(
 
             )
 
-    @PutMapping(value = ["mark-instructor{-view}"])
-    fun setMarkInstructor(
+    @PutMapping(value = ["my-mark-student{-view}"])
+    fun setMyMarkUser(
+            @PathVariable(value = "-view") view: String,
+            @RequestBody changedTask: Task,
+            @AuthenticationPrincipal authUser: UserDetails
+    ) =
+            tasksRepository.run {
+                val student = usersRepository.get(authUser.username)
+                val found =
+                        setMarkUser(
+                                changedTask.markDoneUser,
+                                get(
+                                        changedTask.fixInitializedSet(
+                                                tasksRepository,
+                                                sectionsRepository,
+                                                usersRepository,
+                                                user = student
+                                        ).section,
+                                        student.idUser,
+                                        changedTask.number,
+                                        changedTask.title
+                                ).idTask
+                        )
+                Json.get(
+                        view,
+                        found,
+                        "mark_done_user\":${found.markDoneUser}"
+                                to "mark_done_user\":${changedTask.markDoneUser}",
+                        "timestamp_done_user\":${found.timestampDoneUser}".run {
+                            println("found this: $this")
+                            if (found.markDoneUser == true) {
+                                "timestamp_done_user\":\"${found.timestampDoneUser}".substring(0, 41) + "\""
+                            } else "timestamp_done_user\":${found.timestampDoneUser}"
+                        }.also { println("found it: $it") }
+                                to "timestamp_done_user\":${
+                        if (changedTask.markDoneUser == true) {
+                            "\"${DateTimeFormatter
+                                    .ofPattern("yyyy-MM-dd HH:mm:ss")
+                                    .withZone(ZoneOffset.UTC)
+                                    .format(Instant.now())}\""
+                        } else {
+                            "null"
+                        }
+                        }".also {
+                            println("new: $it")
+                        }
+                )
+            }
+
+    @PutMapping(value = ["my-mark-instructor{-view}"])
+    fun setMyMarkInstructor(
             @PathVariable(value = "-view") view: String,
             @RequestBody changedTask: Task,
             @AuthenticationPrincipal authUser: UserDetails,
@@ -284,85 +330,56 @@ class TasksRestController(
                     required = false) phoneNumber: String?,
             @RequestParam(
                     value = "id_user",
-                    required = false) idUser: Int?,
-            @RequestParam(
-                    value = "section_number",
-                    required = false) sectionNumber: Int?,
-            @RequestParam(
-                    value = "section_title",
-                    required = false) sectionTitle: String?,
-            @RequestParam(
-                    value = "id_section",
-                    required = false) idSection: Int?
+                    required = false) idUser: Int?
     ) =
-            Json.get(
-                    view,
-                    changedTask.run {
-
-                        var thisIdTask = 0
-
-                        if (idTask != 0) {
-                            thisIdTask = idTask
-                        } else {
-
-                            try {
-                                if (section.idSection == 0) {
-                                    throw UninitializedPropertyAccessException()
-                                }
-                            } catch (e: UninitializedPropertyAccessException) {
-                                section =
-                                        sectionsRepository.get(
-                                                idUser ?: usersRepository.get(
-                                                        email,
-                                                        phoneNumber
-                                                ).idUser,
-                                                sectionNumber,
-                                                sectionTitle,
-                                                idSection
-                                        )
-                            } finally {
-                                section.tasks.forEach {
-                                    if (it.number == number || it.title == title) {
-                                        thisIdTask = it.idTask
-                                    }
-                                }
+            tasksRepository.run {
+                val student = usersRepository.get(
+                        email,
+                        phoneNumber,
+                        idUser
+                )
+                val found = get(
+                        changedTask.fixInitializedSet(
+                                tasksRepository,
+                                sectionsRepository,
+                                usersRepository,
+                                student.contactInfo.email
+                        ).section,
+                        student.idUser,
+                        changedTask.number,
+                        changedTask.title
+                )
+                if (student.studyInfo?.instructor?.contactInfo?.email == authUser.username) {
+                    setMarkInstructor(
+                            changedTask.markDoneInstructor,
+                            found.idTask
+                    )
+                    println("this")
+                    return@run Json.get(
+                            view,
+                            found,
+                            "mark_done_instructor\":${found.markDoneInstructor}"
+                                    to "mark_done_instructor\":${changedTask.markDoneInstructor}",
+                            "timestamp_done_instructor\":${found.timestampDoneInstructor}"
+                                    to ("timestamp_done_instructor\":" +
+                                    if (!changedTask.markDoneInstructor!!) {
+                                        null
+                                    } else {
+                                        DateTimeFormatter
+                                                .ofPattern("yyyy-MM-dd HH:mm:ss")
+                                                .withZone(ZoneOffset.UTC)
+                                                .format(Instant.now())
+                                    }).run {
+                                substring(0, if (!this.contains("null")) 40 else 25)
                             }
-
-                            if (thisIdTask == 0) {
-                                return@run Task()
-                            }
-
-                        }
-
-                        return@run if (section.user.studyInfo?.instructor?.contactInfo?.email == authUser.username) {
-
-                            tasksRepository.setMarkInstructor(
-                                    markDoneInstructor,
-                                    thisIdTask
-                            )
-
-                            val newTask = tasksRepository.get(idTask = thisIdTask)
-
-                            Task(
-                                    thisIdTask,
-                                    newTask.number,
-                                    newTask.title,
-                                    newTask.balkline,
-                                    newTask.balkline,
-                                    newTask.markDoneUser,
-                                    markDoneInstructor,
-                                    newTask.link,
-                                    newTask.timestampDoneUser,
-                                    if (markDoneInstructor == false
-                                            || markDoneInstructor == null) null
-                                    else Date.from(Instant.now()),
-                                    section
-                            )
-
-                        } else Task()
-
-                    }
-            )
+                    )
+                } else {
+                    return@run Json.get(
+                            view,
+                            found
+                    )
+                }
+            }
 
     @PutMapping(value = ["one{-view}"])
     fun set(

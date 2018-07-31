@@ -72,19 +72,16 @@ class UsersRestController(
     fun getMyStudents(
             @PathVariable("-view") view: String,
             @AuthenticationPrincipal authUser: UserDetails
-    ): String {
-
-        val myStudents: MutableList<User> = mutableListOf()
-
-        usersRepository.get(
-                authUser.username
-        ).students.forEach { myStudents.add(it!!.user!!) }
-
-        return Json.getUser(
-                view,
-                myStudents
-        )
-    }
+    ) =
+            Json.get(
+                    view,
+                    usersRepository.run {
+                        val myStudents: MutableList<User> = mutableListOf()
+                        get(authUser.username)
+                                .students.forEach { myStudents.add(it!!.user!!) }
+                        return@run myStudents
+                    }
+            )
 
     @GetMapping(value = ["one{-view}"])
     fun get(

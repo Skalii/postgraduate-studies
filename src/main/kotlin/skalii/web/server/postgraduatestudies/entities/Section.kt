@@ -4,8 +4,6 @@ package skalii.web.server.postgraduatestudies.entities
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonView
-import skalii.web.server.postgraduatestudies.repositories.SectionsRepository
-import skalii.web.server.postgraduatestudies.repositories.UsersRepository
 
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -24,6 +22,8 @@ import javax.persistence.Table
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
+import skalii.web.server.postgraduatestudies.repositories.SectionsRepository
+import skalii.web.server.postgraduatestudies.repositories.UsersRepository
 import skalii.web.server.postgraduatestudies.views.View
 
 

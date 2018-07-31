@@ -118,7 +118,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                         PUT,
                         "/api/sections/my**",
                         "/api/study-info/my**",
-                        "/api/tasks/my**"
+                        "/api/tasks/my-mark-student**"
                 ).hasAnyRole(
                         GRADUATE_STUDENT.value,
                         DOCTORAL_STUDENT.value
@@ -137,7 +137,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 ).hasRole(INSTRUCTOR.value)
                 .antMatchers(
                         PUT,
-                        "/api/tasks/mark-instructor**"
+                        "/api/tasks/my-mark-instructor**"
                 ).hasRole(INSTRUCTOR.value)
                 .anyRequest().authenticated()
                 .and()
