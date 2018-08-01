@@ -297,11 +297,10 @@ class TasksRestController(
                         "mark_done_user\":${found.markDoneUser}"
                                 to "mark_done_user\":${changedTask.markDoneUser}",
                         "timestamp_done_user\":${found.timestampDoneUser}".run {
-                            println("found this: $this")
                             if (found.markDoneUser == true) {
                                 "timestamp_done_user\":\"${found.timestampDoneUser}".substring(0, 41) + "\""
                             } else "timestamp_done_user\":${found.timestampDoneUser}"
-                        }.also { println("found it: $it") }
+                        }
                                 to "timestamp_done_user\":${
                         if (changedTask.markDoneUser == true) {
                             "\"${DateTimeFormatter
@@ -311,9 +310,7 @@ class TasksRestController(
                         } else {
                             "null"
                         }
-                        }".also {
-                            println("new: $it")
-                        }
+                        }"
                 )
             }
 
@@ -329,7 +326,7 @@ class TasksRestController(
                     value = "phone_number",
                     required = false) phoneNumber: String?,
             @RequestParam(
-                    value = "id_user",
+                    value = "id_student",
                     required = false) idUser: Int?
     ) =
             tasksRepository.run {
@@ -360,18 +357,21 @@ class TasksRestController(
                             found,
                             "mark_done_instructor\":${found.markDoneInstructor}"
                                     to "mark_done_instructor\":${changedTask.markDoneInstructor}",
-                            "timestamp_done_instructor\":${found.timestampDoneInstructor}"
-                                    to ("timestamp_done_instructor\":" +
-                                    if (!changedTask.markDoneInstructor!!) {
-                                        null
-                                    } else {
-                                        DateTimeFormatter
-                                                .ofPattern("yyyy-MM-dd HH:mm:ss")
-                                                .withZone(ZoneOffset.UTC)
-                                                .format(Instant.now())
-                                    }).run {
-                                substring(0, if (!this.contains("null")) 40 else 25)
+                            "timestamp_done_instructor\":${found.timestampDoneInstructor}".run {
+                                if (found.markDoneInstructor == true) {
+                                    "timestamp_done_instructor\":\"${found.timestampDoneInstructor}".substring(0, 47) + "\""
+                                } else "timestamp_done_instructor\":${found.timestampDoneInstructor}"
                             }
+                                    to "timestamp_done_instructor\":${
+                            if (changedTask.markDoneInstructor == true) {
+                                "\"${DateTimeFormatter
+                                        .ofPattern("yyyy-MM-dd HH:mm:ss")
+                                        .withZone(ZoneOffset.UTC)
+                                        .format(Instant.now())}\""
+                            } else {
+                                "null"
+                            }
+                            }"
                     )
                 } else {
                     return@run Json.get(
